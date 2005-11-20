@@ -28,6 +28,11 @@
 if ( !defined("XOOPS_MAINFILE_INCLUDED") ) {
 	define("XOOPS_MAINFILE_INCLUDED",1);
 
+	// Physical path to your XOOPS directory
+	// Physical path to your main XOOPS directory WITHOUT trailing slash
+	// Example: define('XOOPS_ROOT_PATH', '/path/to/xoops/directory');
+	define('XOOPS_ROOT_PATH', '');
+
 	// XOOPS Physical Path
 	// Physical path to your main XOOPS directory WITHOUT trailing slash
 	// Example: define('XOOPS_ROOT_PATH', '/path/to/xoops/directory');
