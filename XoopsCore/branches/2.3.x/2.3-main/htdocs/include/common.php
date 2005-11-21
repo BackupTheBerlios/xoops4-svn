@@ -54,11 +54,14 @@ if (!defined("XOOPS_MAINFILE_INCLUDED")) {
     define("XOOPS_MATCH_END",1);
     define("XOOPS_MATCH_EQUAL",2);
     define("XOOPS_MATCH_CONTAIN",3);
-    define("SMARTY_DIR", XOOPS_ROOT_PATH."/class/smarty/");
-    define("XOOPS_CACHE_PATH", XOOPS_ROOT_PATH."/cache");
+
     define("XOOPS_UPLOAD_PATH", XOOPS_ROOT_PATH."/uploads");
     define("XOOPS_THEME_PATH", XOOPS_ROOT_PATH."/themes");
-    define("XOOPS_COMPILE_PATH", XOOPS_ROOT_PATH."/templates_c");
+
+    define( "SMARTY_DIR", XOOPS_ROOT_PATH . "/class/smarty/" );
+    define( "XOOPS_CACHE_PATH", XOOPS_VAR_PATH . "/Caches" );
+    define( "XOOPS_COMPILE_PATH", XOOPS_VAR_PATH . "/Application Support/net_php_Smarty" );
+
     define("XOOPS_THEME_URL", XOOPS_URL."/themes");
     define("XOOPS_UPLOAD_URL", XOOPS_URL."/uploads");
     set_magic_quotes_runtime(0);
