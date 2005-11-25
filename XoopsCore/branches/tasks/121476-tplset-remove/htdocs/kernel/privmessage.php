@@ -98,20 +98,20 @@ class XoopsPrivmessageHandler extends XoopsObjectHandler
  **/
     function &get($id)
     {
-        $id = intval($id);
+        $pm = false;
+    	$id = intval($id);
         if ($id > 0) {
             $sql = 'SELECT * FROM '.$this->db->prefix('priv_msgs').' WHERE msg_id='.$id;
             if (!$result = $this->db->query($sql)) {
-                return false;
+                return $pm;
             }
             $numrows = $this->db->getRowsNum($result);
             if ($numrows == 1) {
                 $pm = new XoopsPrivmessage();
                 $pm->assignVars($this->db->fetchArray($result));
-                return $pm;
             }
         }
-        return false;
+        return $pm;
     }
 
 /**
@@ -171,7 +171,7 @@ class XoopsPrivmessageHandler extends XoopsObjectHandler
  * @param 	bool 	$id_as_key 	use ID as key into the array?
  * @return 	array	Array of {@link XoopsPrivmessage} objects
  **/
-    function &getObjects($criteria = null, $id_as_key = false)
+    function getObjects($criteria = null, $id_as_key = false)
     {
         $ret = array();
         $limit = $start = 0;

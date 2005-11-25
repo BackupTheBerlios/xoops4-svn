@@ -74,6 +74,9 @@ if ( !defined("XOOPS_MAINFILE_INCLUDED") ) {
 	define("XOOPS_GROUP_USERS", "2");
 	define("XOOPS_GROUP_ANONYMOUS", "3");
 
+	require_once( XOOPS_PATH . '/Boot/xoops2.php' );
+	global $xoops;
+
 	if (!isset($xoopsOption['nocommon']) && XOOPS_ROOT_PATH != '') {
 		include XOOPS_ROOT_PATH."/include/common.php";
 	}

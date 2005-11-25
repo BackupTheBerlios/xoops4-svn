@@ -88,7 +88,8 @@ class XoopsMemberHandler{
      */
     function &createGroup()
     {
-        return $this->_gHandler->create();
+        $inst =& $this->_gHandler->create();
+    	return $inst;
     }
 
     /**
@@ -98,7 +99,8 @@ class XoopsMemberHandler{
      */
     function &createUser()
     {
-        return $this->_uHandler->create();
+        $inst =& $this->_uHandler->create();
+    	return $inst;
     }
 
     /**
@@ -206,7 +208,7 @@ class XoopsMemberHandler{
      * @param object $criteria {@link CriteriaElement} object
      * @return array associative array of group-IDs and names
      */
-    function &getGroupList($criteria = null)
+    function getGroupList($criteria = null)
     {
         $groups =& $this->_gHandler->getObjects($criteria, true);
         $ret = array();
@@ -327,7 +329,8 @@ class XoopsMemberHandler{
         $criteria->add(new Criteria('pass', md5($pwd)));
         $user =& $this->_uHandler->getObjects($criteria, false);
         if (!$user || count($user) != 1) {
-            return false;
+        	$user = false;
+            return $user;
         }
         return $user[0];
     }
@@ -345,7 +348,8 @@ class XoopsMemberHandler{
         $criteria->add(new Criteria('pass', $md5pwd));
         $user =& $this->_uHandler->getObjects($criteria, false);
         if (!$user || count($user) != 1) {
-            return false;
+        	$user = false;
+            return $user;
         }
         return $user[0];
     }

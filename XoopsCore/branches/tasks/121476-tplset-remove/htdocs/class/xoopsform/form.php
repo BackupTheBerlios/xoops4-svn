@@ -228,14 +228,15 @@ class XoopsForm {
      * @return object  reference to a {@link XoopsFormElement}, false if not found
 	 */
 	function &getElementByName($name){
-		$elements =& $this->getElements(true);
+		$elements = $this->getElements(true);
 		$count = count($elements);
 		for ($i = 0; $i < $count; $i++) {
 			if ($name == $elements[$i]->getName()) {
 				return $elements[$i];
 			}
 		}
-		return false;
+		$elt = false;
+		return $elt;
 	}
 
 	/**
@@ -276,7 +277,7 @@ class XoopsForm {
 	 * @param	string 	$name	the "name" attribute of a form element
 	 * @return	string 	the "value" attribute assigned to a form element, null if not set
 	 */
-	function &getElementValue($name){
+	function getElementValue($name){
 		$ele =& $this->getElementByName($name);
 		if (is_object($ele) && method_exists($ele, 'getValue')) {
 			return $ele->getValue($value);
@@ -289,7 +290,7 @@ class XoopsForm {
 	 * 
 	 * @return	array 	array of name/value pairs assigned to form elements
 	 */
-	function &getElementValues(){
+	function getElementValues(){
 		// will not use getElementByName() for performance..
 		$elements =& $this->getElements(true);
 		$count = count($elements);
@@ -321,6 +322,8 @@ class XoopsForm {
 		if (isset($this->_extra)) {
 			return $this->_extra;
 		}
+		$extra = null;
+		return $extra;
 	}
 
 	/**

@@ -93,19 +93,19 @@ class XoopsGroupHandler extends XoopsObjectHandler
      */
     function &get($id)
     {
-        if (intval($id) > 0) {
+        $group = false;
+    	if (intval($id) > 0) {
             $sql = 'SELECT * FROM '.$this->db->prefix('groups').' WHERE groupid='.$id;
             if (!$result = $this->db->query($sql)) {
-                return false;
+                return $group;
             }
             $numrows = $this->db->getRowsNum($result);
             if ($numrows == 1) {
                 $group = new XoopsGroup();
                 $group->assignVars($this->db->fetchArray($result));
-                return $group;
             }
         }
-        return false;
+        return $group;
     }
 
     /**
@@ -169,7 +169,7 @@ class XoopsGroupHandler extends XoopsObjectHandler
      * @param bool $id_as_key should the groups' IDs be used as keys for the associative array?
      * @return mixed Array of groups
      */
-    function &getObjects($criteria = null, $id_as_key = false)
+    function getObjects($criteria = null, $id_as_key = false)
     {
         $ret = array();
         $limit = $start = 0;
@@ -254,19 +254,19 @@ class XoopsMembershipHandler extends XoopsObjectHandler
      */
     function &get($id)
     {
-        if (intval($id) > 0) {
+        $mship = false;
+    	if (intval($id) > 0) {
             $sql = 'SELECT * FROM '.$this->db->prefix('groups_users_link').' WHERE linkid='.$id;
             if (!$result = $this->db->query($sql)) {
-                return false;
+                return $mship;
             }
             $numrows = $this->db->getRowsNum($result);
             if ($numrows == 1) {
                 $mship = new XoopsMembership();
                 $mship->assignVars($this->db->fetchArray($result));
-                return $mship;
             }
         }
-        return false;
+        return $mship;
     }
 
     /**
@@ -330,7 +330,7 @@ class XoopsMembershipHandler extends XoopsObjectHandler
      * @param bool $id_as_key should the ID be used as the array's key?
      * @return array array of references
      */
-    function &getObjects($criteria = null, $id_as_key = false)
+    function getObjects($criteria = null, $id_as_key = false)
     {
         $ret = array();
         $limit = $start = 0;
@@ -403,7 +403,7 @@ class XoopsMembershipHandler extends XoopsObjectHandler
      * objects? FALSE returns associative array.
      * @return array array of groups the user belongs to
      */
-    function &getGroupsByUser($uid)
+    function getGroupsByUser($uid)
     {
         $ret = array();
         $sql = 'SELECT groupid FROM '.$this->db->prefix('groups_users_link').' WHERE uid='.intval($uid);

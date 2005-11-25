@@ -36,10 +36,10 @@ if (!defined("XOOPS_MAINFILE_INCLUDED")) {
     $xoopsSecurity->checkSuperglobals();
     
     // ############## Activate error handler ##############
-    include_once XOOPS_ROOT_PATH . '/class/errorhandler.php';
-    $xoopsErrorHandler =& XoopsErrorHandler::getInstance();
+    //include_once XOOPS_ROOT_PATH . '/class/errorhandler.php';
+    //$xoopsErrorHandler =& XoopsErrorHandler::getInstance();
     // Turn on error handler by default (until config value obtained from DB)
-    $xoopsErrorHandler->activate(true);
+    //$xoopsErrorHandler->activate(true);
 
     define("XOOPS_SIDEBLOCK_LEFT",0);
     define("XOOPS_SIDEBLOCK_RIGHT",1);
@@ -59,8 +59,8 @@ if (!defined("XOOPS_MAINFILE_INCLUDED")) {
     define("XOOPS_THEME_PATH", XOOPS_ROOT_PATH."/themes");
 
     define( "SMARTY_DIR", XOOPS_ROOT_PATH . "/class/smarty/" );
-    define( "XOOPS_CACHE_PATH", XOOPS_VAR_PATH . "/Caches" );
-    define( "XOOPS_COMPILE_PATH", XOOPS_VAR_PATH . "/Application Support/net_php_Smarty" );
+    define( "XOOPS_CACHE_PATH", XOOPS_VAR_PATH . "/Caches/xoops_template_Smarty" );
+    define( "XOOPS_COMPILE_PATH", XOOPS_VAR_PATH . "/Application Support/xoops_template_Smarty" );
 
     define("XOOPS_THEME_URL", XOOPS_URL."/themes");
     define("XOOPS_UPLOAD_URL", XOOPS_URL."/uploads");
@@ -96,7 +96,8 @@ if (!defined("XOOPS_MAINFILE_INCLUDED")) {
     $xoopsConfig =& $config_handler->getConfigsByCat(XOOPS_CONF);
 
     // #################### Error reporting settings ##################
-    error_reporting(0);
+/*
+	error_reporting(0);
 
     if ($xoopsConfig['debug_mode'] == 1) {
         error_reporting(E_ALL);
@@ -104,7 +105,7 @@ if (!defined("XOOPS_MAINFILE_INCLUDED")) {
         // Turn off error handler
         $xoopsErrorHandler->activate(false);
     }
-
+*/
     $xoopsSecurity->checkBadips();
 
     // ################# Include version info file ##############

@@ -85,7 +85,8 @@ class XoopsAvatarHandler extends XoopsObjectHandler
 
     function &get($id)
     {
-        $id = intval($id);
+        $avatar = false;
+    	$id = intval($id);
         if ($id > 0) {
             $sql = 'SELECT * FROM '.$this->db->prefix('avatar').' WHERE avatar_id='.$id;
             if (!$result = $this->db->query($sql)) {
@@ -98,7 +99,7 @@ class XoopsAvatarHandler extends XoopsObjectHandler
                 return $avatar;
             }
         }
-        return false;
+        return $avatar;
     }
 
     function insert(&$avatar)
@@ -203,7 +204,7 @@ class XoopsAvatarHandler extends XoopsObjectHandler
         return true;
     }
 
-    function &getUser(&$avatar){
+    function getUser(&$avatar){
         $ret = array();
         if (strtolower(get_class($avatar)) != 'xoopsavatar') {
             return $ret;
@@ -218,7 +219,7 @@ class XoopsAvatarHandler extends XoopsObjectHandler
         return $ret;
     }
 
-    function &getList($avatar_type = null, $avatar_display = null)
+    function getList($avatar_type = null, $avatar_display = null)
     {
         $criteria = new CriteriaCompo();
         if (isset($avatar_type)) {

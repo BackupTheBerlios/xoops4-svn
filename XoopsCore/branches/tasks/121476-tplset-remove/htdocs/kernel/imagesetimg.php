@@ -68,20 +68,20 @@ class XoopsImagesetimgHandler extends XoopsObjectHandler
 
     function &get($id)
     {
-        $id = intval($id);
+        $imgsetimg = false;
+    	$id = intval($id);
         if ($id > 0) {
             $sql = 'SELECT * FROM '.$this->db->prefix('imgsetimg').' WHERE imgsetimg_id='.$id;
             if (!$result = $this->db->query($sql)) {
-                return false;
+                return $imgsetimg;
             }
             $numrows = $this->db->getRowsNum($result);
             if ($numrows == 1) {
                 $imgsetimg = new XoopsImagesetimg();
                 $imgsetimg->assignVars($this->db->fetchArray($result));
-                return $imgsetimg;
             }
         }
-        return false;
+        return $imgsetimg;
     }
 
     function insert(&$imgsetimg)
@@ -126,7 +126,7 @@ class XoopsImagesetimgHandler extends XoopsObjectHandler
         return true;
     }
 
-    function &getObjects($criteria = null, $id_as_key = false)
+    function getObjects($criteria = null, $id_as_key = false)
     {
         $ret = array();
         $limit = $start = 0;
@@ -174,7 +174,7 @@ class XoopsImagesetimgHandler extends XoopsObjectHandler
  * @return type documentation
  * @author Kazumi Ono <onokazu@xoops.org>
  **/
-    function &getByImageset($imgset_id, $id_as_key = false)
+    function getByImageset($imgset_id, $id_as_key = false)
     {
         return $this->getObjects(new Criteria('imgsetimg_imgset', intval($imgset_id)), $id_as_key);
     }

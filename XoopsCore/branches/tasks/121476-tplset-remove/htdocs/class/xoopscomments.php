@@ -136,7 +136,7 @@ class XoopsComments extends XoopsObject
 		return ($size + 1);
 	}
 
-	function &getCommentTree()
+	function getCommentTree()
 	{
 		$mytree = new XoopsTree($this->ctable, "comment_id", "pid");
 		$ret = array();

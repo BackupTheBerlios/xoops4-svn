@@ -103,20 +103,20 @@ class MyTextSanitizer
      *
      * @return	string
      */
-    function &smiley($message)
+    function smiley($message)
 	{
 		$db =& Database::getInstance();
 		if (count($this->smileys) == 0) {
 			if ($getsmiles = $db->query("SELECT * FROM ".$db->prefix("smiles"))){
 				while ($smiles = $db->fetchArray($getsmiles)) {
-					$message =& str_replace($smiles['code'], '<img src="'.XOOPS_UPLOAD_URL.'/'.htmlspecialchars($smiles['smile_url']).'" alt="" />', $message);
+					$message = str_replace($smiles['code'], '<img src="'.XOOPS_UPLOAD_URL.'/'.htmlspecialchars($smiles['smile_url']).'" alt="" />', $message);
 					array_push($this->smileys, $smiles);
 				}
 			}
 		} 
 		elseif (is_array($this->smileys)) {
 			foreach ($this->smileys as $smile) {
-				$message =& str_replace($smile['code'], '<img src="'.XOOPS_UPLOAD_URL.'/'.htmlspecialchars($smile['smile_url']).'" alt="" />', $message);
+				$message = str_replace($smile['code'], '<img src="'.XOOPS_UPLOAD_URL.'/'.htmlspecialchars($smile['smile_url']).'" alt="" />', $message);
 			}
 		}
 		return $message;
@@ -128,7 +128,7 @@ class MyTextSanitizer
 	 * @param   string  $text
 	 * @return  string
 	 **/
-	function &makeClickable(&$text)
+	function makeClickable(&$text)
 	{
 		$patterns = array("/(^|[^]_a-z0-9-=\"'\/])([a-z]+?):\/\/([^, \r\n\"\(\)'<>]+)/i", "/(^|[^]_a-z0-9-=\"'\/])www\.([a-z0-9\-]+)\.([^, \r\n\"\(\)'<>]+)/i", "/(^|[^]_a-z0-9-=\"'\/])ftp\.([a-z0-9\-]+)\.([^, \r\n\"\(\)'<>]+)/i", "/(^|[^]_a-z0-9-=\"'\/:\.])([a-z0-9\-_\.]+?)@([^, \r\n\"\(\)'<>\[\]]+)/i");
 		$replacements = array("\\1<a href=\"\\2://\\3\" target=\"_blank\">\\2://\\3</a>", "\\1<a href=\"http://www.\\2.\\3\" target=\"_blank\">www.\\2.\\3</a>", "\\1<a href=\"ftp://ftp.\\2.\\3\" target=\"_blank\">ftp.\\2.\\3</a>", "\\1<a href=\"mailto:\\2@\\3\">\\2@\\3</a>");
@@ -203,7 +203,8 @@ class MyTextSanitizer
 		$replacements[] = "(tammairanslip)";
 		$patterns[] = "/a{$c}b{$c}o{$c}u{$c}t{$c}:/si";
 		$replacements[] = "about :";
-		return preg_replace($patterns, $replacements, $text);
+		$text = preg_replace($patterns, $replacements, $text);
+		return $text;
 	}
 
 	/**
@@ -213,7 +214,7 @@ class MyTextSanitizer
      *
      * @return	string
 	 */
-	function &nl2Br($text)
+	function nl2Br($text)
 	{
 		return preg_replace("/(\015\012)|(\015)|(\012)/","<br />",$text);
 	}
@@ -224,10 +225,10 @@ class MyTextSanitizer
 	 * @param   string  $text
 	 * @return  string
 	 **/
-	function &addSlashes($text)
+	function addSlashes($text)
 	{
 		if (!get_magic_quotes_gpc()) {
-			$text =& addslashes($text);
+			$text = addslashes($text);
 		}
 		return $text;
 	}
@@ -238,10 +239,10 @@ class MyTextSanitizer
     *
     * @return	string
 	*/
-	function &stripSlashesGPC($text)
+	function stripSlashesGPC($text)
 	{
 		if (get_magic_quotes_gpc()) {
-			$text =& stripslashes($text);
+			$text = stripslashes($text);
 		}
 		return $text;
 	}
@@ -253,7 +254,7 @@ class MyTextSanitizer
     *
     * @return	string
 	*/
-	function &htmlSpecialChars($text)
+	function htmlSpecialChars($text)
 	{
 		//return preg_replace("/&amp;/i", '&', htmlspecialchars($text, ENT_QUOTES));
 		return preg_replace(array("/&amp;/i", "/&nbsp;/i"), array('&', '&amp;nbsp;'), htmlspecialchars($text, ENT_QUOTES));
@@ -265,7 +266,7 @@ class MyTextSanitizer
 	 * @param   string  $text
 	 * @return  string
 	 **/
-	function &undoHtmlSpecialChars(&$text)
+	function undoHtmlSpecialChars( $text )
 	{
 		return preg_replace(array("/&gt;/i", "/&lt;/i", "/&quot;/i", "/&#039;/i"), array(">", "<", "\"", "'"), $text);
 	}
@@ -285,28 +286,28 @@ class MyTextSanitizer
 	{
 		if ($html != 1) {
 			// html not allowed
-			$text =& $this->htmlSpecialChars($text);
+			$text = $this->htmlSpecialChars($text);
 		}
-		$text =& $this->codePreConv($text, $xcode); // Ryuji_edit(2003-11-18)
-		$text =& $this->makeClickable($text);
+		$text = $this->codePreConv($text, $xcode); // Ryuji_edit(2003-11-18)
+		$text = $this->makeClickable($text);
 		if ($smiley != 0) {
 			// process smiley
-			$text =& $this->smiley($text);
+			$text = $this->smiley($text);
 		}
 		if ($xcode != 0) {
 			// decode xcode
 			if ($image != 0) {
 				// image allowed
-				$text =& $this->xoopsCodeDecode($text);
-            		} else {
-                		// image not allowed
-                		$text =& $this->xoopsCodeDecode($text, 0);
+				$text = $this->xoopsCodeDecode($text);
+			} else {
+				// image not allowed
+				$text = $this->xoopsCodeDecode($text, 0);
 			}
 		}
 		if ($br != 0) {
-			$text =& $this->nl2Br($text);
+			$text = $this->nl2Br($text);
 		}
-		$text =& $this->codeConv($text, $xcode, $image);	// Ryuji_edit(2003-11-18)
+		$text = $this->codeConv($text, $xcode, $image);	// Ryuji_edit(2003-11-18)
 		return $text;
 	}
 
@@ -323,31 +324,31 @@ class MyTextSanitizer
 	 **/
 	function &previewTarea(&$text, $html = 0, $smiley = 1, $xcode = 1, $image = 1, $br = 1)
 	{
-		$text =& $this->stripSlashesGPC($text);
+		$text = $this->stripSlashesGPC($text);
 		if ($html != 1) {
 			// html not allowed
-			$text =& $this->htmlSpecialChars($text);
+			$text = $this->htmlSpecialChars($text);
 		}
-		$text =& $this->codePreConv($text, $xcode); // Ryuji_edit(2003-11-18)
-		$text =& $this->makeClickable($text);
+		$text = $this->codePreConv($text, $xcode); // Ryuji_edit(2003-11-18)
+		$text = $this->makeClickable($text);
 		if ($smiley != 0) {
 			// process smiley
-			$text =& $this->smiley($text);
+			$text = $this->smiley($text);
 		}
 		if ($xcode != 0) {
 			// decode xcode
 			if ($image != 0) {
 				// image allowed
-				$text =& $this->xoopsCodeDecode($text);
+				$text = $this->xoopsCodeDecode($text);
 			} else {
 				// image not allowed
-				$text =& $this->xoopsCodeDecode($text, 0);
+				$text = $this->xoopsCodeDecode($text, 0);
 			}
 		}
 		if ($br != 0) {
-			$text =& $this->nl2Br($text);
+			$text = $this->nl2Br($text);
 		}
-		$text =& $this->codeConv($text, $xcode, $image);	// Ryuji_edit(2003-11-18)
+		$text = $this->codeConv($text, $xcode, $image);	// Ryuji_edit(2003-11-18)
 		return $text;
 	}
 
@@ -525,7 +526,8 @@ class MyTextSanitizer
 
 	function &makeTareaData4Preview(&$text, $html=1, $smiley=1, $xcode=1)
 	{
-		return $this->previewTarea($text, $html, $smiley, $xcode);
+		$text = $this->previewTarea($text, $html, $smiley, $xcode);
+		return $text;
 	}
 
 	function makeTareaData4PreviewInForm($text)
@@ -540,30 +542,30 @@ class MyTextSanitizer
 		return $this->htmlSpecialChars($text);
 	}
 
-	function &oopsStripSlashesGPC($text)
+	function oopsStripSlashesGPC($text)
 	{
 		return $this->stripSlashesGPC($text);
 	}
 
-	function &oopsStripSlashesRT($text)
+	function oopsStripSlashesRT($text)
 	{
 		if (get_magic_quotes_runtime()) {
-			$text =& stripslashes($text);
+			$text = stripslashes($text);
 		}
 		return $text;
 	}
 
-	function &oopsAddSlashes($text)
+	function oopsAddSlashes($text)
 	{
 		return $this->addSlashes($text);
 	}
 
-	function &oopsHtmlSpecialChars($text)
+	function oopsHtmlSpecialChars($text)
 	{
 		return $this->htmlSpecialChars($text);
 	}
 
-	function &oopsNl2Br($text)
+	function oopsNl2Br($text)
 	{
 		return $this->nl2br($text);
 	}
