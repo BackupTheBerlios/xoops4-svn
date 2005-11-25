@@ -1,123 +1,100 @@
 <?php
-/*
+/**
  * Smarty plugin
+ * 
+ * Kept for XOOPS 2.0 backward compatibility only !!!
+ * 
+ * Use the new xotpl: handler to access XOOPS templates
  * ------------------------------------------------------------- 
  * File:     resource.db.php
  * Type:     resource
  * Name:     db
  * Purpose:  Fetches templates from a database
  * -------------------------------------------------------------
+ * @package xoops20
+ * @deprecated
  */
-function smarty_resource_db_source($tpl_name, &$tpl_source, &$smarty)
-{
-    $tplfile_handler =& xoops_gethandler('tplfile');
-	$tplobj =& $tplfile_handler->find($GLOBALS['xoopsConfig']['template_set'], null, null, null, $tpl_name, true);
-	if (count($tplobj) > 0) {
-		if (false != $smarty->xoops_canUpdateFromFile()) {
-			$conf_theme = isset($GLOBALS['xoopsConfig']['theme_set']) ? $GLOBALS['xoopsConfig']['theme_set'] : 'default';
-			if ($conf_theme != 'default') {
-				switch ($tplobj[0]->getVar('tpl_type')) {
-					case 'module':
-						$filepath = XOOPS_THEME_PATH.'/'.$conf_theme.'/templates/'.$tplobj[0]->getVar('tpl_module').'/'.$tpl_name;
-						break;
-					case 'block':
-						$filepath = XOOPS_THEME_PATH.'/'.$conf_theme.'/templates/'.$tplobj[0]->getVar('tpl_module').'/blocks/'.$tpl_name;
-						break;
-					default:
-						$filepath = "";
-						break;
-				}
-			} else {
-				switch ($tplobj[0]->getVar('tpl_type')) {
-					case 'module':
-						$filepath = XOOPS_ROOT_PATH.'/modules/'.$tplobj[0]->getVar('tpl_module').'/templates/'.$tpl_name;
-						break;
-					case 'block':
-						$filepath = XOOPS_ROOT_PATH.'/modules/'.$tplobj[0]->getVar('tpl_module').'/templates/blocks/'.$tpl_name;
-						break;
-					default:
-						$filepath = "";
-						break;
-				}
-			}
-			if ($filepath != "" && file_exists($filepath)) {
-				$file_modified = filemtime($filepath);
-				if ($file_modified > $tplobj[0]->getVar('tpl_lastmodified')) {
-					if (false != $fp = fopen($filepath, 'r')) {
-						$filesource = fread($fp, filesize($filepath));
-    					fclose($fp);
-						$tplobj[0]->setVar('tpl_source', $filesource, true);
-						$tplobj[0]->setVar('tpl_lastmodified', time());
-						$tplobj[0]->setVar('tpl_lastimported', time());
-    					$tplfile_handler->forceUpdate($tplobj[0]);
-						$tpl_source = $filesource;
-        				return true;
-					}
-				}
-			}
+
+function smarty_resource_db_source($tpl_name, &$tpl_source, &$smarty) {
+
+	if ( $tplPath = smarty_resource_db_lookup( $tpl_name ) ) {
+		if ( $tpl_source = file_get_contents( $tplPath ) ) {
+			return true;
 		}
-        $tpl_source = $tplobj[0]->getVar('tpl_source');
-        return true;
-    } else {
-		return false;
 	}
+	return false;
 }
 
-function smarty_resource_db_timestamp($tpl_name, &$tpl_timestamp, &$smarty)
-{
-    $tplfile_handler =& xoops_gethandler('tplfile');
-    $tplobj =& $tplfile_handler->find($GLOBALS['xoopsConfig']['template_set'], null, null, null, $tpl_name, false);
-	if (count($tplobj) > 0) {
-		if (false != $smarty->xoops_canUpdateFromFile()) {
-			$conf_theme = isset($GLOBALS['xoopsConfig']['theme_set']) ? $GLOBALS['xoopsConfig']['theme_set'] : 'default';
-			if ($conf_theme != 'default') {
-				switch ($tplobj[0]->getVar('tpl_type')) {
-					case 'module':
-						$filepath = XOOPS_THEME_PATH.'/'.$conf_theme.'/templates/'.$tplobj[0]->getVar('tpl_module').'/'.$tpl_name;
-						break;
-					case 'block':
-						$filepath = XOOPS_THEME_PATH.'/'.$conf_theme.'/templates/'.$tplobj[0]->getVar('tpl_module').'/blocks/'.$tpl_name;
-						break;
-					default:
-						$filepath = "";
-						break;
-				}
-			} else {
-				switch ($tplobj[0]->getVar('tpl_type')) {
-					case 'module':
-						$filepath = XOOPS_ROOT_PATH.'/modules/'.$tplobj[0]->getVar('tpl_module').'/templates/'.$tpl_name;
-						break;
-					case 'block':
-						$filepath = XOOPS_ROOT_PATH.'/modules/'.$tplobj[0]->getVar('tpl_module').'/templates/blocks/'.$tpl_name;
-						break;
-					default:
-						$filepath = "";
-						break;
-				}
-			}
-			if ($filepath != "" && file_exists($filepath)) {
-				$file_modified = filemtime($filepath);
-				if ($file_modified > $tplobj[0]->getVar('tpl_lastmodified')) {
-					$tpl_timestamp = $file_modified;
-					return true;
-				}
-			}
+function smarty_resource_db_timestamp($tpl_name, &$tpl_timestamp, &$smarty) {
+
+	if ( $tplPath = smarty_resource_db_lookup( $tpl_name ) ) {
+		if ( $tpl_timestamp = filemtime( $tplPath ) ) {
+			return true;
 		}
-        $tpl_timestamp = $tplobj[0]->getVar('tpl_lastmodified');
-        return true;
-    } else {
-		return false;
 	}
+	return false;
 }
 
-function smarty_resource_db_secure($tpl_name, &$smarty)
-{
+function smarty_resource_db_secure($tpl_name, &$smarty) {
     // assume all templates are secure
     return true;
 }
 
-function smarty_resource_db_trusted($tpl_name, &$smarty)
-{
+function smarty_resource_db_trusted($tpl_name, &$smarty) {
     // not used for templates
 }
+
+/**
+ * Get a template path from its old-style name
+ *
+ * @param string	$tplName	XOOPS 2.0 name of the template to search
+ * @param bool		$refresh	Set this to true to force regeneration of the cache
+ * @return string	Full path to the template (or false if not found)
+ */
+function smarty_resource_db_lookup( $tplName, $refresh = false ) {
+	static $list = null;
+	global $xoops;
+
+	if ( !isset($list) ) {
+		$list = @include $xoops->path( 'var/Caches/xoops_template_Smarty/dbhandler-list.php' );
+	}
+	if ( !is_array($list) || $refresh ) {
+		// List not found: regenerate it
+		$handler =& xoops_gethandler( 'module' );
+		$modules = $handler->getList( null, true );
+		$templates = array();
+	
+		foreach ( array_keys( $modules ) as $modname ) {
+			$modversion = array();
+			if ( @include $xoops->path( "modules/$modname/xoops_version.php" ) ) {
+				if ( isset($modversion['templates']) ) {
+					foreach ( $modversion['templates'] as $tpl ) {
+						$templates[ $tpl['file'] ] = "modules/$modname/templates/" . $tpl['file'];
+					}
+				}
+				if ( isset($modversion['blocks']) ) {
+					foreach ( $modversion['blocks'] as $block ) {
+						if ( isset( $block['template'] ) ) {
+							$templates[ $block['template'] ] = "modules/$modname/templates/blocks/" . $block['template'];
+						}
+					}
+				}
+			}
+		}
+		if ( $fp = fopen( $xoops->path( 'var/Caches/xoops_template_Smarty/dbhandler-list.php' ), 'wt' ) ) {
+			fwrite( $fp, "<?php\nreturn " . var_export( $templates, true ) . ";\n?>" );
+			fclose( $fp );
+			$list = $templates;		// Only save the static if saving was successful
+		} else {
+			trigger_error( "Cannot create db: resource handler templates list", E_USER_WARNING );
+		}
+	}
+	if ( isset( $list[$tplName] ) ) {
+		return $xoops->path( $list[$tplName] );
+	}
+	return false;
+}
+
+
+
 ?>
