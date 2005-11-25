@@ -98,20 +98,20 @@ class XoopsImageHandler extends XoopsObjectHandler
      **/
     function &get($id, $getbinary=true)
     {
-        $id = intval($id);
+        $image = false;
+    	$id = intval($id);
         if ($id > 0) {
             $sql = 'SELECT i.*, b.image_body FROM '.$this->db->prefix('image').' i LEFT JOIN '.$this->db->prefix('imagebody').' b ON b.image_id=i.image_id WHERE i.image_id='.$id;
             if (!$result = $this->db->query($sql)) {
-                return false;
+                return $image;
             }
             $numrows = $this->db->getRowsNum($result);
             if ($numrows == 1) {
                 $image = new XoopsImage();
                 $image->assignVars($this->db->fetchArray($result));
-                return $image;
             }
         }
-        return false;
+        return $image;
     }
 
     /**
@@ -197,7 +197,7 @@ class XoopsImageHandler extends XoopsObjectHandler
      * @param   boolean $getbinary  
      * @return  array   Array of {@link XoopsImage} objects
      **/
-    function &getObjects($criteria = null, $id_as_key = false, $getbinary = false)
+    function getObjects($criteria = null, $id_as_key = false, $getbinary = false)
     {
         $ret = array();
         $limit = $start = 0;
@@ -256,7 +256,7 @@ class XoopsImageHandler extends XoopsObjectHandler
      * @param   bool    $image_display
      * @return  array   Array of {@link XoopsImage} objects
      **/
-    function &getList($imgcat_id, $image_display = null)
+    function getList($imgcat_id, $image_display = null)
     {
         $criteria = new CriteriaCompo(new Criteria('imgcat_id', intval($imgcat_id)));
         if (isset($image_display)) {

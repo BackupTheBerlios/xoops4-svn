@@ -228,7 +228,7 @@ class XoopsMySQLDatabase extends XoopsDatabase
      * @return resource query result or FALSE if successful
      * or TRUE if successful and no result
      */
-    function &queryF($sql, $limit=0, $start=0)
+    function queryF($sql, $limit=0, $start=0)
 	{
 		if ( !empty($limit) ) {
 			if (empty($start)) {
@@ -258,7 +258,7 @@ class XoopsMySQLDatabase extends XoopsDatabase
      * 
      * @abstract
 	 */
-	function &query($sql, $limit=0, $start=0)
+	function query($sql, $limit=0, $start=0)
 	{
 
     }
@@ -346,7 +346,7 @@ class XoopsMySQLDatabaseSafe extends XoopsMySQLDatabase
      * @return resource query result or FALSE if successful
      * or TRUE if successful and no result
      */
-	function &query($sql, $limit=0, $start=0)
+	function query($sql, $limit=0, $start=0)
 	{
 		return $this->queryF($sql, $limit, $start);
 	}
@@ -378,7 +378,7 @@ class XoopsMySQLDatabaseProxy extends XoopsMySQLDatabase
      * @param int $start offset of first record to return
      * @return resource query result or FALSE if unsuccessful
      */
-	function &query($sql, $limit=0, $start=0)
+	function query($sql, $limit=0, $start=0)
 	{
 	    $sql = ltrim($sql);
 		if (strtolower(substr($sql, 0, 6)) == 'select') {

@@ -85,19 +85,19 @@ class XoopsImagecategoryHandler extends XoopsObjectHandler
 
     function &get($id)
     {
-        if (intval($id) > 0) {
+        $imgcat = false;
+    	if (intval($id) > 0) {
             $sql = 'SELECT * FROM '.$this->db->prefix('imagecategory').' WHERE imgcat_id='.$id;
             if (!$result = $this->db->query($sql)) {
-                return false;
+                return $imgcat;
             }
             $numrows = $this->db->getRowsNum($result);
             if ($numrows == 1) {
                 $imgcat = new XoopsImagecategory();
                 $imgcat->assignVars($this->db->fetchArray($result));
-                return $imgcat;
             }
         }
-        return false;
+        return $imgcat;
     }
 
     function insert(&$imgcat)
@@ -142,7 +142,7 @@ class XoopsImagecategoryHandler extends XoopsObjectHandler
         return true;
     }
 
-    function &getObjects($criteria = null, $id_as_key = false)
+    function getObjects($criteria = null, $id_as_key = false)
     {
         $ret = array();
         $limit = $start = 0;
@@ -186,7 +186,7 @@ class XoopsImagecategoryHandler extends XoopsObjectHandler
         return $count;
     }
 
-    function &getList($groups = array(), $perm = 'imgcat_read', $display = null, $storetype = null)
+    function getList($groups = array(), $perm = 'imgcat_read', $display = null, $storetype = null)
     {
         $criteria = new CriteriaCompo();
         if (is_array($groups) && !empty($groups)) {

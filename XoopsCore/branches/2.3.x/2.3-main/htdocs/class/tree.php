@@ -115,7 +115,7 @@ class XoopsObjectTree {
 	 * @param   string  $key    ID of the parent object
 	 * @return  array   Array of children of the parent
 	 **/
-	function &getFirstChild($key)
+	function getFirstChild($key)
 	{
 		$ret = array();
 		if (isset($this->_tree[$key]['child'])) {
@@ -133,7 +133,7 @@ class XoopsObjectTree {
 	 * @param   array   $ret    (Empty when called from client) Array of children from previous recursions.
 	 * @return  array   Array of child nodes.
 	 **/
-	function &getAllChild($key, $ret = array())
+	function getAllChild($key, $ret = array())
 	{
 		if (isset($this->_tree[$key]['child'])) {
 			foreach ($this->_tree[$key]['child'] as $childkey) {
@@ -156,7 +156,7 @@ class XoopsObjectTree {
 	 * @param   int $uplevel (empty when called from outside) level of recursion
 	 * @return  array   Array of parent nodes. 
 	 **/
-	function &getAllParent($key, $ret = array(), $uplevel = 1)
+	function getAllParent($key, $ret = array(), $uplevel = 1)
 	{
 		if (isset($this->_tree[$key]['parent']) && isset($this->_tree[$this->_tree[$key]['parent']]['obj'])) {
 			$ret[$uplevel] =& $this->_tree[$this->_tree[$key]['parent']]['obj'];
@@ -212,7 +212,7 @@ class XoopsObjectTree {
 	 * @param   integer $key             ID of the object to display as the root of select options
 	 * @return  string  HTML select box
 	 **/
-	function &makeSelBox($name, $fieldName, $prefix='-', $selected='', $addEmptyOption = false, $key=0)
+	function makeSelBox($name, $fieldName, $prefix='-', $selected='', $addEmptyOption = false, $key=0)
     {
         $ret = '<select name='.$name.'>';
         if (false != $addEmptyOption) {

@@ -274,7 +274,7 @@ class XoopsObject
     * @param string $format format to use for the output
     * @return mixed formatted value of the variable
     */
-    function &getVar($key, $format = 's')
+    function getVar($key, $format = 's')
     {
         $ret = $this->vars[$key]['value'];
         switch ($this->vars[$key]['data_type']) {
@@ -528,7 +528,7 @@ class XoopsObject
     function &xoopsClone()
     {
         $class = get_class($this);
-        $clone = new $class();
+        $clone =& new $class();
         foreach ($this->vars as $k => $v) {
             $clone->assignVar($k, $v['value']);
         }

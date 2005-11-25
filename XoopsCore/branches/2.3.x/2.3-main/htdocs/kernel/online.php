@@ -133,7 +133,7 @@ class XoopsOnlineHandler
      * @param	object  $criteria   {@link CriteriaElement} 
      * @return	array   Array of associative arrays of online information
      */
-    function &getAll($criteria = null)
+    function getAll($criteria = null)
     {
         $ret = array();
         $limit = $start = 0;

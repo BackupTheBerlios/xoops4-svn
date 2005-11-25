@@ -49,7 +49,7 @@ class XoopsTplfile extends XoopsObject
 		$this->initVar('tpl_source', XOBJ_DTYPE_SOURCE, null, false);
 	}
 
-	function &getSource()
+	function getSource()
 	{
 		return $this->getVar('tpl_source');
 	}
@@ -83,7 +83,8 @@ class XoopsTplfileHandler extends XoopsObjectHandler
 
     function &get($id, $getsource = false)
     {
-        $id = intval($id);
+        $tplfile = false;
+    	$id = intval($id);
         if ($id > 0) {
             if (!$getsource) {
                 $sql = 'SELECT * FROM '.$this->db->prefix('tplfile').' WHERE tpl_id='.$id;
@@ -91,16 +92,15 @@ class XoopsTplfileHandler extends XoopsObjectHandler
                 $sql = 'SELECT f.*, s.tpl_source FROM '.$this->db->prefix('tplfile').' f LEFT JOIN '.$this->db->prefix('tplsource').' s  ON s.tpl_id=f.tpl_id WHERE f.tpl_id='.$id;
             }
             if (!$result = $this->db->query($sql)) {
-                return false;
+                return $tplfile;
             }
             $numrows = $this->db->getRowsNum($result);
             if ($numrows == 1) {
                 $tplfile = new XoopsTplfile();
                 $tplfile->assignVars($this->db->fetchArray($result));
-                return $tplfile;
             }
         }
-        return false;
+        return $tplfile;
     }
 
     function loadSource(&$tplfile)
@@ -211,7 +211,7 @@ class XoopsTplfileHandler extends XoopsObjectHandler
         return true;
     }
 
-    function &getObjects($criteria = null, $getsource = false, $id_as_key = false)
+    function getObjects($criteria = null, $getsource = false, $id_as_key = false)
     {
         $ret = array();
         $limit = $start = 0;
@@ -271,7 +271,7 @@ class XoopsTplfileHandler extends XoopsObjectHandler
         return $ret;
     }
 
-    function &find($tplset = null, $type = null, $refid = null, $module = null, $file = null, $getsource = false)
+    function find($tplset = null, $type = null, $refid = null, $module = null, $file = null, $getsource = false)
     {
         $criteria = new CriteriaCompo();
         if (isset($tplset)) {

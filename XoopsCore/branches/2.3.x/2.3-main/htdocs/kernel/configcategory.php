@@ -105,22 +105,21 @@ class XoopsConfigCategoryHandler extends XoopsObjectHandler
      * 
      * @return	object  {@link XoopsConfigCategory}, FALSE on fail
      */
-    function &get($id)
-    {
-        $id = intval($id);
+    function &get($id) {
+        $confcat = false;
+    	$id = intval($id);
         if ($id > 0) {
             $sql = 'SELECT * FROM '.$this->db->prefix('configcategory').' WHERE confcat_id='.$id;
             if (!$result = $this->db->query($sql)) {
-                return false;
+                return $confcat;
             }
             $numrows = $this->db->getRowsNum($result);
             if ($numrows == 1) {
                 $confcat = new XoopsConfigCategory();
                 $confcat->assignVars($this->db->fetchArray($result), false);
-                return $confcat;
             }
         }
-        return false;
+        return $confcat;
     }
 
     /**
@@ -187,7 +186,7 @@ class XoopsConfigCategoryHandler extends XoopsObjectHandler
      * 
      * @return	array   Array of {@link XoopsConfigCategory}s
      */
-    function &getObjects($criteria = null, $id_as_key = false)
+    function getObjects($criteria = null, $id_as_key = false)
     {
         $ret = array();
         $limit = $start = 0;

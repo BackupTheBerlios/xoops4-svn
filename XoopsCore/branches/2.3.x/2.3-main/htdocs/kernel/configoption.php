@@ -104,20 +104,20 @@ class XoopsConfigOptionHandler extends XoopsObjectHandler
      */
     function &get($id)
     {
-        $id = intval($id);
+        $confoption = false;
+    	$id = intval($id);
         if ($id > 0) {
             $sql = 'SELECT * FROM '.$this->db->prefix('configoption').' WHERE confop_id='.$id;
             if (!$result = $this->db->query($sql)) {
-                return false;
+                return $confoption;
             }
             $numrows = $this->db->getRowsNum($result);
             if ($numrows == 1) {
                 $confoption = new XoopsConfigOption();
                 $confoption->assignVars($this->db->fetchArray($result));
-                return $confoption;
             }
         }
-        return false;
+        return $confoption;
     }
 
     /**
@@ -182,7 +182,7 @@ class XoopsConfigOptionHandler extends XoopsObjectHandler
      * 
      * @return	array   Array of {@link XoopsConfigOption}s 
      */
-    function &getObjects($criteria = null, $id_as_key = false)
+    function getObjects($criteria = null, $id_as_key = false)
     {
         $ret = array();
         $limit = $start = 0;

@@ -101,7 +101,8 @@ class XoopsXmlRss2Parser extends SaxParser
             if (isset($this->_imageData[$name])) {
                 return $this->_imageData[$name];
             }
-            return false;
+            $return = false;
+            return $return;
         }
         return $this->_imageData;
     }
@@ -591,7 +592,8 @@ class RssItemHandler extends XmlTagHandler
 
     function handleEndElement(&$parser)
     {
-        $parser->setItems($parser->getTempArr());
+    	$items =& $parser->getTempArr();
+        $parser->setItems( $items );
     }
 }
 
