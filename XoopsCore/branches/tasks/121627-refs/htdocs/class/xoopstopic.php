@@ -315,7 +315,7 @@ class XoopsTopic
 		return $ret;
 	}
 
-	function &getTopicsList()
+	function getTopicsList()
 	{
 		$result = $this->db->query('SELECT topic_id, topic_pid, topic_title FROM '.$this->table);
 		$ret = array();

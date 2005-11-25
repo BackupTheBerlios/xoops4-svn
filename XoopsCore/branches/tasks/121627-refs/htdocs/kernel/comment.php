@@ -133,20 +133,20 @@ class XoopsCommentHandler extends XoopsObjectHandler
      **/
     function &get($id)
     {
-        $id = intval($id);
+        $comment = false;
+    	$id = intval($id);
         if ($id > 0) {
             $sql = 'SELECT * FROM '.$this->db->prefix('xoopscomments').' WHERE com_id='.$id;
             if (!$result = $this->db->query($sql)) {
-                return false;
+                return $comment;
             }
             $numrows = $this->db->getRowsNum($result);
             if ($numrows == 1) {
                 $comment = new XoopsComment();
                 $comment->assignVars($this->db->fetchArray($result));
-                return $comment;
             }
         }
-        return false;
+        return $comment;
     }
 
     /**
@@ -213,7 +213,7 @@ class XoopsCommentHandler extends XoopsObjectHandler
      * 
      * @return  array   Array of {@link XoopsComment} objects
      **/
-    function &getObjects($criteria = null, $id_as_key = false)
+    function getObjects($criteria = null, $id_as_key = false)
     {
         $ret = array();
         $limit = $start = 0;
@@ -288,9 +288,9 @@ class XoopsCommentHandler extends XoopsObjectHandler
      * 
      * @return  array   Array of raw database records
      **/
-    function &getList($criteria = null)
+    function getList($criteria = null)
     {
-        $comments =& $this->getObjects($criteria, true);
+        $comments = $this->getObjects($criteria, true);
         $ret = array();
         foreach (array_keys($comments) as $i) {
             $ret[$i] = $comments[$i]->getVar('com_title');
@@ -310,7 +310,7 @@ class XoopsCommentHandler extends XoopsObjectHandler
      * 
      * @return  array   Array of {@link XoopsComment} objects
      **/
-    function &getByItemId($module_id, $item_id, $order = null, $status = null, $limit = null, $start = 0)
+    function getByItemId($module_id, $item_id, $order = null, $status = null, $limit = null, $start = 0)
     {
         $criteria = new CriteriaCompo(new Criteria('com_modid', intval($module_id)));
         $criteria->add(new Criteria('com_itemid', intval($item_id)));
@@ -336,7 +336,7 @@ class XoopsCommentHandler extends XoopsObjectHandler
      * 
      * @return  array   Array of {@link XoopsComment} objects
      **/
-    function &getCountByItemId($module_id, $item_id, $status = null)
+    function getCountByItemId($module_id, $item_id, $status = null)
     {
         $criteria = new CriteriaCompo(new Criteria('com_modid', intval($module_id)));
         $criteria->add(new Criteria('com_itemid', intval($item_id)));
@@ -357,7 +357,7 @@ class XoopsCommentHandler extends XoopsObjectHandler
      * 
      * @return  array   Array of {@link XoopsComment} objects
      **/
-    function &getTopComments($module_id, $item_id, $order, $status = null)
+    function getTopComments($module_id, $item_id, $order, $status = null)
     {
         $criteria = new CriteriaCompo(new Criteria('com_modid', intval($module_id)));
         $criteria->add(new Criteria('com_itemid', intval($item_id)));
@@ -378,7 +378,7 @@ class XoopsCommentHandler extends XoopsObjectHandler
      * 
      * @return  array   Array of {@link XoopsComment} objects
      **/
-    function &getThread($comment_rootid, $comment_id, $status = null)
+    function getThread($comment_rootid, $comment_id, $status = null)
     {
         $criteria = new CriteriaCompo(new Criteria('com_rootid', intval($comment_rootid)));
         $criteria->add(new Criteria('com_id', intval($comment_id), '>='));

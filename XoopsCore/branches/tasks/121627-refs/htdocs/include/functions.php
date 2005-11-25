@@ -462,14 +462,18 @@ function xoops_getcss($theme = '')
 function &getMailer()
 {
     global $xoopsConfig;
+    $inst = false;
     include_once XOOPS_ROOT_PATH."/class/xoopsmailer.php";
     if ( file_exists(XOOPS_ROOT_PATH."/language/".$xoopsConfig['language']."/xoopsmailerlocal.php") ) {
         include_once XOOPS_ROOT_PATH."/language/".$xoopsConfig['language']."/xoopsmailerlocal.php";
         if ( class_exists("XoopsMailerLocal") ) {
-            return new XoopsMailerLocal();
+            $inst =& new XoopsMailerLocal();
         }
     }
-    return new XoopsMailer();
+    if ( !$inst ) {
+    	$inst =& new XoopsMailer();
+    }
+    return $inst;
 }
 
 function &xoops_gethandler($name, $optional = false )
@@ -482,13 +486,17 @@ function &xoops_gethandler($name, $optional = false )
         }
         $class = 'Xoops'.ucfirst($name).'Handler';
         if (class_exists($class)) {
-            $handlers[$name] = new $class($GLOBALS['xoopsDB']);
+            $handlers[$name] =& new $class($GLOBALS['xoopsDB']);
         }
     }
     if (!isset($handlers[$name]) && !$optional ) {
         trigger_error('Class <b>'.$class.'</b> does not exist<br />Handler Name: '.$name, E_USER_ERROR);
     }
-    return isset($handlers[$name]) ? $handlers[$name] : false;
+    if ( isset($handlers[$name]) ) {
+    	return $handlers[$name];
+    }
+    $inst = false;
+    return $inst;
 }
 
 function &xoops_getmodulehandler($name = null, $module_dir = null, $optional = false)
@@ -512,13 +520,18 @@ function &xoops_getmodulehandler($name = null, $module_dir = null, $optional = f
         }
         $class = ucfirst(strtolower($module_dir)).ucfirst($name).'Handler';
         if (class_exists($class)) {
-            $handlers[$module_dir][$name] = new $class($GLOBALS['xoopsDB']);
+            $handlers[$module_dir][$name] =& new $class($GLOBALS['xoopsDB']);
         }
     }
     if (!isset($handlers[$module_dir][$name]) && !$optional) {
         trigger_error('Handler does not exist<br />Module: '.$module_dir.'<br />Name: '.$name, E_USER_ERROR);
     }
-    return isset($handlers[$module_dir][$name]) ? $handlers[$module_dir][$name] : false;
+    if ( isset($handlers[$module_dir][$name]) ) {
+    	return $handlers[$module_dir][$name];
+    }
+    $inst = false;
+    return $inst;
+
 }
 
 function xoops_getrank($rank_id =0, $posts = 0)
@@ -655,7 +668,7 @@ function xoops_groupperm_deletebymoditem($module_id, $perm_name, $item_id = null
     return $gperm_handler->deleteByModule($module_id, $perm_name, $item_id);
 }
 
-function &xoops_utf8_encode(&$text)
+function xoops_utf8_encode(&$text)
 {
     if (XOOPS_USE_MULTIBYTES == 1) {
         if (function_exists('mb_convert_encoding')) {
@@ -666,7 +679,7 @@ function &xoops_utf8_encode(&$text)
     return utf8_encode($text);
 }
 
-function &xoops_convert_encoding(&$text)
+function xoops_convert_encoding(&$text)
 {
     return xoops_utf8_encode($text);
 }

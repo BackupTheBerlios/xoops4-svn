@@ -90,7 +90,7 @@ class XoopsConfigItem extends XoopsObject
      * 
      * @return	string
      */
-    function &getConfValueForOutput()
+    function getConfValueForOutput()
     {
         switch ($this->getVar('conf_valuetype')) {
         case 'int':
@@ -201,21 +201,21 @@ class XoopsConfigItemHandler extends XoopsObjectHandler
      */
     function &get($id)
     {
-        $id = intval($id);
+        $config = false;
+    	$id = intval($id);
         if ($id > 0) {
             $sql = 'SELECT * FROM '.$this->db->prefix('config').' WHERE conf_id='.$id;
             if (!$result = $this->db->query($sql)) {
-                return false;
+                return $config;
             }
             $numrows = $this->db->getRowsNum($result);
             if ($numrows == 1) {
                 $myrow = $this->db->fetchArray($result);
                 $config = new XoopsConfigItem();
                 $config->assignVars($myrow);
-                return $config;
             }
         }
-        return false;
+        return $config;
     }
 
     /**
@@ -279,7 +279,7 @@ class XoopsConfigItemHandler extends XoopsObjectHandler
      * @param	bool    $id_as_key  return the config's id as key?
      * @return	array   Array of {@link XoopsConfigItem} objects
      */
-    function &getObjects($criteria = null, $id_as_key = false)
+    function getObjects($criteria = null, $id_as_key = false)
     {
         $ret = array();
         $limit = $start = 0;
@@ -313,7 +313,7 @@ class XoopsConfigItemHandler extends XoopsObjectHandler
      * @param	object  $criteria   {@link CriteriaElement} 
      * @return	int     Count of configs matching $criteria
      */
-    function &getCount($criteria = null)
+    function getCount($criteria = null)
     {
         $ret = array();
         $limit = $start = 0;

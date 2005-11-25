@@ -195,7 +195,8 @@ class XoopsUser extends XoopsObject
 	 */
 	function &groups()
     {
-        return $this->getGroups();
+        $groups =& $this->getGroups();
+    	return $groups;
     }
     /**
      * Is the user admin ?
@@ -482,19 +483,19 @@ class XoopsUserHandler extends XoopsObjectHandler
      */
     function &get($id)
     {
-        if (intval($id) > 0) {
+        $user = false;
+    	if (intval($id) > 0) {
             $sql = 'SELECT * FROM '.$this->db->prefix('users').' WHERE uid='.$id;
             if (!$result = $this->db->query($sql)) {
-                return false;
+                return $user;
             }
             $numrows = $this->db->getRowsNum($result);
             if ($numrows == 1) {
                 $user = new XoopsUser();
                 $user->assignVars($this->db->fetchArray($result));
-                return $user;
             }
         }
-        return false;
+        return $user;
     }
 
     /**
@@ -572,7 +573,7 @@ class XoopsUserHandler extends XoopsObjectHandler
      * @param bool $id_as_key use the UID as key for the array?
      * @return array array of {@link XoopsUser} objects
      */
-    function &getObjects($criteria = null, $id_as_key = false)
+    function getObjects($criteria = null, $id_as_key = false)
     {
         $ret = array();
         $limit = $start = 0;

@@ -108,19 +108,19 @@ class XoopsGroupPermHandler extends XoopsObjectHandler
      */
     function &get($id)
     {
-        if (intval($id) > 0) {
+        $perm = false;
+    	if (intval($id) > 0) {
             $sql = sprintf("SELECT * FROM %s WHERE gperm_id = %u", $this->db->prefix('group_permission'), $id);
             if ( !$result = $this->db->query($sql) ) {
-                return false;
+                return $perm;
             }
             $numrows = $this->db->getRowsNum($result);
             if ( $numrows == 1 ) {
                 $perm = new XoopsGroupPerm();
                 $perm->assignVars($this->db->fetchArray($result));
-                return $perm;
             }
         }
-        return false;
+        return $perm;
     }
 
     /**
@@ -187,7 +187,7 @@ class XoopsGroupPermHandler extends XoopsObjectHandler
      * 
      * @return	array   Array of {@link XoopsGroupPerm}s 
      */
-    function &getObjects($criteria = null, $id_as_key = false)
+    function getObjects($criteria = null, $id_as_key = false)
     {
         $ret = array();
         $limit = $start = 0;

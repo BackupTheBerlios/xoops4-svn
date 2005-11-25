@@ -103,7 +103,8 @@ class XoopsConfigHandler
      */
     function &createConfig()
     {
-        return $this->_cHandler->create();
+    	$instance =& $this->_cHandler->create();
+        return $instance;
     }
 
     /**
@@ -183,7 +184,7 @@ class XoopsConfigHandler
      * 
      * @return	array   Array of {@link XoopsConfigItem} objects
      */
-    function &getConfigs($criteria = null, $id_as_key = false, $with_options = false)
+    function getConfigs($criteria = null, $id_as_key = false, $with_options = false)
     {
         return $this->_cHandler->getObjects($criteria, $id_as_key);
     }
@@ -206,7 +207,7 @@ class XoopsConfigHandler
      * 
      * @return	array   array of {@link XoopsConfig}s 
      */
-    function &getConfigsByCat($category, $module = 0)
+    function getConfigsByCat($category, $module = 0)
     {
         static $_cachedConfigs;
 		if (!empty($_cachedConfigs[$module][$category])) {
@@ -233,8 +234,9 @@ class XoopsConfigHandler
      * 
      * @return	object  {@link XoopsConfigOption} 
      */
-    function &createConfigOption(){
-        return $this->_oHandler->create();
+    function &createConfigOption() {
+    	$inst =& $this->_oHandler->create();
+        return $inst;
     }
 
     /**
@@ -244,9 +246,9 @@ class XoopsConfigHandler
      * 
      * @return	object  {@link XoopsConfigOption} 
      */
-    function &getConfigOption($id)
-    {
-        return $this->_oHandler->get($id);
+    function &getConfigOption($id) {
+    	$inst =& $this->_oHandler->get($id);
+        return $inst;
     }
 
     /**
@@ -257,7 +259,7 @@ class XoopsConfigHandler
      * 
      * @return	array   Array of {@link XoopsConfigOption}s
      */
-    function &getConfigOptions($criteria = null, $id_as_key = false)
+    function getConfigOptions($criteria = null, $id_as_key = false)
     {
         return $this->_oHandler->getObjects($criteria, $id_as_key);
     }
@@ -282,7 +284,7 @@ class XoopsConfigHandler
      * 
      * @return	array   Associative array of name=>value pairs.
      */
-    function &getConfigList($conf_modid, $conf_catid = 0)
+    function getConfigList($conf_modid, $conf_catid = 0)
     {
 		if (!empty($this->_cachedConfigs[$conf_modid][$conf_catid])) {
 			return $this->_cachedConfigs[$conf_modid][$conf_catid];

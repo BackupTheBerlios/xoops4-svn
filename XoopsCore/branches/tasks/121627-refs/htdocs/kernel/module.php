@@ -120,7 +120,8 @@ class XoopsModule extends XoopsObject
             if ( isset($this->modinfo[$name]) ) {
                 return $this->modinfo[$name];
             }
-            return false;
+            $return = false;
+            return $return;
         }
         return $this->modinfo;
     }
@@ -144,7 +145,7 @@ class XoopsModule extends XoopsObject
      * 
      * @return	string
      */
-    function &subLink()
+    function subLink()
     {
         $ret = array();
         if ( $this->getInfo('sub') && is_array($this->getInfo('sub')) ) {
@@ -214,7 +215,7 @@ class XoopsModule extends XoopsObject
      * @param   integer $userid
      * @return  mixed   Search result.
      **/
-    function &search($term = '', $andor = 'AND', $limit = 0, $offset = 0, $userid = 0)
+    function search($term = '', $andor = 'AND', $limit = 0, $offset = 0, $userid = 0)
     {
         if ($this->getVar('hassearch') != 1) {
             return false;
@@ -254,7 +255,8 @@ class XoopsModule extends XoopsObject
     function &getByDirName($dirname)
     {
         $modhandler =& xoops_gethandler('module');
-        return $modhandler->getByDirname($dirname);
+        $inst =& $modhandler->getByDirname($dirname);
+        return $inst;
     }
     /**#@-*/
 }
@@ -316,13 +318,14 @@ class XoopsModuleHandler extends XoopsObjectHandler
         static $_cachedModule_dirname;
         static $_cachedModule_mid;
         $id = intval($id);
+		$module = false;
         if ($id > 0) {
 			if (!empty($_cachedModule_mid[$id])) {
 				return $_cachedModule_mid[$id];
 			} else {
   	        	$sql = 'SELECT * FROM '.$this->db->prefix('modules').' WHERE mid = '.$id;
   	        	if (!$result = $this->db->query($sql)) {
-  	            	return false;
+  	            	return $module;
   	        	}
   	        	$numrows = $this->db->getRowsNum($result);
   	        	if ($numrows == 1) {
@@ -335,7 +338,7 @@ class XoopsModuleHandler extends XoopsObjectHandler
   	        	}
         	}
 		}
-        return false;
+        return $module;
     }
 
     /**
@@ -352,9 +355,10 @@ class XoopsModuleHandler extends XoopsObjectHandler
 		if (!empty($_cachedModule_dirname[$dirname])) {
 			return $_cachedModule_dirname[$dirname];
 		} else {
+			$module = false;
         	$sql = "SELECT * FROM ".$this->db->prefix('modules')." WHERE dirname = '".trim($dirname)."'";
         	if (!$result = $this->db->query($sql)) {
-            	return false;
+            	return $module;
         	}
         	$numrows = $this->db->getRowsNum($result);
         	if ($numrows == 1) {
@@ -363,9 +367,8 @@ class XoopsModuleHandler extends XoopsObjectHandler
             	$module->assignVars($myrow);
 				$_cachedModule_dirname[$dirname] =& $module;
 				$_cachedModule_mid[$module->getVar('mid')] =& $module;
-            	return $module;
         	}
-        	return false;
+        	return $module;
 		}
     }
 
@@ -477,7 +480,7 @@ class XoopsModuleHandler extends XoopsObjectHandler
      * @param   boolean $id_as_key  Use the ID as key into the array
      * @return  array
      **/
-    function &getObjects($criteria = null, $id_as_key = false)
+    function getObjects($criteria = null, $id_as_key = false)
     {
         $ret = array();
         $limit = $start = 0;
@@ -533,7 +536,7 @@ class XoopsModuleHandler extends XoopsObjectHandler
      *      if false, array keys will be module id
      * @return  array
      **/
-    function &getList($criteria = null, $dirname_as_key = false)
+    function getList($criteria = null, $dirname_as_key = false)
     {
         $ret = array();
         $modules =& $this->getObjects($criteria, true);

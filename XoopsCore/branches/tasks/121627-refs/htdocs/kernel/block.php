@@ -104,7 +104,7 @@ class XoopsBlock extends XoopsObject
 	 * <li>T : use text sanitizater (smilies disabled)</ul>
 	 * @return string content for output
      **/
-    function &getContent($format = 'S', $c_type = 'T')
+    function getContent($format = 'S', $c_type = 'T')
     {
         switch ( $format ) {
         case 'S':
@@ -207,20 +207,19 @@ class XoopsBlockHandler extends XoopsObjectHandler
      **/
     function &get($id)
     {
-        $id = intval($id);
+        $block = false;
+    	$id = intval($id);
         if ($id > 0) {
             $sql = 'SELECT * FROM '.$this->db->prefix('newblocks').' WHERE bid='.$id;
-            if (!$result = $this->db->query($sql)) {
-                return false;
-            }
-            $numrows = $this->db->getRowsNum($result);
-            if ($numrows == 1) {
-                $block = new XoopsBlock();
-                $block->assignVars($this->db->fetchArray($result));
-                return $block;
+            if ( $result = $this->db->query($sql) ) {
+	            $numrows = $this->db->getRowsNum($result);
+	            if ($numrows == 1) {
+	                $block = new XoopsBlock();
+	                $block->assignVars($this->db->fetchArray($result));
+	            }
             }
         }
-        return false;
+        return $block;
     }
 
     /**
@@ -286,7 +285,7 @@ class XoopsBlockHandler extends XoopsObjectHandler
 	 * @param bool $id_as_key should the blocks' bid be the key for the returned array?
 	 * @return array {@link XoopsBlock}s matching the conditions
      **/
-    function &getObjects($criteria = null, $id_as_key = false)
+    function getObjects($criteria = null, $id_as_key = false)
     {
         $ret = array();
         $limit = $start = 0;
@@ -319,7 +318,7 @@ class XoopsBlockHandler extends XoopsObjectHandler
 	 * @param string $criteria conditions to match
 	 * @return array array of blocks matching the conditions 
      **/
-    function &getList($criteria = null)
+    function getList($criteria = null)
     {
         $blocks =& $this->getObjects($criteria, true);
         $ret = array();

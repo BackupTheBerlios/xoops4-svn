@@ -123,9 +123,9 @@ class XoopsDatabase
 class Database
 {
 
-	function &getInstance()
-	{
-		return XoopsDatabaseFactory::getDatabaseConnection();
+	function &getInstance() {
+		$inst =& XoopsDatabaseFactory::getDatabaseConnection();
+		return $inst;
 	}
 }
 

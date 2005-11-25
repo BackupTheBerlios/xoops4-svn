@@ -130,7 +130,7 @@ class XoopsBlock extends XoopsObject
     * @param $c_type    type of block content
     * @returns string
     */
-    function &getContent($format = 'S', $c_type = 'T')
+    function getContent($format = 'S', $c_type = 'T')
     {
         switch ( $format ) {
         case 'S':
@@ -164,7 +164,7 @@ class XoopsBlock extends XoopsObject
         }
     }
 
-    function &buildBlock()
+    function buildBlock()
     {
         global $xoopsConfig, $xoopsOption;
         $block = array();
@@ -213,7 +213,7 @@ class XoopsBlock extends XoopsObject
     * If position is 1, content in DB is positioned
     * after the original content
     */
-    function &buildContent($position,$content="",$contentdb="")
+    function buildContent($position,$content="",$contentdb="")
     {
         if ( $position == 0 ) {
             $ret = $contentdb.$content;
@@ -223,7 +223,7 @@ class XoopsBlock extends XoopsObject
         return $ret;
     }
 
-    function &buildTitle($originaltitle, $newtitle="")
+    function buildTitle($originaltitle, $newtitle="")
     {
         if ($newtitle != "") {
             $ret = $newtitle;
@@ -288,7 +288,7 @@ class XoopsBlock extends XoopsObject
     * @param $orderby   order of the blocks
     * @returns array of block objects
     */
-    function &getAllBlocksByGroup($groupid, $asobject=true, $side=null, $visible=null, $orderby="b.weight,b.bid", $isactive=1)
+    function getAllBlocksByGroup($groupid, $asobject=true, $side=null, $visible=null, $orderby="b.weight,b.bid", $isactive=1)
     {
         $db =& Database::getInstance();
         $ret = array();
@@ -342,7 +342,7 @@ class XoopsBlock extends XoopsObject
         return $ret;
     }
 
-    function &getAllBlocks($rettype="object", $side=null, $visible=null, $orderby="side,weight,bid", $isactive=1)
+    function getAllBlocks($rettype="object", $side=null, $visible=null, $orderby="side,weight,bid", $isactive=1)
     {
         $db =& Database::getInstance();
         $ret = array();
@@ -391,7 +391,7 @@ class XoopsBlock extends XoopsObject
         return $ret;
     }
 
-    function &getByModule($moduleid, $asobject=true)
+    function getByModule($moduleid, $asobject=true)
     {
         $db =& Database::getInstance();
         if ( $asobject == true ) {
@@ -411,7 +411,7 @@ class XoopsBlock extends XoopsObject
         return $ret;
     }
 
-    function &getAllByGroupModule($groupid, $module_id=0, $toponlyblock=false, $visible=null, $orderby='b.weight,b.bid', $isactive=1)
+    function getAllByGroupModule($groupid, $module_id=0, $toponlyblock=false, $visible=null, $orderby='b.weight,b.bid', $isactive=1)
     {
         $db =& Database::getInstance();
         $ret = array();
@@ -460,7 +460,7 @@ class XoopsBlock extends XoopsObject
         return $ret;
     }
 
-    function &getNonGroupedBlocks($module_id=0, $toponlyblock=false, $visible=null, $orderby='b.weight,b.bid', $isactive=1)
+    function getNonGroupedBlocks($module_id=0, $toponlyblock=false, $visible=null, $orderby='b.weight,b.bid', $isactive=1)
     {
         $db =& Database::getInstance();
         $ret = array();

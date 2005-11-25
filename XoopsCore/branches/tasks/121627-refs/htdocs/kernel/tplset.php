@@ -68,38 +68,38 @@ class XoopsTplsetHandler extends XoopsObjectHandler
 
     function &get($id)
     {
-        $id = intval($id);
+        $tplset = false;
+    	$id = intval($id);
         if ($id > 0) {
             $sql = 'SELECT * FROM '.$this->db->prefix('tplset').' WHERE tplset_id='.$id;
             if (!$result = $this->db->query($sql)) {
-                return false;
+                return $tplset;
             }
             $numrows = $this->db->getRowsNum($result);
             if ($numrows == 1) {
                 $tplset = new XoopsTplset();
                 $tplset->assignVars($this->db->fetchArray($result));
-                return $tplset;
             }
         }
-        return false;
+        return $tplset;
     }
 
     function &getByName($tplset_name)
     {
-        $tplset_name = trim($tplset_name);
+        $tplset = false;
+    	$tplset_name = trim($tplset_name);
         if ($tplset_name != '') {
             $sql = 'SELECT * FROM '.$this->db->prefix('tplset').' WHERE tplset_name='.$this->db->quoteString($tplset_name);
             if (!$result = $this->db->query($sql)) {
-                return false;
+                return $tplset;
             }
             $numrows = $this->db->getRowsNum($result);
             if ($numrows == 1) {
                 $tplset = new XoopsTplset();
                 $tplset->assignVars($this->db->fetchArray($result));
-                return $tplset;
             }
         }
-        return false;
+        return $tplset;
     }
 
     function insert(&$tplset)
@@ -146,7 +146,7 @@ class XoopsTplsetHandler extends XoopsObjectHandler
         return true;
     }
 
-    function &getObjects($criteria = null, $id_as_key = false)
+    function getObjects($criteria = null, $id_as_key = false)
     {
         $ret = array();
         $limit = $start = 0;
@@ -187,7 +187,7 @@ class XoopsTplsetHandler extends XoopsObjectHandler
         return $count;
     }
 
-    function &getList($criteria = null)
+    function getList($criteria = null)
 	{
         $ret = array();
 		$tplsets =& $this->getObjects($criteria, true);
