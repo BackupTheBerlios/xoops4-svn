@@ -27,7 +27,15 @@
 if (!defined("XOOPS_ROOT_PATH")) {
     die("XOOPS root path not defined");
 }
-include_once XOOPS_ROOT_PATH.'/class/xoopsblock.php';
+
+	global $xoops;
+	$xoops->loadService( 'theme', 'xoops_pyro_Theme', array( 'folderName' => $xoopsConfig['theme_set'] ) );
+	
+	//var_export( $xoops->services['theme'] );
+
+
+
+	include_once XOOPS_ROOT_PATH.'/class/xoopsblock.php';
 
     $xoopsOption['theme_use_smarty'] = 1;
     // include Smarty template engine and initialize it
