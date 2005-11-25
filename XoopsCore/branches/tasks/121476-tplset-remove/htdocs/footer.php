@@ -30,19 +30,7 @@ if (!defined("XOOPS_ROOT_PATH")) {
 if ( !defined("XOOPS_FOOTER_INCLUDED") ) {
 	define("XOOPS_FOOTER_INCLUDED",1);
 	$xoopsLogger->stopTime();
-	if ($xoopsOption['theme_use_smarty'] == 0) {
-		// the old way
-		$footer = $xoopsConfigMetaFooter['footer'].'<br /><div style="text-align:center">Powered by XOOPS &copy; 2002 <a href="http://www.xoops.org/" target="_blank">The XOOPS Project</a></div>';
-		if (isset($xoopsOption['template_main'])) {
-			$xoopsTpl->xoops_setCaching(0);
-			$xoopsTpl->display('db:'.$xoopsOption['template_main']);
-		}
-		if (!isset($xoopsOption['show_rblock'])) {
-			$xoopsOption['show_rblock'] = 0;
-		}
-		themefooter($xoopsOption['show_rblock'], $footer);
-		xoops_footer();
-	} else {
+
 		// RMV-NOTIFY
 		include_once XOOPS_ROOT_PATH . '/include/notification_select.php';
 		if (isset($xoopsOption['template_main'])) {
@@ -87,5 +75,5 @@ if ( !defined("XOOPS_FOOTER_INCLUDED") ) {
 		//-->
 		</script>';
 	}
-}
+
 ?>
