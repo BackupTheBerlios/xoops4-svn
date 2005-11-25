@@ -58,10 +58,16 @@ if (!defined("XOOPS_MAINFILE_INCLUDED")) {
     define("XOOPS_UPLOAD_PATH", XOOPS_ROOT_PATH."/uploads");
     define("XOOPS_THEME_PATH", XOOPS_ROOT_PATH."/themes");
 
-    define( "SMARTY_DIR", XOOPS_ROOT_PATH . "/class/smarty/" );
-    define( "XOOPS_CACHE_PATH", XOOPS_VAR_PATH . "/Caches/xoops_template_Smarty" );
+	// ----- BEGIN: Already refactored stuff just kept for compat purposes -----
+  
+    //define( "SMARTY_DIR", XOOPS_PATH . "/Frameworks/XoopsCore/Pyro/Smarty.xoobj/smarty/" );
+    define( "XOOPS_CACHE_PATH", XOOPS_VAR_PATH . "/Caches" );
     define( "XOOPS_COMPILE_PATH", XOOPS_VAR_PATH . "/Application Support/xoops_template_Smarty" );
 
+	// ----- END: Already refactored stuff just kept for compat purposes -----
+
+    
+    
     define("XOOPS_THEME_URL", XOOPS_URL."/themes");
     define("XOOPS_UPLOAD_URL", XOOPS_URL."/uploads");
     set_magic_quotes_runtime(0);
