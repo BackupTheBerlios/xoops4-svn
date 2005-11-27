@@ -230,8 +230,8 @@ if (!defined("XOOPS_MAINFILE_INCLUDED")) {
         unset($allowed, $group);
     }
 
-    if (file_exists('./xoops_version.php')) {
-        $url_arr = explode('/',strstr($xoopsRequestUri,'/modules/'));
+    if ( file_exists('./xoops_version.php') ) {
+        $url_arr = explode( '/', strstr( $_SERVER['SCRIPT_NAME'], '/modules/' ) );
         $module_handler =& xoops_gethandler('module');
         $xoopsModule =& $module_handler->getByDirname($url_arr[2]);
         unset($url_arr);
