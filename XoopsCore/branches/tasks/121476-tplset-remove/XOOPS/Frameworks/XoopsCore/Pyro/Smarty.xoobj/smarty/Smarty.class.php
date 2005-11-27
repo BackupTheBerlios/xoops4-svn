@@ -1474,6 +1474,9 @@ class Smarty
         $smarty_compiler->compile_id        = $this->_compile_id;
         $smarty_compiler->_config            = $this->_config;
         $smarty_compiler->request_use_auto_globals  = $this->request_use_auto_globals;
+		// --- XOOPS HACK: Ensure compiler plug-ins have access to this Smarty instance too
+		$smarty_compiler->template_engine =& $this;
+		// --- XOOPS HACK
 
         if (isset($cache_include_path) && isset($this->_cache_serials[$cache_include_path])) {
             $smarty_compiler->_cache_serial = $this->_cache_serials[$cache_include_path];
