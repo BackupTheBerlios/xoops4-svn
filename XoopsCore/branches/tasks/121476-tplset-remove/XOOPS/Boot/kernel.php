@@ -27,7 +27,7 @@
 class xoops_kernel_Xoops2 {
 	var $xoBundleIdentifier		= 'xoops_kernel_Xoops2';
 	var $xoRunMode				= XO_MODE_PROD;
-	var $xoShortVersionString	= 'XOOPS 2.3.0-dev';
+	var $xoShortVersionString	= 'XOOPS 2.3.0-dev (Mistrust)';
 
 	var $xoBundleRoot = 'XOOPS/Frameworks/XoopsCore/Foundation/Kernel.xofrm';
 	
@@ -98,6 +98,12 @@ class xoops_kernel_Xoops2 {
 	 * @access private
 	 */
 	var $hasShutdown			= false;
+	/**
+	 * Semi-relative URI to this XOOPS files
+	 *
+	 * @var string
+	 */
+	var $baseLocation			= '';
 
 	var $isVirtual				= false;
 
@@ -131,6 +137,12 @@ class xoops_kernel_Xoops2 {
 
 		$this->bootFile = str_replace( array( '/', '\\' ), '', $this->bootFile );		// Might be useless check, but this one won't hurt
 		
+		$this->baseLocation = $this->isSecure ? $this->secureLocation : $this->hostLocation;
+		if ( false !== ( $pos = strpos( $this->baseLocation, '/' ) ) ) {
+			$this->baseLocation = substr( $this->baseLocation, $pos );
+		} else {
+			$this->baseLocation = '';
+		}
 		//$this->services['logger'] = $this->services['errorhandler'] = $this;
 
 	}
@@ -227,7 +239,13 @@ class xoops_kernel_Xoops2 {
 			if ( !$virtual ) {
 				return !isset( $this->paths[$parts[0]] ) ? '' : ( $this->paths[$parts[0]][0] . '/' . $parts[1] );
 			} else {
-				return !isset( $this->paths[$parts[0]][2] ) ? '' : ( $this->paths[$parts[0]][0][2] . '/' . $parts[1] );
+				if ( !isset( $this->paths[$parts[0]][1] ) ) {
+					return false;
+				}
+				if ( empty( $this->paths[$parts[0]][1] ) ) {
+					return $this->baseLocation . '/' . $parts[1];
+				}
+				return $this->baseLocation . '/' . $this->paths[$parts[0]][1] . '/' . $parts[1];
 			}
 		} else {
 			$root = XOS::classVar( $parts[0], 'xoBundleRoot' );
