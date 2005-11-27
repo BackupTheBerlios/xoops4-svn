@@ -118,6 +118,17 @@ class xoops_pyro_Theme {
 	* @var string
 	*/
 	var $themeAPI = '2.3';
+	/**
+	* Name of this theme parent (if any)
+	* @var string
+	*/
+	var $parentTheme = '';
+	/**
+	* Array containing all this theme ancestors (parent,grand-parent,etc...)
+	* @var array
+	* @access protected
+	*/
+	var $parentInfos = array();
 	
 	var $renderCount = 0;
 	/**
@@ -159,7 +170,7 @@ class xoops_pyro_Theme {
 	 * Standard themes should be delivered with the following canvas templates:
 	 * - canvas-default.xotpl: The "normal" template, used by most pages on a site
 	 * - canvas-dialog.xotpl: A lightweight canvas, without left and right columns, used by popups
-	 * - canvas-email.xotpl: The canvas used by e-mails
+	 * - canvas-email.xotpl: The canvas used by e-mails sent by the site
 	 * 
 	 * The page template is the container for center blocks and the content. Themes don't have to
 	 * include several page templates, but applications may have their own page template that is
@@ -224,6 +235,96 @@ class xoops_pyro_Theme {
 			}
 		}	
 	}
+	function renderAttributes( $coll ) {
+		$str = '';
+		foreach ( $coll as $name => $val ) {
+			if ( $name != '_' ) {
+				$str .= ' ' . $name . '="' . htmlspecialchars( $val, ENT_QUOTES ) . '"';
+			}
+		}
+		return $str;
+	}
+	
+	
+	function resourcePath( $path ) {
+		global $xoops;
+		$isWeb = true;
+		if ( $path{0} == '/' ) {
+			$path = substr( $path, 1 );
+			$isWeb = false;
+		}
+		if ( file_exists( "$this->path/$path" ) ) {
+			return "themes/$this->folderName/$path";
+		}
+		return $isWeb ? "www/$path" : $path;
+	}
+
+	
+	
+	
+	
+	
+    /**
+    * Add Javascript file or JS code to the document head
+    *
+    * @param string $src path to .js file
+    * @param array $attributes name => value paired array of attributes such as title
+    * @param string $content JavaScript code
+    *
+    * @return void
+    **/
+    function addScript( $src = '', $attributes = array(), $content = '' ) {
+    	global $xoops;
+		if ( !empty( $src ) ) {
+			$attributes['src'] = $xoops->url( $this->resourcePath( $src ) );
+		}
+		if ( !empty( $content ) ) {
+			$attributes['_'] = $content;
+		}
+		if ( !isset( $attributes['type'] ) ) {
+			$attributes['type'] = 'text/javascript';
+		}
+		$this->setMeta( 'script', $src, $attributes );
+    }
+
+    /**
+    * Add StyleSheet or CSS code to the document head
+    *
+    * @param string $src path to .css file
+    * @param array $attributes name => value paired array of attributes such as title
+    * @param string $content CSS code
+    *
+    * @return void
+    **/
+    function addStylesheet( $src = '', $attributes = array(), $content = '' ) {
+		if ( !empty( $src ) ) {
+			$attributes['href'] = $xoops->url( $this->resourcePath( $src ) );
+		}
+		if ( !empty( $content ) ) {
+			$attributes['_'] = $content;
+		}
+    	$this->setMeta( 'stylesheet', $src, $attributes );
+    }
+	/**
+	 * Change output page meta-information
+	 *
+	 * 
+	 */
+    function setMeta( $type = 'meta', $name = '', $content = '' ) {
+		if ( !isset( $this->metas[$type] ) ) {
+			$this->metas[$type] = array();
+		}
+    	if ( isset($name) ) {
+			$this->metas[$type][$name] = $content;
+		} else {
+			$this->metas[$type][] = 	$content;
+		}
+		return $content;
+    }
+	
+
+	
+	
 
 }
 
