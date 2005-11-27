@@ -34,39 +34,49 @@ if (!defined("XOOPS_ROOT_PATH")) {
 	//var_export( $xoops->services['theme'] );
 
 
-
-	include_once XOOPS_ROOT_PATH.'/class/xoopsblock.php';
-
     $xoopsOption['theme_use_smarty'] = 1;
     // include Smarty template engine and initialize it
     require_once XOOPS_ROOT_PATH.'/class/template.php';
     $xoopsTpl = new XoopsTpl();
+    $xoopsTpl->currentTheme =& $xoops->services['theme'];
     $xoopsTpl->xoops_setCaching(2);
     if ($xoopsConfig['debug_mode'] == 3) {
         $xoopsTpl->xoops_setDebugging(true);
     }
-    $xoopsTpl->assign(array('xoops_theme' => $xoopsConfig['theme_set'], 'xoops_imageurl' => XOOPS_THEME_URL.'/'.$xoopsConfig['theme_set'].'/', 'xoops_themecss'=> xoops_getcss($xoopsConfig['theme_set']), 'xoops_requesturi' => htmlspecialchars($GLOBALS['xoopsRequestUri'], ENT_QUOTES), 'xoops_sitename' => htmlspecialchars($xoopsConfig['sitename'], ENT_QUOTES), 'xoops_slogan' => htmlspecialchars($xoopsConfig['slogan'], ENT_QUOTES)));
+    $xoopsTpl->assign(
+    	array(
+	    	'xoops_theme' => $xoopsConfig['theme_set'],
+	    	'xoops_imageurl' => XOOPS_THEME_URL.'/'.$xoopsConfig['theme_set'].'/',
+	    	'xoops_themecss'=> xoops_getcss($xoopsConfig['theme_set']),
+	    	'xoops_requesturi' => htmlspecialchars($GLOBALS['xoopsRequestUri'], ENT_QUOTES),
+	    	'xoops_sitename' => htmlspecialchars($xoopsConfig['sitename'], ENT_QUOTES),
+	    	'xoops_slogan' => htmlspecialchars($xoopsConfig['slogan'], ENT_QUOTES)
+	    )
+   	);
+
+    
     // Meta tags
     $config_handler =& xoops_gethandler('config');
     $criteria = new CriteriaCompo(new Criteria('conf_modid', 0));
     $criteria->add(new Criteria('conf_catid', XOOPS_CONF_METAFOOTER));
     $config =& $config_handler->getConfigs($criteria, true);
-    foreach (array_keys($config) as $i) {
-        // prefix each tag with 'xoops_'
-        $xoopsTpl->assign('xoops_'.$config[$i]->getVar('conf_name'), $config[$i]->getConfValueForOutput());
+    foreach ( array_keys($config) as $i ) {
+    	if ( substr( $config[$i]->getVar('conf_name'), 0, 5 ) == 'meta_' ) {
+    		$xoops->services['theme']->setMeta( 'meta',
+    			substr( $config[$i]->getVar('conf_name'), 5 ), $config[$i]->getConfValueForOutput() );
+    	}
     }
     //unset($config);
     // show banner?
+
+	$xoops->services['theme']->addScript( 'include/xoops.js' );
+
     if ($xoopsConfig['banners'] == 1) {
         $xoopsTpl->assign('xoops_banner', xoops_getbanner());
     } else {
         $xoopsTpl->assign('xoops_banner', '&nbsp;');
     }
-    // Weird, but need extra <script> tags for 2.0.x themes
-    $xoopsTpl->assign('xoops_js', '//--></script><script type="text/javascript" src="'.XOOPS_URL.'/include/xoops.js"></script><script type="text/javascript"><!--');
     // get all blocks and assign to smarty
-    $xoopsblock = new XoopsBlock();
-    $block_arr = array();
     if ($xoopsUser != '') {
         $xoopsTpl->assign(array('xoops_isuser' => true, 'xoops_userid' => $xoopsUser->getVar('uid'), 'xoops_uname' => $xoopsUser->getVar('uname'), 'xoops_isadmin' => $xoopsUserIsAdmin));
         $groups = $xoopsUser->getGroups();
@@ -74,99 +84,22 @@ if (!defined("XOOPS_ROOT_PATH")) {
         $xoopsTpl->assign(array('xoops_isuser' => false, 'xoops_isadmin' => false));
         $groups = XOOPS_GROUP_ANONYMOUS;
     }
-    $toppage = false;
     if (isset($xoopsModule) && is_object($xoopsModule)) {
         // set page title
         $xoopsTpl->assign('xoops_pagetitle', $xoopsModule->getVar('name'));
         $xoopsTpl->assign('xoops_dirname', $xoopsModule->getVar('dirname'));
-        $moduleid = $xoopsModule->getVar('mid');
-        if (preg_match("/index\.php$/i", xoops_getenv('PHP_SELF')) && $xoopsConfig['startpage'] == $xoopsModule->getVar('dirname')) {
-            $toppage = true;
-        }
     } else {
         $xoopsTpl->assign('xoops_pagetitle', htmlspecialchars($xoopsConfig['slogan'], ENT_QUOTES));
         $xoopsTpl->assign('xoops_dirname', "system");
-        $moduleid = 0;
-        if (!empty($xoopsOption['show_cblock'])) {
-            $toppage = true;
-        }
     }
-    // Get blocks
-    $block_arr =& $xoopsblock->getAllByGroupModule($groups, $moduleid, $toppage, XOOPS_BLOCK_VISIBLE);
 
-    foreach (array_keys($block_arr) as $i) {
-        $bcachetime = $block_arr[$i]->getVar('bcachetime');
-        if (empty($bcachetime)) {
-            $xoopsTpl->xoops_setCaching(0);
-        } else {
-            $xoopsTpl->xoops_setCaching(2);
-            $xoopsTpl->xoops_setCacheTime($bcachetime);
-        }
-        $btpl = $block_arr[$i]->getVar('template') != '' ? $block_arr[$i]->getVar('template') : "system_block_dummy.html";
-
-        if (empty($bcachetime) || !$xoopsTpl->is_cached('db:'.$btpl, 'blk_'.$block_arr[$i]->getVar('bid'))) {
-            $xoopsLogger->addBlock($block_arr[$i]->getVar('name'));
-            $bresult =& $block_arr[$i]->buildBlock();
-            if (!$bresult) {
-                continue;
-            }
-            $xoopsTpl->assign_by_ref('block', $bresult);
-            $bcontent =& $xoopsTpl->fetch('db:'.$btpl, 'blk_'.$block_arr[$i]->getVar('bid'));
-            $xoopsTpl->clear_assign('block');
-        } else {
-            $xoopsLogger->addBlock($block_arr[$i]->getVar('name'), true, $bcachetime);
-            $bcontent =& $xoopsTpl->fetch('db:'.$btpl, 'blk_'.$block_arr[$i]->getVar('bid'));
-        }
-
-        switch ($block_arr[$i]->getVar('side')) {
-        case XOOPS_SIDEBLOCK_LEFT:
-            if (!isset($show_lblock)) {
-                $xoopsTpl->assign('xoops_showlblock', 1);
-                $show_lblock = 1;
-            }
-            $xoopsTpl->append('xoops_lblocks', array('title' => $block_arr[$i]->getVar('title'), 'content' => $bcontent));
-            break;
-        case XOOPS_CENTERBLOCK_LEFT:
-            if (!isset($show_cblock)) {
-                $xoopsTpl->assign('xoops_showcblock', 1);
-                $show_cblock = 1;
-            }
-            $xoopsTpl->append('xoops_clblocks', array('title' => $block_arr[$i]->getVar('title'), 'content' => $bcontent));
-            break;
-        case XOOPS_CENTERBLOCK_RIGHT:
-            if (!isset($show_cblock)) {
-                $xoopsTpl->assign('xoops_showcblock', 1);
-                $show_cblock = 1;
-            }
-            $xoopsTpl->append('xoops_crblocks', array('title' => $block_arr[$i]->getVar('title'), 'content' => $bcontent));
-            break;
-        case XOOPS_CENTERBLOCK_CENTER:
-            if (!isset($show_cblock)) {
-                $xoopsTpl->assign('xoops_showcblock', 1);
-                $show_cblock = 1;
-            }
-            $xoopsTpl->append('xoops_ccblocks', array('title' => $block_arr[$i]->getVar('title'), 'content' => $bcontent));
-            break;
-        case XOOPS_SIDEBLOCK_RIGHT:
-            if (!isset($show_rblock)) {
-                $xoopsTpl->assign('xoops_showrblock', 1);
-                $show_rblock = 1;
-            }
-            $xoopsTpl->append('xoops_rblocks', array('title' => $block_arr[$i]->getVar('title'), 'content' => $bcontent));
-            break;
-        }
-        unset($bcontent);
-    }
-    //unset($block_arr);
-    if (!isset($show_rblock)) {
-        $xoopsTpl->assign('xoops_showrblock', 0);
-    }
-    if (!isset($show_cblock)) {
-        $xoopsTpl->assign('xoops_showcblock', 0);
-    }
-    if (!isset($show_lblock)) {
-        $xoopsTpl->assign('xoops_showlblock', 0);
-    }
+    /////////
+    $builder =& XOS::create( 'xoops_logos_PageBuilder' );
+    $builder->retrieveBlocks();
+    
+    $builder->assignVars( $xoops->services['theme']->template );
+    
+	
     if (xoops_getenv('REQUEST_METHOD') != 'POST' && !empty($xoopsModule) && !empty($xoopsConfig['module_cache'][$xoopsModule->getVar('mid')])) {
         $xoopsTpl->xoops_setCaching(2);
         $xoopsTpl->xoops_setCacheTime($xoopsConfig['module_cache'][$xoopsModule->getVar('mid')]);
