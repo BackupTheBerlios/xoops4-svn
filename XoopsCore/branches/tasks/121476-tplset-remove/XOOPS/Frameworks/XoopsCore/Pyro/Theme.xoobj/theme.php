@@ -258,11 +258,6 @@ class xoops_pyro_Theme {
 		}
 		return $isWeb ? "www/$path" : $path;
 	}
-
-	
-	
-	
-	
 	
     /**
     * Add Javascript file or JS code to the document head
@@ -306,20 +301,33 @@ class xoops_pyro_Theme {
     	$this->setMeta( 'stylesheet', $src, $attributes );
     }
 	/**
-	 * Change output page meta-information
-	 *
+	 * Add a <link> to the header
 	 * 
+	 * @param string	$rel		Relationship from the current doc to the anchored one
+	 * @param string	$href		URI of the anchored document
+	 * @param array		$attributes	Additional attributes to add to the <link> element
 	 */
-    function setMeta( $type = 'meta', $name = '', $content = '' ) {
+	function addLink( $rel, $href = '', $attributes = array() ) {
+		global $xoops;
+		if ( !empty( $href ) ) {
+			$attributes['href'] = $href;
+		}
+		$this->setMeta( 'link', $rel, $attributes );
+	}
+    
+	/**
+	 * Change output page meta-information
+	 */
+    function setMeta( $type = 'meta', $name = '', $value = '' ) {
 		if ( !isset( $this->metas[$type] ) ) {
 			$this->metas[$type] = array();
 		}
     	if ( isset($name) ) {
-			$this->metas[$type][$name] = $content;
+			$this->metas[$type][$name] = $value;
 		} else {
-			$this->metas[$type][] = 	$content;
+			$this->metas[$type][] = 	$value;
 		}
-		return $content;
+		return $value;
     }
 	
 
