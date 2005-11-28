@@ -1,0 +1,30 @@
+
+	<div id="xo-page">
+		([if !empty($xoops_ccblocks)])
+		<div class="xo-blockszone" id="xo-page-topblocks">
+		([foreach item=block from=$xoops_ccblocks])
+			([include file="default-web/block.html"])
+		([/foreach])
+		</div>
+		([/if])
+		([if !empty($xoops_clblocks)])
+		<div class="xo-blockszone" id="xo-page-topleftblocks">
+		([foreach item=block from=$xoops_clblocks])
+			([include file="default-web/block.html"])
+		([/foreach])
+		</div>
+		([/if])
+		([if !empty($xoops_crblocks)])
+		<div class="xo-blockszone" id="xo-page-toprightblocks">
+		([foreach item=block from=$xoops_crblocks])
+			([include file="default-web/block.html"])
+		([/foreach])
+		</div>
+		([/if])
+		
+		([include file='xotpl:modules/news/templates/blocks/news_block_topics.html'])
+
+		<div id="xo-content">
+			([$xoTheme->renderZone('content')])
+		</div>
+	</div>
