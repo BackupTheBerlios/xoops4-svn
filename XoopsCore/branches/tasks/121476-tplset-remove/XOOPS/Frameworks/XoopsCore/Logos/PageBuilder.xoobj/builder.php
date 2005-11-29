@@ -83,7 +83,7 @@ class xoops_logos_PageBuilder {
 		if ( '' != ( $tplName = $xobject->getVar('template') ) ) {
 			$tplName = "xotpl:modules/{$block['module']}/templates/blocks/$tplName";
 		} else {
-			$tplName = "xotpl:modules/system/templates/blocks/system_block_dummy.html";
+			$tplName = "xotpl:modules/system/templates/system_block_dummy.html";
 		}
 		$cacheid = 'blk_' . $xobject->getVar('bid') . ':' . md5( serialize( $xobject->getVar( 'options', 'n' ) ) );
              
