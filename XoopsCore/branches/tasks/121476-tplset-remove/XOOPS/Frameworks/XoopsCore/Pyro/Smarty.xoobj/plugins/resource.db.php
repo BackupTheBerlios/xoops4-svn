@@ -89,6 +89,10 @@ function smarty_resource_db_lookup( $tplName, $refresh = false ) {
 			trigger_error( "Cannot create db: resource handler templates list", E_USER_WARNING );
 		}
 	}
+	
+	if ( $tplName == 'system_notification_select.html' ) {
+		$tplName = 'system_notification_select.xotpl';
+	}
 	if ( isset( $list[$tplName] ) ) {
 		return $xoops->path( $list[$tplName] );
 	}
