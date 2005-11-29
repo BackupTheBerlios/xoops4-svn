@@ -204,7 +204,6 @@ class xoops_pyro_Theme {
 		if ( !empty($contentTpl) ) {
 			$this->contentTemplate = $contentTpl;
 		}
-		$vars['xoops']		=& $xoops;
 		$vars['xoTheme']	=& $this;
 		$this->template->assign( $vars );
 		$this->renderZone( 'canvas' );
@@ -227,11 +226,11 @@ class xoops_pyro_Theme {
 					$tpl = $this->path . substr( $tpl, 1 );
 				}
 				$this->template->display( $tpl );
-				if ( !empty($this->content) && $zone == 'content' ) {
-					echo $this->content;
-				}
 			} elseif ( $zone != 'content' ) {
 				$this->renderZone( $zones[$zone] + 1 );
+			}
+			if ( !empty($this->content) && $zone == 'content' ) {
+				echo $this->content;
 			}
 		}	
 	}
@@ -292,8 +291,12 @@ class xoops_pyro_Theme {
     * @return void
     **/
     function addStylesheet( $src = '', $attributes = array(), $content = '' ) {
+    	global $xoops;
 		if ( !empty( $src ) ) {
 			$attributes['href'] = $xoops->url( $this->resourcePath( $src ) );
+		}
+		if ( !isset($attributes['type']) ) {
+			$attributes['type'] = 'text/css';
 		}
 		if ( !empty( $content ) ) {
 			$attributes['_'] = $content;
