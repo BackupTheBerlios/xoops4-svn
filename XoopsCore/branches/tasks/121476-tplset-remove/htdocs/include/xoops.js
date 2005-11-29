@@ -52,12 +52,16 @@ function setElementSize(id, size){
 	xoopsGetElementById(id).style.fontSize = size;
 }
 
-function changeDisplay(id){
-	var elestyle = xoopsGetElementById(id).style;
-	if (elestyle.display == "") {
-		elestyle.display = "none";
+function changeDisplay( elt ) {
+	if ( elt && typeof(elt)!="object" )	elt=document.getElementById(elt);
+	if ( !elt ) return;
+	if ( elt.style.display != "none" ) {
+		elt.xoOrigDisplay = elt.style.display;
+		elt.style.display = "none";
+	} else if ( typeof(elt.xoOrigDisplay)!="undefined" ) {
+		elt.style.display = elt.xoOrigDisplay;
 	} else {
-		elestyle.display = "block";
+		elt.style.display = "";
 	}
 }
 
@@ -120,13 +124,15 @@ function disableElement(target){
 		targetDom.disabled = false;
 	}
 }
-function xoopsCheckAll(formname, switchid) {
-	var ele = document.forms[formname].elements;
-	var switch_cbox = xoopsGetElementById(switchid);
-	for (var i = 0; i < ele.length; i++) {
-		var e = ele[i];
-		if ( (e.name != switch_cbox.name) && (e.type == 'checkbox') ) {
-			e.checked = switch_cbox.checked;
+function xoopsCheckAll( form, checkbox ) {
+	if ( !form || !checkbox )	return;
+	if ( typeof(form) != 'object' )			form=document.getElementById(form);
+	if ( typeof(checkbox) != 'object' )		checkbox=document.getElementById(checkbox);
+	if ( !form || !checkbox )	return;
+	
+	for (var i = 0; i < form.elements.length; i++) {
+		if ( form.elements[i] != checkbox && form.elements[i].type == 'checkbox' ) {
+			form.elements[i].checked = checkbox.checked;
 		}
 	}
 }
