@@ -52,16 +52,22 @@ function smarty_resource_xotpl_getpath( $tplName, &$smarty ) {
 		$themed = $smarty->currentTheme->resourcePath( $name );
 		if ( substr( $themed, 0, 7 ) == 'themes/' ) {
 			$tplName = $themed;
-		} elseif ( substr( $tplName, -6 ) == '.xotpl' ) {
-			// If the template is not in the theme folder,
-			// check if it's not here, but with an .html extension
-			$name = substr( $name, 0, -6 ) . '.html';
-			$themed = $smarty->currentTheme->resourcePath( $name );
-			if ( substr( $themed, 0, 7 ) == 'themes/' ) {
-				$tplName = $themed;
+		} else {
+			if ( false !== ( $pos = strrpos( $tplName, '.' ) ) ) {
+				$name = substr( $tplName, 0, $pos );
+				$ext = substr( $tplName, $pos );
+				$name = ( $ext == '.xotpl' ) ? "$name.html" : "$name.xotpl";
+				$name = str_replace( '/templates/', '/', $name );
+				// If the template is not in the theme folder,
+				// check if it's not here, but with a different extension
+				$themed = $smarty->currentTheme->resourcePath( $name );
+				if ( substr( $themed, 0, 7 ) == 'themes/' ) {
+					$tplName = $themed;
+				}
 			}
 		}
 	}
+	//echo $xoops->path( $tplName ) . "<br />\n";
 	return $xoops->path( $tplName );
 
 }
