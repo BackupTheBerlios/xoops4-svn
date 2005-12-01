@@ -99,7 +99,7 @@ class xoops_template_Smarty extends Smarty {
 	 * Compiler prefilter to change 2.0 style delimiters to new ones
 	 */
     function filterOldTemplates( $data, &$compiler ) {
-    	$file = ( substr( $compiler->_current_file, 0, 6 ) == 'xotpl:' ) ? $this->realTemplatePath : $compiler->_current_file;
+    	$file = ( substr( $compiler->_current_file, 0, 6 ) == 'xotpl:' ) ? $compiler->template_engine->realTemplatePath : $compiler->_current_file;
 		if ( substr( $file, -5 ) == '.html' ) {
 			$data = str_replace( array( '<{', '}>' ), array( '([', '])' ), $data );
 		}
