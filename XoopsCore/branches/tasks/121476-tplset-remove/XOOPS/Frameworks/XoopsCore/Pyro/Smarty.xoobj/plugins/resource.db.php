@@ -17,7 +17,7 @@
 
 function smarty_resource_db_source($tpl_name, &$tpl_source, &$smarty) {
 
-	if ( $tplPath = smarty_resource_db_lookup( $tpl_name ) ) {
+	if ( $tplPath = smarty_resource_db_lookup( $tpl_name, $smarty ) ) {
 		if ( $tpl_source = file_get_contents( $tplPath ) ) {
 			return true;
 		}
@@ -27,7 +27,7 @@ function smarty_resource_db_source($tpl_name, &$tpl_source, &$smarty) {
 
 function smarty_resource_db_timestamp($tpl_name, &$tpl_timestamp, &$smarty) {
 
-	if ( $tplPath = smarty_resource_db_lookup( $tpl_name ) ) {
+	if ( $tplPath = smarty_resource_db_lookup( $tpl_name, $smarty ) ) {
 		if ( $tpl_timestamp = filemtime( $tplPath ) ) {
 			return true;
 		}
@@ -51,7 +51,7 @@ function smarty_resource_db_trusted($tpl_name, &$smarty) {
  * @param bool		$refresh	Set this to true to force regeneration of the cache
  * @return string	Full path to the template (or false if not found)
  */
-function smarty_resource_db_lookup( $tplName, $refresh = false ) {
+function smarty_resource_db_lookup( $tplName, &$smarty, $refresh = false ) {
 	static $list = null;
 	global $xoops;
 
@@ -89,12 +89,15 @@ function smarty_resource_db_lookup( $tplName, $refresh = false ) {
 			trigger_error( "Cannot create db: resource handler templates list", E_USER_WARNING );
 		}
 	}
-	
+	if ( !function_exists( 'smarty_resource_xotpl_getpath' ) ) {
+		$path = str_replace( DIRECTORY_SEPARATOR, '/', dirname( __FILE__ ) );
+		include_once "$path/resource.xotpl.php";
+	}
 	if ( $tplName == 'system_notification_select.html' ) {
 		$tplName = 'system_notification_select.xotpl';
 	}
 	if ( isset( $list[$tplName] ) ) {
-		return $xoops->path( $list[$tplName] );
+		return smarty_resource_xotpl_getpath( $list[$tplName], $smarty );
 	}
 	return false;
 }
