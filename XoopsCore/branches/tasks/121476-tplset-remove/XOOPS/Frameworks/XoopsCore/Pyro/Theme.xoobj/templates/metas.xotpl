@@ -6,17 +6,17 @@
 
 ([foreach from=$xoTheme->metas.script item=attributes])
 	<script([$xoTheme->renderAttributes($attributes)])>([if !empty( $attributes._ ) ])
-	//<[!CDATA[
+	//<![CDATA[
 	([$attributes._])
 	//]]>([/if])</script>
 ([/foreach])
 
 ([foreach from=$xoTheme->metas.stylesheet item=attributes])
 ([if empty( $attributes._ )])
-	<link([$xoTheme->renderAttributes($attributes)]) />
+	<link rel="stylesheet"([$xoTheme->renderAttributes($attributes)]) />
 ([else])
 	<style([$xoTheme->renderAttributes($attributes)])>
-	/* <[!CDATA[ */
+	/* <![CDATA[ */
 	([$attributes._])
 	/* //]]> */
 	</style>
