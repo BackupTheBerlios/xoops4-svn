@@ -8,8 +8,7 @@
 
 	<link rel="SHORTCUT ICON" href="([xoImgUrl favicon.ico])" />
 
-	<link rel="stylesheet" type="text/css" media="screen" href="([xoImgUrl xoops.css])" />
-	<link rel="stylesheet" type="text/css" media="screen" href="([xoImgUrl style.css])" />
+	<link rel="stylesheet" type="text/css" media="screen" href="([xoImgUrl page-default.css])" />
 
 	
 	<title>([$xoops_sitename]) - ([$xoops_pagetitle])</title>

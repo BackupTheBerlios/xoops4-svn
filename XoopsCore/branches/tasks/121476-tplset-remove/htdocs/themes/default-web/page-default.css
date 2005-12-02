@@ -1,0 +1,76 @@
+
+@import url(style-blocks.css);
+@import url(style-elements.css);
+
+
+html, body {
+	margin:					0px;
+	background:				#ffffff url(img/body_bg.png) repeat-x left top;
+	background-attachment:	fixed;
+	color:					#000000;
+	font:					10pt sans-serif;
+}
+
+#xo-canvas {
+	margin:			15px;
+	background:		#EEEEEE;
+}
+
+#xo-canvas-header {
+	border-bottom:	1px solid #CCCCCC;
+	background:		#FFFFFF;
+	padding:		3px 3px 3px;
+}
+
+#xo-banner {
+	height:			60px;
+	border:			1px solid #000000;
+	padding:		2px;
+	background:		#2A75C5 url(img/canvas-banner_bg.png) repeat-x left top;
+}
+
+#xo-canvas-main {
+	border-top:		1px solid #FFFFFF;
+	padding:		6px;
+}
+
+.xo-canvas-column {
+	width:			160px;
+}
+
+#xo-canvas-leftcolumn {
+	float:			left;
+	border:			1px solid #666666;
+}
+
+#xo-canvas-rightcolumn {
+	float:			right;
+	padding-bottom:	96px;
+	background:		url(img/canvas-rightcolumn_bg.png) no-repeat center bottom;
+}
+
+#xo-page {
+	background:		#ffffff;
+	padding:		1em 0px;
+	border:			1px solid #CCCCCC;
+}
+
+#xo-canvas-leftcolumn + #xo-page, #xo-canvas-leftcolumn + * + #xo-page {
+	margin-left:	176px;
+}
+
+#xo-canvas-rightcolumn + #xo-page {
+	margin-right:	176px;
+}
+
+#xo-canvas-footer {
+	padding:		1px;
+	background:		#DDDDDD;
+	text-align:		center;
+	font-size:		90%;
+	font-family:	monospace;
+}
+#xo-canvas-footer, #xo-canvas-footer a {
+	color:				#666666;
+	text-decoration:	none;
+}
