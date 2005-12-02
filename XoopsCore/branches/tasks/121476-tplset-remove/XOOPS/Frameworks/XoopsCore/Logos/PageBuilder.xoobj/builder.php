@@ -52,7 +52,7 @@ class xoops_logos_PageBuilder {
 
 		$xoopsblock = new XoopsBlock();
     	$block_arr = array();
-	    $block_arr =& $xoopsblock->getAllByGroupModule( $groups, $mid, $isStart, XOOPS_BLOCK_VISIBLE);
+	    $block_arr = $xoopsblock->getAllByGroupModule( $groups, $mid, $isStart, XOOPS_BLOCK_VISIBLE);
 	    foreach ( $block_arr as $block ) {
 	    	$side = $oldzones[ $block->getVar('side') ];
 	    	if ( $var = $this->buildBlock( $block ) ) {
