@@ -207,7 +207,7 @@ class XoopsConfigHandler
      * 
      * @return	array   array of {@link XoopsConfig}s 
      */
-    function getConfigsByCat($category, $module = 0)
+    function &getConfigsByCat($category, $module = 0)
     {
         static $_cachedConfigs;
 		if (!empty($_cachedConfigs[$module][$category])) {
@@ -218,14 +218,14 @@ class XoopsConfigHandler
         	if (!empty($category)) {
             	$criteria->add(new Criteria('conf_catid', intval($category)));
         	}
-        	$configs =& $this->getConfigs($criteria, true);
+        	$configs = $this->getConfigs($criteria, true);
 			if (is_array($configs)) {
             	foreach (array_keys($configs) as $i) {
                 	$ret[$configs[$i]->getVar('conf_name')] = $configs[$i]->getConfValueForOutput();
             	}
         	}
-			$_cachedConfigs[$module][$category] =& $ret;
-        	return $ret;
+			$_cachedConfigs[$module][$category] = $ret;
+        	return $_cachedConfigs[$module][$category];
 		}
     }
 

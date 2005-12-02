@@ -374,7 +374,7 @@ class XoopsGroupPermHandler extends XoopsObjectHandler
 		} else {
 			$criteria->add(new Criteria('gperm_groupid', intval($gperm_groupid)));
 		}
-		$perms =& $this->getObjects($criteria, true);
+		$perms = $this->getObjects($criteria, true);
 		foreach (array_keys($perms) as $i) {
 			$ret[] = $perms[$i]->getVar('gperm_itemid');
 		}
@@ -396,7 +396,7 @@ class XoopsGroupPermHandler extends XoopsObjectHandler
 		$criteria = new CriteriaCompo(new Criteria('gperm_name', $gperm_name));
 		$criteria->add(new Criteria('gperm_itemid', intval($gperm_itemid)));
 		$criteria->add(new Criteria('gperm_modid', intval($gperm_modid)));
-		$perms =& $this->getObjects($criteria, true);
+		$perms = $this->getObjects($criteria, true);
 		foreach (array_keys($perms) as $i) {
 			$ret[] = $perms[$i]->getVar('gperm_groupid');
 		}
