@@ -113,15 +113,15 @@ function b_system_main_show()
     $criteria = new CriteriaCompo(new Criteria('hasmain', 1));
     $criteria->add(new Criteria('isactive', 1));
     $criteria->add(new Criteria('weight', 0, '>'));
-    $modules =& $module_handler->getObjects($criteria, true);
+    $modules = $module_handler->getObjects($criteria, true);
     $moduleperm_handler =& xoops_gethandler('groupperm');
     $groups = is_object($xoopsUser) ? $xoopsUser->getGroups() : XOOPS_GROUP_ANONYMOUS;
-    $read_allowed =& $moduleperm_handler->getItemIds('module_read', $groups);
+    $read_allowed = $moduleperm_handler->getItemIds('module_read', $groups);
     foreach (array_keys($modules) as $i) {
         if (in_array($i, $read_allowed)) {
             $block['modules'][$i]['name'] = $modules[$i]->getVar('name');
             $block['modules'][$i]['directory'] = $modules[$i]->getVar('dirname');
-            $sublinks =& $modules[$i]->subLink();
+            $sublinks = $modules[$i]->subLink();
             if ((count($sublinks) > 0) && (!empty($xoopsModule)) && ($i == $xoopsModule->getVar('mid'))) {
                 foreach($sublinks as $sublink){
                     $block['modules'][$i]['sublinks'][] = array('name' => $sublink['name'], 'url' => XOOPS_URL.'/modules/'.$modules[$i]->getVar('dirname').'/'.$sublink['url']);
@@ -479,9 +479,15 @@ function b_system_info_edit($options)
     return $form;
 }
 
-function b_system_themes_show($options)
-{
+function b_system_themes_show($options) {
     global $xoopsConfig;
+
+    $vars = array();
+    $vars['availableThemes'] = $xoopsConfig['theme_set_allowed'];
+    $vars['currentTheme'] = $xoopsConfig['theme_set'];
+    $vars['options'] = $options;
+    return $vars;
+    
     $theme_options = '';
     foreach ($xoopsConfig['theme_set_allowed'] as $theme) {
         $theme_options .= '<option value="'.$theme.'"';
