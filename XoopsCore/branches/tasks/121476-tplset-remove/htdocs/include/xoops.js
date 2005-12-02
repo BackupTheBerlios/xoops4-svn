@@ -29,6 +29,7 @@ function justReturn() {
 	return;
 }
 
+
 function openWithSelfMain(url,name,width,height,returnwindow) {
 	var options = "width=" + width + ",height=" + height + ",toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,copyhistory=no";
 
@@ -394,3 +395,17 @@ function xoopsValidate(subjectId, textareaId, submitId, plzCompletePhrase, msgTo
 		return true;
 	}
 }
+
+function switchBlockDisplay( blk, button ) {
+	if ( blk && typeof(blk) != 'object' )	blk=document.getElementById(blk);
+	if ( !blk ) return;
+	for (var i=0;i!=blk.childNodes.length;i++) {
+		if ( blk.childNodes[i].className && blk.childNodes[i].className.indexOf("xo-blockcontent") != -1 ) {
+			changeDisplay(blk.childNodes[i]);
+			button.innerHTML = (blk.childNodes[i].style.display=="none") ? "+" : "-";
+			return;
+		}
+	}
+}
+
+
