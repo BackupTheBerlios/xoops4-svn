@@ -33,7 +33,7 @@
 		([if !empty($xoBlocks.canvas_left)])
 		<div class="xo-canvas-column xo-blockszone" id="xo-canvas-leftcolumn">
 		([foreach from=$xoBlocks.canvas_left key=n item=block])
-			([include file="`$xoTheme->folderName`/block.xotpl"])
+			([include file="xotpl:block.xotpl"])
 		([/foreach])
 		</div>
 		([/if])
@@ -41,7 +41,7 @@
 		([if !empty($xoBlocks.canvas_right)])
 		<div class="xo-canvas-column xo-blockszone" id="xo-canvas-rightcolumn">
 		([foreach from=$xoBlocks.canvas_right key=n item=block])
-			([include file="`$xoTheme->folderName`/block.xotpl"])
+			([include file="xotpl:block.xotpl"])
 		([/foreach])
 		</div>
 		([/if])

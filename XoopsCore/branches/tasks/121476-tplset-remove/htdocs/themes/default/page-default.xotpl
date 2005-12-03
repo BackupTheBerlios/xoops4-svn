@@ -3,21 +3,21 @@
 		([if !empty($xoops_ccblocks)])
 		<div class="xo-blockszone" id="xo-page-topblocks">
 		([foreach item=block from=$xoops_ccblocks])
-			([include file="default-web/block.html"])
+			([include file="xotpl:block.xotpl"])
 		([/foreach])
 		</div>
 		([/if])
 		([if !empty($xoops_clblocks)])
 		<div class="xo-blockszone" id="xo-page-topleftblocks">
 		([foreach item=block from=$xoops_clblocks])
-			([include file="default-web/block.html"])
+			([include file="xotpl:block.xotpl"])
 		([/foreach])
 		</div>
 		([/if])
 		([if !empty($xoops_crblocks)])
 		<div class="xo-blockszone" id="xo-page-toprightblocks">
 		([foreach item=block from=$xoops_crblocks])
-			([include file="default-web/block.html"])
+			([include file="xotpl:block.xotpl"])
 		([/foreach])
 		</div>
 		([/if])
