@@ -59,7 +59,7 @@ if (!defined("XOOPS_ROOT_PATH")) {
     $config_handler =& xoops_gethandler('config');
     $criteria = new CriteriaCompo(new Criteria('conf_modid', 0));
     $criteria->add(new Criteria('conf_catid', XOOPS_CONF_METAFOOTER));
-    $config =& $config_handler->getConfigs($criteria, true);
+    $config = $config_handler->getConfigs($criteria, true);
     foreach ( array_keys($config) as $i ) {
     	if ( substr( $config[$i]->getVar('conf_name'), 0, 5 ) == 'meta_' ) {
     		$xoops->services['theme']->setMeta( 'meta',
@@ -145,7 +145,6 @@ if (!defined("XOOPS_ROOT_PATH")) {
         include XOOPS_ROOT_PATH.'/include/old_theme_functions.php';
         // need this also
         $xoopsTheme['thename'] = $xoopsConfig['theme_set'];
-        ob_start();
     }
 
 ?>
