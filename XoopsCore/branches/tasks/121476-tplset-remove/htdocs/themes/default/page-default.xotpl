@@ -22,8 +22,6 @@
 		</div>
 		([/if])
 		
-		([include file='xotpl:modules/news/templates/blocks/news_block_topics.html'])
-
 		<div id="xo-content">
 			([$xoTheme->renderZone('content')])
 		</div>
