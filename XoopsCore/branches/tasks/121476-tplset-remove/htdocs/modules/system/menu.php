@@ -53,8 +53,6 @@ $adminmenu[10]['title'] = _MI_SYSTEM_ADMENU11;
 $adminmenu[10]['link'] = "admin.php?fct=mailusers";
 $adminmenu[11]['title'] = _MI_SYSTEM_ADMENU14;
 $adminmenu[11]['link'] = "admin.php?fct=avatars";
-$adminmenu[12]['title'] = _MI_SYSTEM_ADMENU15;
-$adminmenu[12]['link'] = "admin.php?fct=tplsets";
-$adminmenu[13]['title'] = _MI_SYSTEM_ADMENU16;
-$adminmenu[13]['link'] = "admin.php?fct=comments";
+$adminmenu[12]['title'] = _MI_SYSTEM_ADMENU16;
+$adminmenu[12]['link'] = "admin.php?fct=comments";
 ?>

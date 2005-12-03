@@ -36,6 +36,5 @@ define("_MI_SYSTEM_ADMENU11","Mail Users");
 define("_MI_SYSTEM_ADMENU12", "Find Users");
 define("_MI_SYSTEM_ADMENU13", "Images");
 define("_MI_SYSTEM_ADMENU14", "Avatars");
-define("_MI_SYSTEM_ADMENU15", "Templates");
 define("_MI_SYSTEM_ADMENU16", "Comments");
 ?>
