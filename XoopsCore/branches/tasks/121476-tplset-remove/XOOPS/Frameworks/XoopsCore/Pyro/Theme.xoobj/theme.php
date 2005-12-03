@@ -152,6 +152,7 @@ class xoops_pyro_Theme {
 			XOS::apply( $this, $info );
 		} else {
 			$this->themeAPI = '2.0';
+			$this->parentTheme = ( $this->folderName == 'xoops20' ? '' : 'xoops20' );
 		}
 		if ( $this->bufferOutput ) {
 			ob_start();
@@ -217,13 +218,15 @@ class xoops_pyro_Theme {
 	 * @param string $zone
 	 */	
 	function renderZone( $zone ) {
+		global $xoops;
+
 		$zones = array( 'canvas' => 0, 'page' => 1, 'content' => 2 );
 		if ( isset( $zones[$zone] ) ) {
 			$tpl = $zone . 'Template';
 			$tpl = $this->$tpl;
 			if ( !empty( $tpl ) ) {
 				if ( $tpl{0} == '.' ) {
-					$tpl = $this->path . substr( $tpl, 1 );
+					$tpl = $xoops->path( $this->resourcePath( substr( $tpl, 1 ) ) );
 				}
 				$this->template->display( $tpl );
 			} elseif ( $zone != 'content' ) {
@@ -245,17 +248,24 @@ class xoops_pyro_Theme {
 	}
 	
 	
-	function resourcePath( $path ) {
+	function resourcePath( $path, $fromDocRoot = true ) {
 		global $xoops;
-		$isWeb = true;
 		if ( $path{0} == '/' ) {
 			$path = substr( $path, 1 );
-			$isWeb = false;
+			$fromDocRoot = false;
 		}
 		if ( file_exists( "$this->path/$path" ) ) {
 			return "themes/$this->folderName/$path";
 		}
-		return $isWeb ? "www/$path" : $path;
+		if ( !empty( $this->parentTheme ) ) {
+			if ( !is_object( $this->parentTheme ) ) {
+				$this->parentTheme =& XOS::create( 'xoops_pyro_Theme', array( 'folderName' => $this->parentTheme ) );
+			}
+			if ( is_object( $this->parentTheme ) ) {
+				return $this->parentTheme->resourcePath( $path, $fromDocRoot );
+			}
+		}
+		return $fromDocRoot ? "www/$path" : "themes/$this->folderName/$path";
 	}
 	
     /**
