@@ -1,0 +1,14 @@
+
+@import url(../default/page-default.css);
+
+
+#xo-canvas-leftcolumn {
+	float:			right;
+}
+
+#xo-canvas-rightcolumn {
+	float:			left;
+	background-image:		url(img/canvas-rightcolumn_bg.png);
+}
+
+
