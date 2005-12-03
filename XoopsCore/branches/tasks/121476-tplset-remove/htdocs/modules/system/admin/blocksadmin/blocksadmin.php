@@ -343,14 +343,7 @@ if ( $xoopsUser->isAdmin($xoopsModule->mid()) ) {
     {
         $myblock = new XoopsBlock($bid);
         $myblock->delete();
-        if ($myblock->getVar('template') != '') {
-            $tplfile_handler =& xoops_gethandler('tplfile');
-            $btemplate =& $tplfile_handler->find($GLOBALS['xoopsConfig']['template_set'], 'block', $bid);
-            if (count($btemplate) > 0) {
-                $tplfile_handler->delete($btemplate[0]);
-            }
-        }
-        redirect_header('admin.php?fct=blocksadmin&amp;t='.time(),1,_AM_DBUPDATED);
+        redirect_header( 'admin.php?fct=blocksadmin&amp;t=' . time(), 1, _AM_DBUPDATED );
         exit();
     }
 
@@ -417,16 +410,6 @@ if ( $xoopsUser->isAdmin($xoopsModule->mid()) ) {
             $clone->getHtmlErrors();
             xoops_cp_footer();
             exit();
-        }
-        if ($clone->getVar('template') != '') {
-            $tplfile_handler =& xoops_gethandler('tplfile');
-            $btemplate =& $tplfile_handler->find($GLOBALS['xoopsConfig']['template_set'], 'block', $bid);
-            if (count($btemplate) > 0) {
-                $tplclone =& $btemplate[0]->xoopsClone();
-                $tplclone->setVar('tpl_id', 0);
-                $tplclone->setVar('tpl_refid', $newid);
-                $tplman->insert($tplclone);
-            }
         }
         $db =& Database::getInstance();
         foreach ($bmodule as $bmid) {
