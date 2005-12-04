@@ -479,51 +479,6 @@ CREATE TABLE smiles (
 ) TYPE=MyISAM;
 # --------------------------------------------------------
 
-#
-# Table structure for table `tplset`
-#
-
-CREATE TABLE tplset (
-  tplset_id int(7) unsigned NOT NULL auto_increment,
-  tplset_name varchar(50) NOT NULL default '',
-  tplset_desc varchar(255) NOT NULL default '',
-  tplset_credits text NOT NULL,
-  tplset_created int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (tplset_id)
-) TYPE=MyISAM;
-# --------------------------------------------------------
-
-#
-# Table structure for table `tplfile`
-#
-
-CREATE TABLE tplfile (
-  tpl_id mediumint(7) unsigned NOT NULL auto_increment,
-  tpl_refid smallint(5) unsigned NOT NULL default '0',
-  tpl_module varchar(25) NOT NULL default '',
-  tpl_tplset varchar(50) NOT NULL default '',
-  tpl_file varchar(50) NOT NULL default '',
-  tpl_desc varchar(255) NOT NULL default '',
-  tpl_lastmodified int(10) unsigned NOT NULL default '0',
-  tpl_lastimported int(10) unsigned NOT NULL default '0',
-  tpl_type varchar(20) NOT NULL default '',
-  PRIMARY KEY  (tpl_id),
-  KEY tpl_refid (tpl_refid,tpl_type),
-  KEY tpl_tplset (tpl_tplset,tpl_file(10))
-) TYPE=MyISAM;
-# --------------------------------------------------------
-
-#
-# Table structure for table `tplsource`
-#
-
-CREATE TABLE tplsource (
-  tpl_id mediumint(7) unsigned NOT NULL default '0',
-  tpl_source mediumtext NOT NULL,
-  KEY tpl_id (tpl_id)
-) TYPE=MyISAM;
-# --------------------------------------------------------
-
 # RMV-NOTIFY (added two columns)
 # Table structure for table `users`
 #

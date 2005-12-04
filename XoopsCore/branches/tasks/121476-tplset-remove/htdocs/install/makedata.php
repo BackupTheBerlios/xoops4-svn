@@ -89,7 +89,6 @@ function make_data(&$dbm, &$cm, $adminname, $adminpass, $adminmail, $language, $
     // default theme
 
     $time = time();
-    $dbm->insert('tplset', " VALUES (1, 'default', 'XOOPS Default Template Set', '', ".$time.")");
 
     // system modules
 
@@ -107,16 +106,6 @@ function make_data(&$dbm, &$cm, $adminname, $adminpass, $adminmail, $language, $
 	// RMV-NOTIFY (updated for extra column in table)
     $dbm->insert("modules", " VALUES (1, '"._MI_SYSTEM_NAME."', 100, ".$time.", 0, 1, 'system', 0, 1, 0, 0, 0, 0)");
 
-    foreach ($modversion['templates'] as $tplfile) {
-        if ($fp = fopen('../modules/system/templates/'.$tplfile['file'], 'r')) {
-            $newtplid = $dbm->insert('tplfile', " VALUES (0, 1, 'system', 'default', '".addslashes($tplfile['file'])."', '".addslashes($tplfile['description'])."', ".$time.", ".$time.", 'module')");
-            //$newtplid = $xoopsDB->getInsertId();
-            $tplsource = fread($fp, filesize('../modules/system/templates/'.$tplfile['file']));
-            fclose($fp);
-            $dbm->insert('tplsource', " (tpl_id, tpl_source) VALUES (".$newtplid.", '".addslashes($tplsource)."')");
-        }
-    }
-
     foreach ($modversion['blocks'] as $func_num => $newblock) {
         if ($fp = fopen('../modules/system/templates/blocks/'.$newblock['template'], 'r')) {
             if (in_array($newblock['template'], array('system_block_user.html', 'system_block_login.html', 'system_block_mainmenu.html'))) {
@@ -128,11 +117,7 @@ function make_data(&$dbm, &$cm, $adminname, $adminpass, $adminmail, $language, $
             $edit_func = !isset($newblock['edit_func']) ? '' : trim($newblock['edit_func']);
             $newbid = $dbm->insert('newblocks', " VALUES (0, 1, ".$func_num.", '".addslashes($options)."', '".addslashes($newblock['name'])."', '".addslashes($newblock['name'])."', '', 0, 0, ".$visible.", 'S', 'H', 1, 'system', '".addslashes($newblock['file'])."', '".addslashes($newblock['show_func'])."', '".addslashes($edit_func)."', '".addslashes($newblock['template'])."', 0, ".$time.")");
             //$newbid = $xoopsDB->getInsertId();
-            $newtplid = $dbm->insert('tplfile', " VALUES (0, ".$newbid.", 'system', 'default', '".addslashes($newblock['template'])."', '".addslashes($newblock['description'])."', ".$time.", ".$time.", 'block')");
-            //$newtplid = $xoopsDB->getInsertId();
-            $tplsource = fread($fp, filesize('../modules/system/templates/blocks/'.$newblock['template']));
             fclose($fp);
-            $dbm->insert('tplsource', " (tpl_id, tpl_source) VALUES (".$newtplid.", '".addslashes($tplsource)."')");
             $dbm->insert("group_permission", " VALUES (0, ".$gruops['XOOPS_GROUP_ADMIN'].", ".$newbid.", 1, 'block_read')");
             //$dbm->insert("group_permission", " VALUES (0, ".$gruops['XOOPS_GROUP_ADMIN'].", ".$newbid.", 'xoops_blockadmiin')");
             $dbm->insert("group_permission", " VALUES (0, ".$gruops['XOOPS_GROUP_USERS'].", ".$newbid.", 1, 'block_read')");
