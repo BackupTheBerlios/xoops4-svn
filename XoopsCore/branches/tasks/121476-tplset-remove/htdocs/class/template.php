@@ -78,20 +78,10 @@ class XoopsTpl extends xoops_template_Smarty {
 }
 
 /**
- * Useless... just kept for compatibility, just in case
+ * Those have been removed. Please tell us if your module use them
  **/
 function xoops_template_create ($resource_type, $resource_name, &$template_source, &$template_timestamp, &$smarty_obj) {
-	if ( $resource_type == 'db' ) {
-		$file_handler =& xoops_gethandler('tplfile');
-		$tpl =& $file_handler->find('default', null, null, null, $resource_name, true);
-		if (count($tpl) > 0 && is_object($tpl[0])) {
-			$template_source = $tpl[0]->getSource();
-			$template_timestamp = $tpl[0]->getLastModified();
-			return true;
-		}
-	} else {
-	}
-	return false;
+	trigger_error( "Function removed", E_USER_ERROR );
 }
 
 /**
@@ -101,22 +91,8 @@ function xoops_template_create ($resource_type, $resource_name, &$template_sourc
  * @param   boolean $clear_old
  * @return  boolean
  **/
-function xoops_template_touch($tpl_id, $clear_old = true)
-{
-	$tpl = new XoopsTpl();
-	$tpl->force_compile = true;
-	$tplfile_handler =& xoops_gethandler('tplfile');
-	$tplfile =& $tplfile_handler->get($tpl_id);
-	if ( is_object($tplfile) ) {
-		$file = $tplfile->getVar('tpl_file');
-		if ($clear_old) {
-			$tpl->clear_cache('db:'.$file);
-			$tpl->clear_compiled_tpl('db:'.$file);
-		}
-		$tpl->fetch('db:'.$file);
-		return true;
-	}
-	return false;
+function xoops_template_touch($tpl_id, $clear_old = true) {
+	trigger_error( "Function removed", E_USER_ERROR );
 }
 
 /**
@@ -125,18 +101,7 @@ function xoops_template_touch($tpl_id, $clear_old = true)
  * @param   int $mid    Module ID
  * @return 
  **/
-function xoops_template_clear_module_cache($mid)
-{
-	$block_arr =& XoopsBlock::getByModule($mid);
-	$count = count($block_arr);
-	if ($count > 0) {
-		$xoopsTpl = new XoopsTpl();	
-		$xoopsTpl->xoops_setCaching(2);
-		for ($i = 0; $i < $count; $i++) {
-			if ($block_arr[$i]->getVar('template') != '') {
-				$xoopsTpl->clear_cache('db:'.$block_arr[$i]->getVar('template'), 'blk_'.$block_arr[$i]->getVar('bid'));
-			}
-		}
-	}
+function xoops_template_clear_module_cache($mid) {
+	trigger_error( "Function removed", E_USER_ERROR );
 }
 ?>
