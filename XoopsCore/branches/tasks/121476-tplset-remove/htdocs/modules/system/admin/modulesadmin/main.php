@@ -269,61 +269,8 @@ if ($op == 'update_ok') {
         $newmid = $module->getVar('mid');
         $msgs = array();
         $msgs[] = 'Module data updated.';
-        $tplfile_handler =& xoops_gethandler('tplfile');
-        $deltpl =& $tplfile_handler->find('default', 'module', $module->getVar('mid'));
-        $delng = array();
-        if (is_array($deltpl)) {
-            $xoopsTpl = new XoopsTpl();
-            // clear cache files
-            $xoopsTpl->clear_cache(null, 'mod_'.$dirname);
-            // delete template file entry in db
-            $dcount = count($deltpl);
-            for ($i = 0; $i < $dcount; $i++) {
-                if (!$tplfile_handler->delete($deltpl[$i])) {
-                    $delng[] = $deltpl[$i]->getVar('tpl_file');
-                }
-            }
-        }
-        $templates = $module->getInfo('templates');
-        if ($templates != false) {
-            $msgs[] = 'Updating templates...';
-            foreach ($templates as $tpl) {
-                $tpl['file'] = trim($tpl['file']);
-                if (!in_array($tpl['file'], $delng)) {
-                    $tpldata =& xoops_module_gettemplate($dirname, $tpl['file']);
-                    $tplfile =& $tplfile_handler->create();
-                    $tplfile->setVar('tpl_refid', $newmid);
-                    $tplfile->setVar('tpl_lastimported', 0);
-                    $tplfile->setVar('tpl_lastmodified', time());
-                    if (preg_match("/\.css$/i", $tpl['file'])) {
-                        $tplfile->setVar('tpl_type', 'css');
-                    } else {
-                        $tplfile->setVar('tpl_type', 'module');
-                    }
-                    $tplfile->setVar('tpl_source', $tpldata, true);
-                    $tplfile->setVar('tpl_module', $dirname);
-                    $tplfile->setVar('tpl_tplset', 'default');
-                    $tplfile->setVar('tpl_file', $tpl['file'], true);
-                    $tplfile->setVar('tpl_desc', $tpl['description'], true);
-                    if (!$tplfile_handler->insert($tplfile)) {
-                        $msgs[] = '&nbsp;&nbsp;<span style="color:#ff0000;">ERROR: Could not insert template <b>'.$tpl['file'].'</b> to the database.</span>';
-                    } else {
-                        $newid = $tplfile->getVar('tpl_id');
-                        $msgs[] = '&nbsp;&nbsp;Template <b>'.$tpl['file'].'</b> inserted to the database.';
-                        if ($xoopsConfig['template_set'] == 'default') {
-                            if (!xoops_template_touch($newid)) {
-                                $msgs[] = '&nbsp;&nbsp;<span style="color:#ff0000;">ERROR: Could not recompile template <b>'.$tpl['file'].'</b>.</span>';
-                            } else {
-                                $msgs[] = '&nbsp;&nbsp;Template <b>'.$tpl['file'].'</b> recompiled.</span>';
-                            }
-                        }
-                    }
-                    unset($tpldata);
-                } else {
-                    $msgs[] = '&nbsp;&nbsp;<span style="color:#ff0000;">ERROR: Could not delete old template <b>'.$tpl['file'].'</b>. Aborting update of this file.</span>';
-                }
-            }
-        }
+        $msgs[] = '@TODO-2.3: Delete cached output from the templates cache on module ins/upd/uninst... :-)';
+
         $contents = xoops_module_get_admin_menu();
         if (!xoops_module_write_admin_menu($contents)) {
             $msgs[] = '<p><span style="color:#ff0000;">'._MD_AM_FAILWRITE.'</span></p>';
@@ -339,14 +286,10 @@ if ($op == 'update_ok') {
                     $editfunc = isset($blocks[$i]['edit_func']) ? $blocks[$i]['edit_func'] : '';
                     $showfuncs[] = $blocks[$i]['show_func'];
                     $funcfiles[] = $blocks[$i]['file'];
+                    $content = '';
                     $template = '';
-                    if ((isset($blocks[$i]['template']) && trim($blocks[$i]['template']) != '')) {
-                        $content =& xoops_module_gettemplate($dirname, $blocks[$i]['template'], true);
-                    }
-                    if (!$content) {
-                        $content = '';
-                    } else {
-                        $template = $blocks[$i]['template'];
+                    if ( isset( $blocks[$i]['template'] ) && @is_readable( XOOPS_ROOT_PATH . "/modules/$dirname/templates/blocks/" . $blocks[$i]['template'] ) ) {
+						$template = $blocks[$i]['template'];
                     }
                     $options = '';
                     if (!empty($blocks[$i]['options'])) {
@@ -363,37 +306,6 @@ if ($op == 'update_ok') {
                             $msgs[] = '&nbsp;&nbsp;ERROR: Could not update '.$fblock['name'];
                         } else {
                             $msgs[] = '&nbsp;&nbsp;Block <b>'.$fblock['name'].'</b> updated. Block ID: <b>'.$fblock['bid'].'</b>';
-                            if ($template != '') {
-                                $tplfile =& $tplfile_handler->find('default', 'block', $fblock['bid']);
-                                if (count($tplfile) == 0) {
-                                    $tplfile_new =& $tplfile_handler->create();
-                                    $tplfile_new->setVar('tpl_module', $dirname);
-                                    $tplfile_new->setVar('tpl_refid', $fblock['bid']);
-                                    $tplfile_new->setVar('tpl_tplset', 'default');
-                                    $tplfile_new->setVar('tpl_file', $blocks[$i]['template'], true);
-                                    $tplfile_new->setVar('tpl_type', 'block');
-                                }
-                                else {
-                                    $tplfile_new = $tplfile[0];
-                                }
-                                $tplfile_new->setVar('tpl_source', $content, true);
-                                $tplfile_new->setVar('tpl_desc', $blocks[$i]['description'], true);
-                                $tplfile_new->setVar('tpl_lastmodified', time());
-                                $tplfile_new->setVar('tpl_lastimported', 0);
-                                if (!$tplfile_handler->insert($tplfile_new)) {
-                                    $msgs[] = '&nbsp;&nbsp;<span style="color:#ff0000;">ERROR: Could not update template <b>'.$blocks[$i]['template'].'</b>.</span>';
-                                } else {
-                                    $msgs[] = '&nbsp;&nbsp;Template <b>'.$blocks[$i]['template'].'</b> updated.';
-                                    if ($xoopsConfig['template_set'] == 'default') {
-                                        if (!xoops_template_touch($tplfile_new->getVar('tpl_id'))) {
-                                            $msgs[] = '&nbsp;&nbsp;<span style="color:#ff0000;">ERROR: Could not recompile template <b>'.$blocks[$i]['template'].'</b>.</span>';
-                                        } else {
-                                            $msgs[] = '&nbsp;&nbsp;Template <b>'.$blocks[$i]['template'].'</b> recompiled.';
-                                        }
-                                    }
-
-                                }
-                            }
                         }
                     }
                     if ($fcount == 0) {
@@ -421,32 +333,6 @@ if ($op == 'update_ok') {
                                     $msgs[] = '&nbsp;&nbsp;Added block access right. Block ID: <b>'.$newbid.'</b> Group ID: <b>'.$mygroup.'</b>';
                                 }
                             }
-
-                            if ($template != '') {
-                                $tplfile =& $tplfile_handler->create();
-                                $tplfile->setVar('tpl_module', $dirname);
-                                $tplfile->setVar('tpl_refid', $newbid);
-                                $tplfile->setVar('tpl_source', $content, true);
-                                $tplfile->setVar('tpl_tplset', 'default');
-                                $tplfile->setVar('tpl_file', $blocks[$i]['template'], true);
-                                $tplfile->setVar('tpl_type', 'block');
-                                $tplfile->setVar('tpl_lastimported', 0);
-                                $tplfile->setVar('tpl_lastmodified', time());
-                                $tplfile->setVar('tpl_desc', $blocks[$i]['description'], true);
-                                if (!$tplfile_handler->insert($tplfile)) {
-                                    $msgs[] = '&nbsp;&nbsp;<span style="color:#ff0000;">ERROR: Could not insert template <b>'.$blocks[$i]['template'].'</b> to the database.</span>';
-                                } else {
-                                    $newid = $tplfile->getVar('tpl_id');
-                                    $msgs[] = '&nbsp;&nbsp;Template <b>'.$blocks[$i]['template'].'</b> added to the database.';
-                                    if ($xoopsConfig['template_set'] == 'default') {
-                                        if (!xoops_template_touch($newid)) {
-                                            $msgs[] = '&nbsp;&nbsp;<span style="color:#ff0000;">ERROR: Template <b>'.$blocks[$i]['template'].'</b> recompile failed.</span>';
-                                        } else {
-                                            $msgs[] = '&nbsp;&nbsp;Template <b>'.$blocks[$i]['template'].'</b> recompiled.';
-                                        }
-                                    }
-                                }
-                            }
                             $msgs[] = '&nbsp;&nbsp;Block <b>'.$blocks[$i]['name'].'</b> created. Block ID: <b>'.$newbid.'</b>';
                             $sql = 'INSERT INTO '.$xoopsDB->prefix('block_module_link').' (block_id, module_id) VALUES ('.$newbid.', -1)';
                             $xoopsDB->query($sql);
@@ -462,19 +348,6 @@ if ($op == 'update_ok') {
                         $msgs[] = '&nbsp;&nbsp;<span style="color:#ff0000;">ERROR: Could not delete block <b>'.$block->getVar('name').'</b>. Block ID: <b>'.$block->getVar('bid').'</b></span>';
                     } else {
                         $msgs[] = '&nbsp;&nbsp;Block <b>'.$block->getVar('name').' deleted. Block ID: <b>'.$block->getVar('bid').'</b>';
-                        if ($block->getVar('template') != '') {
-                            $tplfiles =& $tplfile_handler->find(null, 'block', $block->getVar('bid'));
-                            if (is_array($tplfiles)) {
-                                $btcount = count($tplfiles);
-                                for ($k = 0; $k < $btcount; $k++) {
-                                    if (!$tplfile_handler->delete($tplfiles[$k])) {
-                                        $msgs[] = '&nbsp;&nbsp;<span style="color:#ff0000;">ERROR: Could not remove deprecated block template. (ID: <b>'.$tplfiles[$k]->getVar('tpl_id').'</b>)</span>';
-                                    } else {
-                                        $msgs[] = '&nbsp;&nbsp;Block template <b>'.$tplfiles[$k]->getVar('tpl_file').'</b> deprecated.';
-                                    }
-                                }
-                            }
-                        }
                     }
                 }
             }

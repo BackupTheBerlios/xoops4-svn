@@ -366,49 +366,6 @@ if ( !is_object($xoopsUser) || !is_object($xoopsModule) || !$xoopsUser->isAdmin(
                         $theme_updated = true;
                     }
 
-                    // if default template set has been changed
-                    if (!$tpl_updated && $config->getVar('conf_catid') == XOOPS_CONF && $config->getVar('conf_name') == 'template_set') {
-                        // clear cached/compiled files and regenerate them if default theme has been changed
-                        if ($xoopsConfig['template_set'] != ${$config->getVar('conf_name')}) {
-                            $newtplset = ${$config->getVar('conf_name')};
-
-                            // clear all compiled and cachedfiles
-                            $xoopsTpl->clear_compiled_tpl();
-
-                            // generate compiled files for the new theme
-                            // block files only for now..
-                            $tplfile_handler =& xoops_gethandler('tplfile');
-                            $dtemplates =& $tplfile_handler->find('default', 'block');
-                            $dcount = count($dtemplates);
-
-                            // need to do this to pass to xoops_template_touch function
-                            $GLOBALS['xoopsConfig']['template_set'] = $newtplset;
-
-                            for ($i = 0; $i < $dcount; $i++) {
-                                $found =& $tplfile_handler->find($newtplset, 'block', $dtemplates[$i]->getVar('tpl_refid'), null);
-                                if (count($found) > 0) {
-                                    // template for the new theme found, compile it
-                                    xoops_template_touch($found[0]->getVar('tpl_id'));
-                                } else {
-                                    // not found, so compile 'default' template file
-                                    xoops_template_touch($dtemplates[$i]->getVar('tpl_id'));
-                                }
-                            }
-
-                            // generate image cache files from image binary data, save them under cache/
-                            $image_handler =& xoops_gethandler('imagesetimg');
-                            $imagefiles =& $image_handler->getObjects(new Criteria('tplset_name', $newtplset), true);
-                            foreach (array_keys($imagefiles) as $i) {
-                                if (!$fp = fopen(XOOPS_CACHE_PATH.'/'.$newtplset.'_'.$imagefiles[$i]->getVar('imgsetimg_file'), 'wb')) {
-                                } else {
-                                    fwrite($fp, $imagefiles[$i]->getVar('imgsetimg_body'));
-                                    fclose($fp);
-                                }
-                            }
-                        }
-                        $tpl_updated = true;
-                    }
-
                     // add read permission for the start module to all groups
                     if (!$startmod_updated  && $new_value != '--' && $config->getVar('conf_catid') == XOOPS_CONF && $config->getVar('conf_name') == 'startpage') {
                         $member_handler =& xoops_gethandler('member');

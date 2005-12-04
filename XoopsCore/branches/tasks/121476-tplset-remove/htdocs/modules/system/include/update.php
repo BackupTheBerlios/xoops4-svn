@@ -30,6 +30,8 @@
 // ------------------------------------------------------------------------- //
 
 function xoops_module_system_update(&$module) {
+	//@TODO-2.3: This should be for an old version, and should be copied in the upgrader
+	/*
     if ($module->getVar('version') == 100) {
         $result = $xoopsDB->query("SELECT t1.tpl_id FROM ".$xoopsDB->prefix('tplfile')." t1, ".$xoopsDB->prefix('tplfile')." t2 WHERE t1.tpl_module = t2.tpl_module AND t1.tpl_tplset=t2.tpl_tplset AND t1.tpl_file = t2.tpl_file AND t1.tpl_id > t2.tpl_id");
 
@@ -48,6 +50,7 @@ function xoops_module_system_update(&$module) {
             }
         }
     }
+    */
     return true;
 }
 

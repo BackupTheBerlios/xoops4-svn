@@ -129,12 +129,19 @@ function xoops_module_list()
     xoops_cp_footer();
 }
 
-function xoops_module_install($dirname)
-{
+function xoops_module_install($dirname) {
     global $xoopsUser, $xoopsConfig;
     $dirname = trim($dirname);
     $db =& Database::getInstance();
-    $reservedTables = array('avatar', 'avatar_users_link', 'block_module_link', 'xoopscomments', 'config', 'configcategory', 'configoption', 'image', 'imagebody', 'imagecategory', 'imgset', 'imgset_tplset_link', 'imgsetimg', 'groups','groups_users_link','group_permission', 'online', 'bannerclient', 'banner', 'bannerfinish', 'priv_msgs', 'ranks', 'session', 'smiles', 'users', 'newblocks', 'modules', 'tplfile', 'tplset', 'tplsource', 'xoopsnotifications', 'banner', 'bannerclient', 'bannerfinish');
+    $reservedTables = array(
+    	'avatar', 'avatar_users_link', 'block_module_link', 'xoopscomments',
+    	'config', 'configcategory', 'configoption',
+    	'image', 'imagebody', 'imagecategory', 'imgset', 'imgset_tplset_link', 'imgsetimg',
+    	'groups','groups_users_link','group_permission', 'online',
+    	'bannerclient', 'banner', 'bannerfinish',
+    	'priv_msgs', 'ranks', 'session', 'smiles', 'users', 'newblocks', 'modules',
+    	'xoopsnotifications', 'banner', 'bannerclient', 'bannerfinish'
+    );
     $module_handler =& xoops_gethandler('module');
     if ($module_handler->getCount(new Criteria('dirname', $dirname)) == 0) {
         $module =& $module_handler->create();
@@ -229,41 +236,8 @@ function xoops_module_install($dirname)
                 $newmid = $module->getVar('mid');
                 unset($created_tables);
                 $msgs[] = 'Module data inserted successfully. Module ID: <b>'.$newmid.'</b>';
-                $tplfile_handler =& xoops_gethandler('tplfile');
-                $templates = $module->getInfo('templates');
-                if ($templates != false) {
-                    $msgs[] = 'Adding templates...';
-                    foreach ($templates as $tpl) {
-                        $tplfile =& $tplfile_handler->create();
-                        $tpldata =& xoops_module_gettemplate($dirname, $tpl['file']);
-                        $tplfile->setVar('tpl_source', $tpldata, true);
-                        $tplfile->setVar('tpl_refid', $newmid);
+                $msgs[] = '@TODO-2.3: Clear module templates cache here';
 
-                        $tplfile->setVar('tpl_tplset', 'default');
-                        $tplfile->setVar('tpl_file', $tpl['file']);
-                        $tplfile->setVar('tpl_desc', $tpl['description'], true);
-                        $tplfile->setVar('tpl_module', $dirname);
-                        $tplfile->setVar('tpl_lastmodified', time());
-                        $tplfile->setVar('tpl_lastimported', 0);
-                        $tplfile->setVar('tpl_type', 'module');
-                        if (!$tplfile_handler->insert($tplfile)) {
-                            $msgs[] = '&nbsp;&nbsp;<span style="color:#ff0000;">ERROR: Could not insert template <b>'.$tpl['file'].'</b> to the database.</span>';
-                        } else {
-                            $newtplid = $tplfile->getVar('tpl_id');
-                            $msgs[] = '&nbsp;&nbsp;Template <b>'.$tpl['file'].'</b> added to the database. (ID: <b>'.$newtplid.'</b>)';
-                            // generate compiled file
-                            include_once XOOPS_ROOT_PATH.'/class/template.php';
-                            if (!xoops_template_touch($newtplid)) {
-                                $msgs[] = '&nbsp;&nbsp;<span style="color:#ff0000;">ERROR: Failed compiling template <b>'.$tpl['file'].'</b>.</span>';
-                            } else {
-                                $msgs[] = '&nbsp;&nbsp;Template <b>'.$tpl['file'].'</b> compiled.</span>';
-                            }
-                        }
-                        unset($tpldata);
-                    }
-                }
-                include_once XOOPS_ROOT_PATH.'/class/template.php';
-                xoops_template_clear_module_cache($newmid);
                 $blocks = $module->getInfo('blocks');
                 if ($blocks != false) {
                     $msgs[] = 'Adding blocks...';
@@ -298,31 +272,6 @@ function xoops_module_install($dirname)
                             $msgs[] = '&nbsp;&nbsp;Block <b>'.$block['name'].'</b> added. Block ID: <b>'.$newbid.'</b>';
                             $sql = 'INSERT INTO '.$db->prefix('block_module_link').' (block_id, module_id) VALUES ('.$newbid.', -1)';
                             $db->query($sql);
-                            if ($template != '') {
-                                $tplfile =& $tplfile_handler->create();
-                                $tplfile->setVar('tpl_refid', $newbid);
-                                $tplfile->setVar('tpl_source', $content, true);
-                                $tplfile->setVar('tpl_tplset', 'default');
-                                $tplfile->setVar('tpl_file', $block['template']);
-                                $tplfile->setVar('tpl_module', $dirname);
-                                $tplfile->setVar('tpl_type', 'block');
-                                $tplfile->setVar('tpl_desc', $block['description'], true);
-                                $tplfile->setVar('tpl_lastimported', 0);
-                                $tplfile->setVar('tpl_lastmodified', time());
-                                if (!$tplfile_handler->insert($tplfile)) {
-                                    $msgs[] = '&nbsp;&nbsp;<span style="color:#ff0000;">ERROR: Could not insert template <b>'.$block['template'].'</b> to the database.</span>';
-                                } else {
-                                    $newtplid = $tplfile->getVar('tpl_id');
-                                    $msgs[] = '&nbsp;&nbsp;Template <b>'.$block['template'].'</b> added to the database. (ID: <b>'.$newtplid.'</b>)';
-                                    // generate compiled file
-                                    include_once XOOPS_ROOT_PATH.'/class/template.php';
-                                    if (!xoops_template_touch($newtplid)) {
-                                        $msgs[] = '&nbsp;&nbsp;<span style="color:#ff0000;">ERROR: Failed compiling template <b>'.$block['template'].'</b>.</span>';
-                                    } else {
-                                        $msgs[] = '&nbsp;&nbsp;Template <b>'.$block['template'].'</b> compiled.</span>';
-                                    }
-                                }
-                            }
                         }
                         unset($content);
                     }
@@ -529,13 +478,22 @@ function &xoops_module_gettemplate($dirname, $template, $block=false)
 function xoops_module_uninstall($dirname)
 {
     global $xoopsConfig;
-    $reservedTables = array('avatar', 'avatar_users_link', 'block_module_link', 'xoopscomments', 'config', 'configcategory', 'configoption', 'image', 'imagebody', 'imagecategory', 'imgset', 'imgset_tplset_link', 'imgsetimg', 'groups','groups_users_link','group_permission', 'online', 'bannerclient', 'banner', 'bannerfinish', 'priv_msgs', 'ranks', 'session', 'smiles', 'users', 'newblocks', 'modules', 'tplfile', 'tplset', 'tplsource', 'xoopsnotifications', 'banner', 'bannerclient', 'bannerfinish');
+    $reservedTables = array(
+    	'avatar', 'avatar_users_link', 'block_module_link', 'xoopscomments',
+    	'config', 'configcategory', 'configoption',
+    	'image', 'imagebody', 'imagecategory', 'imgset', 'imgset_tplset_link', 'imgsetimg',
+    	'groups','groups_users_link','group_permission', 'online',
+    	'bannerclient', 'banner', 'bannerfinish',
+    	'priv_msgs', 'ranks', 'session', 'smiles', 'users', 'newblocks', 'modules',
+    	'xoopsnotifications', 'banner', 'bannerclient', 'bannerfinish'
+    );
     $db =& Database::getInstance();
     $module_handler =& xoops_gethandler('module');
     $module =& $module_handler->getByDirname($dirname);
-    include_once XOOPS_ROOT_PATH.'/class/template.php';
-    xoops_template_clear_module_cache($module->getVar('mid'));
-    if ($module->getVar('dirname') == 'system') {
+
+	$msgs[] = '@TODO-2.3: Clear module templates cache here';
+
+	if ($module->getVar('dirname') == 'system') {
         return "<p>".sprintf(_MD_AM_FAILUNINS, "<b>".$module->getVar('name')."</b>")."&nbsp;"._MD_AM_ERRORSC."<br /> - "._MD_AM_SYSNO."</p>";
     } elseif ($module->getVar('dirname') == $xoopsConfig['startpage']) {
         return "<p>".sprintf(_MD_AM_FAILUNINS, "<b>".$module->getVar('name')."</b>")."&nbsp;"._MD_AM_ERRORSC."<br /> - "._MD_AM_STRTNO."</p>";
@@ -544,23 +502,6 @@ function xoops_module_uninstall($dirname)
         if (!$module_handler->delete($module)) {
             $msgs[] = '&nbsp;&nbsp;<span style="color:#ff0000;">ERROR: Could not delete '.$module->getVar('name').'</span>';
         } else {
-
-            // delete template files
-            $tplfile_handler = xoops_gethandler('tplfile');
-            $templates =& $tplfile_handler->find(null, 'module', $module->getVar('mid'));
-            $tcount = count($templates);
-            if ($tcount > 0) {
-                $msgs[] = 'Deleting templates...';
-                for ($i = 0; $i < $tcount; $i++) {
-                    if (!$tplfile_handler->delete($templates[$i])) {
-                        $msgs[] = '&nbsp;&nbsp;<span style="color:#ff0000;">ERROR: Could not delete template '.$templates[$i]->getVar('tpl_file').' from the database. Template ID: <b>'.$templates[$i]->getVar('tpl_id').'</b></span>';
-                    } else {
-                        $msgs[] = '&nbsp;&nbsp;Template <b>'.$templates[$i]->getVar('tpl_file').'</b> deleted from the database. Template ID: <b>'.$templates[$i]->getVar('tpl_id').'</b>';
-                    }
-                }
-            }
-            unset($templates);
-
             // delete blocks and block tempalte files
             $block_arr =& XoopsBlock::getByModule($module->getVar('mid'));
             if (is_array($block_arr)) {
@@ -571,20 +512,6 @@ function xoops_module_uninstall($dirname)
                         $msgs[] = '&nbsp;&nbsp;<span style="color:#ff0000;">ERROR: Could not delete block <b>'.$block_arr[$i]->getVar('name').'</b> Block ID: <b>'.$block_arr[$i]->getVar('bid').'</b></span>';
                     } else {
                         $msgs[] = '&nbsp;&nbsp;Block <b>'.$block_arr[$i]->getVar('name').'</b> deleted. Block ID: <b>'.$block_arr[$i]->getVar('bid').'</b>';
-                    }
-                    if ($block_arr[$i]->getVar('template') != ''){
-                        $templates =& $tplfile_handler->find(null, 'block', $block_arr[$i]->getVar('bid'));
-                        $btcount = count($templates);
-                        if ($btcount > 0) {
-                            for ($j = 0; $j < $btcount; $j++) {
-                                if (!$tplfile_handler->delete($templates[$j])) {
-                                $msgs[] = '&nbsp;&nbsp;<span style="color:#ff0000;">ERROR: Could not delete block template '.$templates[$j]->getVar('tpl_file').' from the database. Template ID: <b>'.$templates[$j]->getVar('tpl_id').'</b></span>';
-                                } else {
-                                $msgs[] = '&nbsp;&nbsp;Block template <b>'.$templates[$j]->getVar('tpl_file').'</b> deleted from the database. Template ID: <b>'.$templates[$j]->getVar('tpl_id').'</b>';
-                                }
-                            }
-                        }
-                        unset($templates);
                     }
                 }
             }
@@ -683,8 +610,8 @@ function xoops_module_activate($mid)
 {
     $module_handler =& xoops_gethandler('module');
     $module =& $module_handler->get($mid);
-    include_once XOOPS_ROOT_PATH.'/class/template.php';
-    xoops_template_clear_module_cache($module->getVar('mid'));
+
+	// @TODO-2.3: Clear module templates cache here
     $module->setVar('isactive', 1);
     if (!$module_handler->insert($module)) {
         $ret = "<p>".sprintf(_MD_AM_FAILACT, "<b>".$module->getVar('name')."</b>")."&nbsp;"._MD_AM_ERRORSC."<br />".$module->getHtmlErrors();
@@ -704,8 +631,7 @@ function xoops_module_deactivate($mid)
     global $xoopsConfig;
     $module_handler =& xoops_gethandler('module');
     $module =& $module_handler->get($mid);
-    include_once XOOPS_ROOT_PATH.'/class/template.php';
-    xoops_template_clear_module_cache($mid);
+	// @TODO-2.3: Clear module templates cache here
     $module->setVar('isactive', 0);
     if ($module->getVar('dirname') == "system") {
         return "<p>".sprintf(_MD_AM_FAILDEACT, "<b>".$module->getVar('name')."</b>")."&nbsp;"._MD_AM_ERRORSC."<br /> - "._MD_AM_SYSNO."</p>";
