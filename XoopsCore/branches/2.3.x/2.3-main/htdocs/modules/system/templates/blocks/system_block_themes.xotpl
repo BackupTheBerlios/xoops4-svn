@@ -1,0 +1,19 @@
+
+<form action="([xoAppUrl /www/index.php])" method="post">
+([if $block.options.0 == 1])
+	<img id="xo-theme-thumbImg" alt="Screenshot" style="width:([$block.options.1])px"
+		 src="([$xoops->url("themes/`$block.currentTheme`/shot.gif") ])" /><br />
+	<select name="xoops_theme_select"
+		onchange="document.getElementById('xo-theme-thumbImg').src='([xoAppUrl themes/])'+this.value+'/shot.gif')">
+([else])	
+	<select name="xoops_theme_select" size="3" onchange="this.form.submit()">
+([/if])
+([foreach from=$block.availableThemes item=theme])
+		<option value="([$theme])"([if $theme==$block.currentTheme]) selected="selected"([/if])>([$theme])</option>
+([/foreach])	
+	</select><br />
+	([$block.availableThemes|@count|string_format:$smarty.const._MB_SYSTEM_NUMTHEME])<br />
+([if $block.options.0 == 1])
+	<input type="submit" value="([$smarty.const._GO])" />	
+([/if])
+</form>

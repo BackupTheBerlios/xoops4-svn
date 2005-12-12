@@ -236,7 +236,7 @@ class XoopsMySQLDatabase extends XoopsDatabase
 			}
 			$sql = $sql. ' LIMIT '.(int)$start.', '.(int)$limit;
 		}
-		$result =& mysql_query($sql, $this->conn);
+		$result = mysql_query($sql, $this->conn);
 		if ( $result ) {
 			$this->logger->addQuery($sql);
 			return $result;

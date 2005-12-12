@@ -55,16 +55,7 @@ if ( $block['is_custom'] ) {
     $form->addElement($ctype_select);
 } else {
     if ($block['template'] != '') {
-        $tplfile_handler =& xoops_gethandler('tplfile');
-        $btemplate =& $tplfile_handler->find($GLOBALS['xoopsConfig']['template_set'], 'block', $block['bid']);
-        if (count($btemplate) > 0) {
-            $form->addElement(new XoopsFormLabel(_AM_CONTENT, '<a href="'.XOOPS_URL.'/modules/system/admin.php?fct=tplsets&op=edittpl&id='.$btemplate[0]->getVar('tpl_id').'">'._AM_EDITTPL.'</a>'));
-        } else {
-            $btemplate2 =& $tplfile_handler->find('default', 'block', $block['bid']);
-            if (count($btemplate2) > 0) {
-                $form->addElement(new XoopsFormLabel(_AM_CONTENT, '<a href="'.XOOPS_URL.'/modules/system/admin.php?fct=tplsets&op=edittpl&id='.$btemplate2[0]->getVar('tpl_id').'" target="_blank">'._AM_EDITTPL.'</a>'));
-            }
-        }
+		$form->addElement( new XoopsFormLabel(_AM_CONTENT, '@TODO-2.3: Add a link to the new tpl editor module') );
     }
     if ($block['edit_form'] != false) {
         $form->addElement(new XoopsFormLabel(_AM_OPTIONS, $block['edit_form']));

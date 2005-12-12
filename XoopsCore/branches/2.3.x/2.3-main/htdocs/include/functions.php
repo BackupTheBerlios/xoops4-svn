@@ -138,6 +138,18 @@ function xoops_confirm($hiddens, $action, $msg, $submit='', $addtoken = true)
 }
 
 /**
+* Load the specified localized strings file
+*/
+function xoops_load_lang_file( $filename, $module = '', $default = 'english' ) {
+	$lang = $GLOBALS['xoopsConfig']['language'];
+	$path = XOOPS_ROOT_PATH . ( empty($module) ? '/' : "/modules/$module/" ) . 'language';
+	if ( !( $ret = include_once( "$path/$lang/$filename.php" ) ) ) {
+		$ret = include_once( "$path/$default/$filename.php" );
+	}
+	return $ret;
+}
+
+/**
 * Deprecated, use {@link XoopsSecurity} class instead
 **/
 function xoops_refcheck($docheck=1)

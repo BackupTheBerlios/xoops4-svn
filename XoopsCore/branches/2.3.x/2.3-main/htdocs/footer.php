@@ -24,52 +24,37 @@
 //  along with this program; if not, write to the Free Software              //
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA //
 //  ------------------------------------------------------------------------ //
-if (!defined("XOOPS_ROOT_PATH")) {
-    die("XOOPS root path not defined");
-}
-if ( !defined("XOOPS_FOOTER_INCLUDED") ) {
-	define("XOOPS_FOOTER_INCLUDED",1);
+/**
+ * This file cannot be requested directly
+ */
+if ( !defined( 'XOOPS_ROOT_PATH') )			die();
+
+if ( defined( 'XOOPS_FOOTER_INCLUDED' ) )	return;
+
+
+	define( 'XOOPS_FOOTER_INCLUDED', 1 );
 	$xoopsLogger->stopTime();
-	if ($xoopsOption['theme_use_smarty'] == 0) {
-		// the old way
-		$footer = $xoopsConfigMetaFooter['footer'].'<br /><div style="text-align:center">Powered by XOOPS &copy; 2002 <a href="http://www.xoops.org/" target="_blank">The XOOPS Project</a></div>';
-		if (isset($xoopsOption['template_main'])) {
-			$xoopsTpl->xoops_setCaching(0);
-			$xoopsTpl->display('db:'.$xoopsOption['template_main']);
-		}
-		if (!isset($xoopsOption['show_rblock'])) {
-			$xoopsOption['show_rblock'] = 0;
-		}
-		themefooter($xoopsOption['show_rblock'], $footer);
-		xoops_footer();
-	} else {
-		// RMV-NOTIFY
-		include_once XOOPS_ROOT_PATH . '/include/notification_select.php';
-		if (isset($xoopsOption['template_main'])) {
-			if (isset($xoopsCachedTemplateId)) {
-				$xoopsTpl->assign('xoops_contents', $xoopsTpl->fetch('db:'.$xoopsOption['template_main'], $xoopsCachedTemplateId));
-			} else {
-				$xoopsTpl->assign('xoops_contents', $xoopsTpl->fetch('db:'.$xoopsOption['template_main']));
-			}
-		} else {
-			if (isset($xoopsCachedTemplate)) {
-				$xoopsTpl->assign('dummy_content', ob_get_contents());
-				$xoopsTpl->assign('xoops_contents', $xoopsTpl->fetch($xoopsCachedTemplate, $xoopsCachedTemplateId));
-			} else {
-				$xoopsTpl->assign('xoops_contents', ob_get_contents());
-			}
-			ob_end_clean();
-		}
-		if (!headers_sent()) {
-			header('Content-Type:text/html; charset='._CHARSET);
-			header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-			//header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
-			header('Cache-Control: private, no-cache');
-			header('Pragma: no-cache');
-		}
-		$xoopsTpl->xoops_setCaching(0);
-		$xoopsTpl->display($xoopsConfig['theme_set'].'/theme.html');
+
+	// RMV-NOTIFY
+	include_once XOOPS_ROOT_PATH . '/include/notification_select.php';
+	
+	if (!headers_sent()) {
+		header('Content-Type:text/html; charset='._CHARSET);
+		header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+		//header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
+		header('Cache-Control: private, no-cache');
+		header('Pragma: no-cache');
 	}
+	
+	global $xoops;
+	if ( !$xoops->services['theme']->renderCount ) {
+		if ( isset( $xoopsOption['template_main'] ) ) {
+			$xoops->services['theme']->contentTemplate = 'db:' . $xoopsOption['template_main'];
+		}
+		$xoops->services['theme']->template->assign( $xoopsTpl->_tpl_vars );
+		$xoops->services['theme']->render();
+	}
+		
 	if ($xoopsConfig['debug_mode'] == 2 && $xoopsUserIsAdmin) {
 		echo '<script type="text/javascript">
 		<!--//
@@ -87,5 +72,6 @@ if ( !defined("XOOPS_FOOTER_INCLUDED") ) {
 		//-->
 		</script>';
 	}
-}
+
+
 ?>

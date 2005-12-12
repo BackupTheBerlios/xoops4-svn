@@ -54,7 +54,7 @@ function xoops_cp_header()
         echo '<link rel="stylesheet" type="text/css" media="all" href="'.XOOPS_URL.'/modules/system/style.css" />';
         include_once XOOPS_CACHE_PATH.'/adminmenu.php';
         $moduleperm_handler =& xoops_gethandler('groupperm');
-        $admin_mids =& $moduleperm_handler->getItemIds('module_admin', $xoopsUser->getGroups());
+        $admin_mids = $moduleperm_handler->getItemIds('module_admin', $xoopsUser->getGroups());
 ?>
 
 <script type='text/javascript'>

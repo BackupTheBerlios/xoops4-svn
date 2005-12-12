@@ -112,7 +112,8 @@ $xoopsTpl->assign('user_occupation', $thisUser->getVar('user_occ'));
 $xoopsTpl->assign('lang_interest', _US_INTEREST);
 $xoopsTpl->assign('user_interest', $thisUser->getVar('user_intrest'));
 $xoopsTpl->assign('lang_extrainfo', _US_EXTRAINFO);
-$xoopsTpl->assign('user_extrainfo', $myts->makeTareaData4Show($thisUser->getVar('bio', 'N'),0,1,1));
+$var = $thisUser->getVar('bio', 'N');
+$xoopsTpl->assign('user_extrainfo', $myts->makeTareaData4Show($var,0,1,1));
 $xoopsTpl->assign('lang_statistics', _US_STATISTICS);
 $xoopsTpl->assign('lang_membersince', _US_MEMBERSINCE);
 $xoopsTpl->assign('user_joindate', formatTimestamp($thisUser->getVar('user_regdate'),'s'));
@@ -126,7 +127,8 @@ $xoopsTpl->assign('lang_lastlogin', _US_LASTLOGIN);
 $xoopsTpl->assign('lang_notregistered', _US_NOTREGISTERED);
 
 $xoopsTpl->assign('lang_signature', _US_SIGNATURE);
-$xoopsTpl->assign('user_signature', $myts->makeTareaData4Show($thisUser->getVar('user_sig', 'N'),0,1,1));
+$var = $thisUser->getVar('user_sig', 'N');
+$xoopsTpl->assign('user_signature', $myts->makeTareaData4Show($var,0,1,1));
 
 if ($thisUser->getVar('user_viewemail') == 1) {
     $xoopsTpl->assign('user_email', $thisUser->getVar('email', 'E'));

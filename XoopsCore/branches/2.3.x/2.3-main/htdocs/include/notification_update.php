@@ -50,9 +50,11 @@ include_once XOOPS_ROOT_PATH.'/include/notification_constants.php';
 include_once XOOPS_ROOT_PATH.'/include/notification_functions.php';
 include_once XOOPS_ROOT_PATH.'/language/'.$xoopsConfig['language'].'/notification.php';
 
+/*
 if (!isset($_POST['not_submit'])) {
     exit();
 }
+*/
 
 if (!$GLOBALS['xoopsSecurity']->check()) {
     redirect_header($_POST['not_redirect'], 3, implode('<br />', $GLOBALS['xoopsSecurity']->getErrors()));

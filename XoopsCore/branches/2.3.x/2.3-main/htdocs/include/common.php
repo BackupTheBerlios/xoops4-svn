@@ -58,10 +58,16 @@ if (!defined("XOOPS_MAINFILE_INCLUDED")) {
     define("XOOPS_UPLOAD_PATH", XOOPS_ROOT_PATH."/uploads");
     define("XOOPS_THEME_PATH", XOOPS_ROOT_PATH."/themes");
 
-    define( "SMARTY_DIR", XOOPS_ROOT_PATH . "/class/smarty/" );
-    define( "XOOPS_CACHE_PATH", XOOPS_VAR_PATH . "/Caches/xoops_template_Smarty" );
+	// ----- BEGIN: Already refactored stuff just kept for compat purposes -----
+  
+    //define( "SMARTY_DIR", XOOPS_PATH . "/Frameworks/XoopsCore/Pyro/Smarty.xoobj/smarty/" );
+    define( "XOOPS_CACHE_PATH", XOOPS_VAR_PATH . "/Caches" );
     define( "XOOPS_COMPILE_PATH", XOOPS_VAR_PATH . "/Application Support/xoops_template_Smarty" );
 
+	// ----- END: Already refactored stuff just kept for compat purposes -----
+
+    
+    
     define("XOOPS_THEME_URL", XOOPS_URL."/themes");
     define("XOOPS_UPLOAD_URL", XOOPS_URL."/uploads");
     set_magic_quotes_runtime(0);
@@ -193,9 +199,9 @@ if (!defined("XOOPS_MAINFILE_INCLUDED")) {
             $xoopsUserIsAdmin = $xoopsUser->isAdmin();
         }
     }
-    if (!empty($_POST['xoops_theme_select']) && in_array($_POST['xoops_theme_select'], $xoopsConfig['theme_set_allowed'])) {
-        $xoopsConfig['theme_set'] = $_POST['xoops_theme_select'];
-        $_SESSION['xoopsUserTheme'] = $_POST['xoops_theme_select'];
+    if (!empty($_REQUEST['xoops_theme_select']) && in_array($_REQUEST['xoops_theme_select'], $xoopsConfig['theme_set_allowed'])) {
+        $xoopsConfig['theme_set'] = $_REQUEST['xoops_theme_select'];
+        $_SESSION['xoopsUserTheme'] = $_REQUEST['xoops_theme_select'];
     } elseif (!empty($_SESSION['xoopsUserTheme']) && in_array($_SESSION['xoopsUserTheme'], $xoopsConfig['theme_set_allowed'])) {
         $xoopsConfig['theme_set'] = $_SESSION['xoopsUserTheme'];
     }
@@ -224,8 +230,8 @@ if (!defined("XOOPS_MAINFILE_INCLUDED")) {
         unset($allowed, $group);
     }
 
-    if (file_exists('./xoops_version.php')) {
-        $url_arr = explode('/',strstr($xoopsRequestUri,'/modules/'));
+    if ( file_exists('./xoops_version.php') ) {
+        $url_arr = explode( '/', strstr( $_SERVER['SCRIPT_NAME'], '/modules/' ) );
         $module_handler =& xoops_gethandler('module');
         $xoopsModule =& $module_handler->getByDirname($url_arr[2]);
         unset($url_arr);

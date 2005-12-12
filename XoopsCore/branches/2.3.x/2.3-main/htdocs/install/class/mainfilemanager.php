@@ -63,6 +63,7 @@ class mainfile_manager {
             $this->error = true;
             return false;
         }
+        clearstatcache();
         $content = fread($file, filesize($this->path) );
         fclose($file);
 

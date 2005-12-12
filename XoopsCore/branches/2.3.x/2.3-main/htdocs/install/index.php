@@ -622,41 +622,16 @@ case 'updateConfig_go':
 	// default the default theme
 
     $time = time();
-    $dbm->insert('tplset', " VALUES (1, 'default', 'XOOPS Default Theme', '', ".$time.")");
 
-//	include_once './class/cachemanager.php';
-//    $cm = new cache_manager;
-//	$skinfiles = array('1' => 'skin.html', '2' => 'style.css'
-//                        , '3' => 'styleNN.css','4' =>  'styleMAC.css'
-//                        , '5' => 'skin_blockleft.html', '6' => 'skin_blockright.html'
-//                        , '7' => 'skin_blockcenter_l.html', '8' => 'skin_blockcenter_c.html'
-//                        , '9' => 'skin_blockcenter_r.html');
-//    foreach ($skinfiles as $key => $skinfile) {
-//        if(preg_match('/\.css$/', $skinfile)) {
-//            $type = 'css';
-//        }else{
-//            $type = 'skin';
-//        }
-//        $dbm->insert('tplfile', " VALUES ($key, 0, '', 'default', '$skinfile', '', $time, $time, '$type')");
-
-//        $fp = fopen('./templates/default_skin/'.$skinfile, 'r');
-//        $skinsource = fread($fp, filesize('./templates/default_skin/'.$skinfile));
-//        fclose($fp);
-//        $dbm->insert('tplsource', " (tpl_id, tpl_source) VALUES ($key, '".addslashes($skinsource)."')");
-//        if(preg_match('/\.css$/',$skinfile)) {
-//            $cm->write($skinfile, $skinsource);
-//        }
-//    }
-
-        $dbm->query("INSERT INTO ".$dbm->prefix('group_permission')." (gperm_groupid, gperm_itemid) SELECT groupid, block_id FROM ".$dbm->prefix('groups_blocks_link'));
-		$dbm->query("UPDATE ".$dbm->prefix('group_permission')." SET gperm_name = 'block_read'");
-    	$dbm->query("INSERT INTO ".$dbm->prefix('group_permission')." (gperm_groupid, gperm_itemid) SELECT groupid, mid FROM ".$dbm->prefix('groups_modules_link') ." WHERE type='A'");
-		$dbm->query("UPDATE ".$dbm->prefix('group_permission')." SET gperm_name = 'module_admin' WHERE gperm_name = ''");
-    	$dbm->query("INSERT INTO ".$dbm->prefix('group_permission')." (gperm_groupid, gperm_itemid) SELECT groupid, mid FROM ".$dbm->prefix('groups_modules_link')." WHERE type='R'");
-		$dbm->query("UPDATE ".$dbm->prefix('group_permission')." SET gperm_name = 'module_read' WHERE gperm_name = ''");
-		$dbm->query("UPDATE ".$dbm->prefix('group_permission')." SET gperm_modid = 1");
-		$dbm->query('DROP TABLE '.$dbm->prefix('groups_blocks_link'));
-		$dbm->query('DROP TABLE '.$dbm->prefix('groups_modules_link'));
+    $dbm->query("INSERT INTO ".$dbm->prefix('group_permission')." (gperm_groupid, gperm_itemid) SELECT groupid, block_id FROM ".$dbm->prefix('groups_blocks_link'));
+	$dbm->query("UPDATE ".$dbm->prefix('group_permission')." SET gperm_name = 'block_read'");
+	$dbm->query("INSERT INTO ".$dbm->prefix('group_permission')." (gperm_groupid, gperm_itemid) SELECT groupid, mid FROM ".$dbm->prefix('groups_modules_link') ." WHERE type='A'");
+	$dbm->query("UPDATE ".$dbm->prefix('group_permission')." SET gperm_name = 'module_admin' WHERE gperm_name = ''");
+	$dbm->query("INSERT INTO ".$dbm->prefix('group_permission')." (gperm_groupid, gperm_itemid) SELECT groupid, mid FROM ".$dbm->prefix('groups_modules_link')." WHERE type='R'");
+	$dbm->query("UPDATE ".$dbm->prefix('group_permission')." SET gperm_name = 'module_read' WHERE gperm_name = ''");
+	$dbm->query("UPDATE ".$dbm->prefix('group_permission')." SET gperm_modid = 1");
+	$dbm->query('DROP TABLE '.$dbm->prefix('groups_blocks_link'));
+	$dbm->query('DROP TABLE '.$dbm->prefix('groups_modules_link'));
 
 	// insert some more data
 	$result = $dbm->queryFromFile('./sql/'.XOOPS_DB_TYPE.'.data.sql');
@@ -723,39 +698,6 @@ case 'updateModules_go':
 				$newmid = $modules[$mid]->getVar('mid');
 				$msgs = array();
 				$msgs[] = 'Module data updated.';
-				$tplfile_handler =& xoops_gethandler('tplfile');
-				$templates = $modules[$mid]->getInfo('templates');
-				if ($templates != false) {
-					$msgs[] = 'Generating templates...';
-					foreach ($templates as $tpl) {
-						$tpl['file'] = trim($tpl['file']);
-						$tpldata =& xoops_module_gettemplate($dirname, $tpl['file']);
-						$tplfile =& $tplfile_handler->create();
-						$tplfile->setVar('tpl_refid', $newmid);
-						$tplfile->setVar('tpl_lastimported', 0);
-						$tplfile->setVar('tpl_lastmodified', time());
-						if (preg_match("/\.css$/i", $tpl['file'])) {
-							$tplfile->setVar('tpl_type', 'css');
-						} else {
-							$tplfile->setVar('tpl_type', 'module');
-							//if ($xoopsConfig['default_theme'] == 'default') {
-							//	include_once XOOPS_ROOT_PATH.'/class/template.php';
-							//	xoops_template_touch($tplfile->getVar('tpl_id'));
-							//}
-						}
-						$tplfile->setVar('tpl_source', $tpldata, true);
-						$tplfile->setVar('tpl_module', $dirname);
-						$tplfile->setVar('tpl_tplset', 'default');
-						$tplfile->setVar('tpl_file', $tpl['file'], true);
-						$tplfile->setVar('tpl_desc', $tpl['description'], true);
-						if (!$tplfile_handler->insert($tplfile)) {
-							$msgs[] = '&nbsp;&nbsp;<span style="color:#ff0000;">ERROR: Could not insert template <b>'.$tpl['file'].'</b> to the database.</span>';
-						} else {
-							$msgs[] = '&nbsp;&nbsp;Template <b>'.$tpl['file'].'</b> inserted to the database.';
-						}
-						unset($tpldata);
-					}
-				}
 				$blocks = $modules[$mid]->getInfo('blocks');
 				$msgs[] = 'Rebuilding blocks...';
 				$showfuncs = array();
@@ -768,13 +710,10 @@ case 'updateModules_go':
 							$editfunc = isset($blocks[$i]['edit_func']) ? $blocks[$i]['edit_func'] : '';
 							$showfuncs[] = $blocks[$i]['show_func'];
 							$funcfiles[] = $blocks[$i]['file'];
+							$content = '';
 							$template = '';
-							if ((isset($blocks[$i]['template']) && trim($blocks[$i]['template']) != '')) {
-								$content =& xoops_module_gettemplate($dirname, $blocks[$i]['template'], true);
+							if ( isset($blocks[$i]['template']) && @is_readable( XOOPS_ROOT_PATH . "/modules/$dirname/templates/blocks/" . $blocks[$i]['template'] ) ) {
 								$template = $blocks[$i]['template'];
-							}
-							if (!$content) {
-								$content = '';
 							}
 							$options = '';
 							if (isset($blocks[$i]['options']) && $blocks[$i]['options'] != '') {
@@ -791,30 +730,6 @@ case 'updateModules_go':
 									$msgs[] = '&nbsp;&nbsp;ERROR: Could not update '.$fblock['name'];
 								} else {
 									$msgs[] = '&nbsp;&nbsp;Block <b>'.$fblock['name'].'</b> updated. Block ID: <b>'.$fblock['bid'].'</b>';
-									if ($template != '') {
-										$tplfile =& $tplfile_handler->create();
-										$tplfile->setVar('tpl_refid', $fblock['bid']);
-										$tplfile->setVar('tpl_source', $content, true);
-										$tplfile->setVar('tpl_tplset', 'default');
-										$tplfile->setVar('tpl_file', $blocks[$i]['template']);
-										$tplfile->setVar('tpl_module', $dirname);
-										$tplfile->setVar('tpl_type', 'block');
-										$tplfile->setVar('tpl_desc', $blocks[$i]['description'], true);
-										$tplfile->setVar('tpl_lastimported', 0);
-										$tplfile->setVar('tpl_lastmodified', time());
-										if (!$tplfile_handler->insert($tplfile)) {
-											$msgs[] = '&nbsp;&nbsp;<span style="color:#ff0000;">ERROR: Could not insert template <b>'.$blocks[$i]['template'].'</b> to the database.</span>';
-										} else {
-											$msgs[] = '&nbsp;&nbsp;Template <b>'.$blocks[$i]['template'].'</b> inserted to the database.';
-											//if ($xoopsConfig['default_theme'] == 'default') {
-											//	if (!xoops_template_touch($tplfile[0]->getVar('tpl_id'))) {
-											//		$msgs[] = '&nbsp;&nbsp;<span style="color:#ff0000;">ERROR: Could not recompile template <b>'.$blocks[$i]['template'].'</b>.</span>';
-											//	} else {
-											//		$msgs[] = '&nbsp;&nbsp;Template <b>'.$blocks[$i]['template'].'</b> recompiled.';
-											//	}
-											//}
-										}
-									}
 								}
 							}
 							if ($fcount == 0) {
@@ -827,23 +742,6 @@ case 'updateModules_go':
 								} else {
 									if (empty($newbid)) {
 										$newbid = $xoopsDB->getInsertId();
-									}
-									if ($template != '') {
-										$tplfile =& $tplfile_handler->create();
-										$tplfile->setVar('tpl_module', $dirname);
-										$tplfile->setVar('tpl_refid', $newbid);
-										$tplfile->setVar('tpl_source', $content, true);
-										$tplfile->setVar('tpl_tplset', 'default');
-										$tplfile->setVar('tpl_file', $blocks[$i]['template'], true);
-										$tplfile->setVar('tpl_type', 'block');
-										$tplfile->setVar('tpl_lastimported', 0);
-										$tplfile->setVar('tpl_lastmodified', time());
-										$tplfile->setVar('tpl_desc', $blocks[$i]['description'], true);
-										if (!$tplfile_handler->insert($tplfile)) {
-											$msgs[] = '&nbsp;&nbsp;<span style="color:#ff0000;">ERROR: Could not insert template <b>'.$blocks[$i]['template'].'</b> to the database.</span>';
-										} else {
-											$msgs[] = '&nbsp;&nbsp;Template <b>'.$blocks[$i]['template'].'</b> inserted to the database.';
-										}
 									}
 									$msgs[] = '&nbsp;&nbsp;Block <b>'.$blocks[$i]['name'].'</b> created. Block ID: <b>'.$newbid.'</b>';
 								}

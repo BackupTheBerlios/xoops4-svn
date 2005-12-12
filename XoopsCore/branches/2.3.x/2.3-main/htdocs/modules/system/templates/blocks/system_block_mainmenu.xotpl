@@ -1,0 +1,9 @@
+<ul>
+	<li><a rel="home" href="([xoAppUrl /www/])">([$block.lang_home])</a></li>
+	([foreach item=module from=$block.modules])
+	<li><a href="([$xoops->url("modules/`$module.directory`/") ])">([$module.name])</a></li>
+	([foreach item=sublink from=$module.sublinks])
+	<li class="menuSub"><a href="([$sublink.url])">([$sublink.name])</a></li>
+	([/foreach])
+	([/foreach])
+</ul>

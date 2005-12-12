@@ -74,7 +74,7 @@ $modversion['templates'][12]['file'] = 'system_dummy.html';
 $modversion['templates'][12]['description'] = 'Dummy template file for holding non-template contents. This should not be edited.';
 $modversion['templates'][13]['file'] = 'system_notification_list.html';
 $modversion['templates'][13]['description'] = '';
-$modversion['templates'][14]['file'] = 'system_notification_select.html';
+$modversion['templates'][14]['file'] = 'system_notification_select.xotpl';
 $modversion['templates'][14]['description'] = '';
 $modversion['templates'][15]['file'] = 'system_block_dummy.html';
 $modversion['templates'][15]['description'] = 'Dummy template for custom blocks or blocks without templates';
@@ -84,7 +84,7 @@ $modversion['blocks'][1]['file'] = "system_blocks.php";
 $modversion['blocks'][1]['name'] = _MI_SYSTEM_BNAME2;
 $modversion['blocks'][1]['description'] = "Shows user block";
 $modversion['blocks'][1]['show_func'] = "b_system_user_show";
-$modversion['blocks'][1]['template'] = 'system_block_user.html';
+$modversion['blocks'][1]['template'] = 'system_block_user.xotpl';
 
 $modversion['blocks'][2]['file'] = "system_blocks.php";
 $modversion['blocks'][2]['name'] = _MI_SYSTEM_BNAME3;
@@ -108,7 +108,7 @@ $modversion['blocks'][5]['file'] = "system_blocks.php";
 $modversion['blocks'][5]['name'] = _MI_SYSTEM_BNAME6;
 $modversion['blocks'][5]['description'] = "Shows the main navigation menu of the site";
 $modversion['blocks'][5]['show_func'] = "b_system_main_show";
-$modversion['blocks'][5]['template'] = 'system_block_mainmenu.html';
+$modversion['blocks'][5]['template'] = 'system_block_mainmenu.xotpl';
 
 $modversion['blocks'][6]['file'] = "system_blocks.php";
 $modversion['blocks'][6]['name'] = _MI_SYSTEM_BNAME7;
@@ -162,7 +162,7 @@ $modversion['blocks'][12]['description'] = "Shows theme selection box";
 $modversion['blocks'][12]['show_func'] = "b_system_themes_show";
 $modversion['blocks'][12]['options'] = "0|80";
 $modversion['blocks'][12]['edit_func'] = "b_system_themes_edit";
-$modversion['blocks'][12]['template'] = 'system_block_themes.html';
+$modversion['blocks'][12]['template'] = 'system_block_themes.xotpl';
 
 // Menu
 $modversion['hasMain'] = 0;

@@ -1,0 +1,27 @@
+
+@import url(../default/page-default.css);
+
+
+#xo-canvas-leftcolumn {
+	float:			right;
+}
+
+#xo-canvas-rightcolumn {
+	float:			left;
+	background-image:		url(img/canvas-rightcolumn_bg.png);
+}
+
+#xo-canvas-leftcolumn + #xo-page {
+	margin-left:	0px;
+	margin-right:	176px;
+}
+#xo-canvas-rightcolumn + #xo-page {
+	margin-right:	0px;
+	margin-left:	176px;
+}
+#xo-canvas-leftcolumn + #xo-canvas-rightcolumn + #xo-page {
+	margin-left:	176px;
+	margin-right:	176px;
+}
+
+
