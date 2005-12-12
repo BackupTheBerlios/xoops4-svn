@@ -67,8 +67,9 @@ html, body {
 
 #xo-page {
 	background:		#ffffff;
-	padding:		1em 0px;
+	padding:		0px;
 	border:			1px solid #CCCCCC;
+	min-height:		300px;
 }
 
 #xo-canvas-leftcolumn + #xo-page, #xo-canvas-leftcolumn + * + #xo-page {
