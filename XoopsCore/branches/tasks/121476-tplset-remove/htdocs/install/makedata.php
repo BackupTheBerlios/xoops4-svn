@@ -108,7 +108,7 @@ function make_data(&$dbm, &$cm, $adminname, $adminpass, $adminmail, $language, $
 
     foreach ($modversion['blocks'] as $func_num => $newblock) {
         if ($fp = fopen('../modules/system/templates/blocks/'.$newblock['template'], 'r')) {
-            if (in_array($newblock['template'], array('system_block_user.html', 'system_block_login.html', 'system_block_mainmenu.html'))) {
+            if (in_array($newblock['template'], array('system_block_user.xotpl', 'system_block_login.html', 'system_block_mainmenu.xotpl'))) {
                 $visible = 1;
             } else {
                 $visible = 0;
