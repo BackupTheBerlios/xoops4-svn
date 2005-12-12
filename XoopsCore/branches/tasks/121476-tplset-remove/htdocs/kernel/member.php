@@ -210,7 +210,7 @@ class XoopsMemberHandler{
      */
     function getGroupList($criteria = null)
     {
-        $groups =& $this->_gHandler->getObjects($criteria, true);
+        $groups = $this->_gHandler->getObjects($criteria, true);
         $ret = array();
         foreach (array_keys($groups) as $i) {
             $ret[$i] = $groups[$i]->getVar('name');
@@ -226,7 +226,7 @@ class XoopsMemberHandler{
      */
     function getUserList($criteria = null)
     {
-        $users =& $this->_uHandler->getObjects($criteria, true);
+        $users = $this->_uHandler->getObjects($criteria, true);
         $ret = array();
         foreach (array_keys($users) as $i) {
             $ret[$i] = $users[$i]->getVar('uname');
@@ -280,7 +280,7 @@ class XoopsMemberHandler{
      */
     function getUsersByGroup($group_id, $asobject = false, $limit = 0, $start = 0)
     {
-        $user_ids =& $this->_mHandler->getUsersByGroup($group_id, $limit, $start);
+        $user_ids = $this->_mHandler->getUsersByGroup($group_id, $limit, $start);
         if (!$asobject) {
            return $user_ids;
         } else {
@@ -305,7 +305,7 @@ class XoopsMemberHandler{
      */
     function getGroupsByUser($user_id, $asobject = false)
     {
-        $group_ids =& $this->_mHandler->getGroupsByUser($user_id);
+        $group_ids = $this->_mHandler->getGroupsByUser($user_id);
         if (!$asobject) {
            return $group_ids;
         } else {
@@ -327,7 +327,7 @@ class XoopsMemberHandler{
     {
         $criteria = new CriteriaCompo(new Criteria('uname', $uname));
         $criteria->add(new Criteria('pass', md5($pwd)));
-        $user =& $this->_uHandler->getObjects($criteria, false);
+        $user = $this->_uHandler->getObjects($criteria, false);
         if (!$user || count($user) != 1) {
         	$user = false;
             return $user;
@@ -346,7 +346,7 @@ class XoopsMemberHandler{
     {
         $criteria = new CriteriaCompo(new Criteria('uname', $uname));
         $criteria->add(new Criteria('pass', $md5pwd));
-        $user =& $this->_uHandler->getObjects($criteria, false);
+        $user = $this->_uHandler->getObjects($criteria, false);
         if (!$user || count($user) != 1) {
         	$user = false;
             return $user;

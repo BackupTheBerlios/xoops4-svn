@@ -496,7 +496,7 @@ class XoopsModuleHandler extends XoopsObjectHandler
             return $ret;
         }
         while ($myrow = $this->db->fetchArray($result)) {
-            $module = new XoopsModule();
+            $module =& new XoopsModule();
             $module->assignVars($myrow);
             if (!$id_as_key) {
                 $ret[] =& $module;
@@ -520,7 +520,7 @@ class XoopsModuleHandler extends XoopsObjectHandler
         if (isset($criteria) && is_subclass_of($criteria, 'criteriaelement')) {
             $sql .= ' '.$criteria->renderWhere();
         }
-        if (!$result =& $this->db->query($sql)) {
+        if (!$result = $this->db->query($sql)) {
             return 0;
         }
         list($count) = $this->db->fetchRow($result);
@@ -539,12 +539,12 @@ class XoopsModuleHandler extends XoopsObjectHandler
     function getList($criteria = null, $dirname_as_key = false)
     {
         $ret = array();
-        $modules =& $this->getObjects($criteria, true);
+        $modules = $this->getObjects($criteria, true);
         foreach (array_keys($modules) as $i) {
             if (!$dirname_as_key) {
-                $ret[$i] =& $modules[$i]->getVar('name');
+                $ret[$i] = $modules[$i]->getVar('name');
             } else {
-                $ret[$modules[$i]->getVar('dirname')] =& $modules[$i]->getVar('name');
+                $ret[$modules[$i]->getVar('dirname')] = $modules[$i]->getVar('name');
             }
         }
         return $ret;
