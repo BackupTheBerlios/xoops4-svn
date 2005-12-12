@@ -46,8 +46,8 @@ if ( !is_object($xoopsUser) || !is_object($xoopsModule) || !$xoopsUser->isAdmin(
         $confcat_id = intval($_GET['confcat_id']);
     }
     if ($op == 'list') {
-        $confcat_handler =& xoops_gethandler('configcategory');
-        $confcats =& $confcat_handler->getObjects();
+        $confcat_handler = xoops_gethandler('configcategory');
+        $confcats = $confcat_handler->getObjects();
         $catcount = count($confcats);
         xoops_cp_header();
         echo '<h4 style="text-align:left">'._MD_AM_SITEPREF.'</h4><ul>';
@@ -75,7 +75,7 @@ if ( !is_object($xoopsUser) || !is_object($xoopsModule) || !$xoopsUser->isAdmin(
         $criteria = new CriteriaCompo();
         $criteria->add(new Criteria('conf_modid', 0));
         $criteria->add(new Criteria('conf_catid', $confcat_id));
-        $config =& $config_handler->getConfigs($criteria);
+        $config = $config_handler->getConfigs($criteria);
         $confcount = count($config);
         for ($i = 0; $i < $confcount; $i++) {
             $title = (!defined($config[$i]->getVar('conf_desc')) || constant($config[$i]->getVar('conf_desc')) == '') ? constant($config[$i]->getVar('conf_title')) : constant($config[$i]->getVar('conf_title')).'<br /><br /><span style="font-weight:normal;">'.constant($config[$i]->getVar('conf_desc')).'</span>';
@@ -91,7 +91,7 @@ if ( !is_object($xoopsUser) || !is_object($xoopsModule) || !$xoopsUser->isAdmin(
                 break;
             case 'select':
                 $ele = new XoopsFormSelect($title, $config[$i]->getVar('conf_name'), $config[$i]->getConfValueForOutput());
-                $options =& $config_handler->getConfigOptions(new Criteria('conf_id', $config[$i]->getVar('conf_id')));
+                $options = $config_handler->getConfigOptions(new Criteria('conf_id', $config[$i]->getVar('conf_id')));
                 $opcount = count($options);
                 for ($j = 0; $j < $opcount; $j++) {
                     $optval = defined($options[$j]->getVar('confop_value')) ? constant($options[$j]->getVar('confop_value')) : $options[$j]->getVar('confop_value');
@@ -101,7 +101,7 @@ if ( !is_object($xoopsUser) || !is_object($xoopsModule) || !$xoopsUser->isAdmin(
                 break;
             case 'select_multi':
                 $ele = new XoopsFormSelect($title, $config[$i]->getVar('conf_name'), $config[$i]->getConfValueForOutput(), 5, true);
-                $options =& $config_handler->getConfigOptions(new Criteria('conf_id', $config[$i]->getVar('conf_id')));
+                $options = $config_handler->getConfigOptions(new Criteria('conf_id', $config[$i]->getVar('conf_id')));
                 $opcount = count($options);
                 for ($j = 0; $j < $opcount; $j++) {
                     $optval = defined($options[$j]->getVar('confop_value')) ? constant($options[$j]->getVar('confop_value')) : $options[$j]->getVar('confop_value');
@@ -139,7 +139,7 @@ if ( !is_object($xoopsUser) || !is_object($xoopsModule) || !$xoopsUser->isAdmin(
             case 'tplset':
                 $ele = new XoopsFormSelect($title, $config[$i]->getVar('conf_name'), $config[$i]->getConfValueForOutput());
                 $tplset_handler =& xoops_gethandler('tplset');
-                $tplsetlist =& $tplset_handler->getList();
+                $tplsetlist = $tplset_handler->getList();
                 asort($tplsetlist);
                 foreach ($tplsetlist as $key => $name) {
                     $ele->addOption($key, $name);
@@ -158,7 +158,7 @@ if ( !is_object($xoopsUser) || !is_object($xoopsModule) || !$xoopsUser->isAdmin(
                 $module_handler =& xoops_gethandler('module');
                 $criteria = new CriteriaCompo(new Criteria('hasmain', 1));
                 $criteria->add(new Criteria('isactive', 1));
-                $moduleslist =& $module_handler->getList($criteria, true);
+                $moduleslist = $module_handler->getList($criteria, true);
                 $moduleslist['--'] = _MD_AM_NONE;
                 $ele->addOptionArray($moduleslist);
                 break;
@@ -177,7 +177,7 @@ if ( !is_object($xoopsUser) || !is_object($xoopsModule) || !$xoopsUser->isAdmin(
                 break;
             case 'module_cache':
                 $module_handler =& xoops_gethandler('module');
-                $modules =& $module_handler->getObjects(new Criteria('hasmain', 1), true);
+                $modules = $module_handler->getObjects(new Criteria('hasmain', 1), true);
                 $currrent_val = $config[$i]->getConfValueForOutput();
                 $cache_options = array('0' => _NOCACHE, '30' => sprintf(_SECONDS, 30), '60' => _MINUTE, '300' => sprintf(_MINUTES, 5), '1800' => sprintf(_MINUTES, 30), '3600' => _HOUR, '18000' => sprintf(_HOURS, 5), '86400' => _DAY, '259200' => sprintf(_DAYS, 3), '604800' => _WEEK);
                 if (count($modules) > 0) {
@@ -229,7 +229,7 @@ if ( !is_object($xoopsUser) || !is_object($xoopsModule) || !$xoopsUser->isAdmin(
             header('Location: admin.php?fct=preferences');
             exit();
         }
-        $config =& $config_handler->getConfigs(new Criteria('conf_modid', $mod));
+        $config = $config_handler->getConfigs(new Criteria('conf_modid', $mod));
         $count = count($config);
         if ($count < 1) {
             redirect_header('admin.php?fct=preferences', 1);
