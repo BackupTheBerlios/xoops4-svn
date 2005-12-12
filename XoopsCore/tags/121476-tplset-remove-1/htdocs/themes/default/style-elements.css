@@ -1,0 +1,135 @@
+
+table {
+	border-collapse:	collapse;
+}
+img {
+	border-style:		none;
+}
+a {
+	text-decoration:	none;
+}
+a:hover {
+	text-decoration:	underline;
+}
+
+
+/* Web resources lists */
+
+.xo-mentas-list .xo-menta {
+	margin:				.5em 0px;
+	border:				1px solid #98ABCA;
+	-moz-border-radius:	5px;
+}
+
+.xo-mentas-list .xo-menta .xo-head {
+	border-bottom:		1px solid #98ABCA;
+	padding:			1px .5em;
+	background:			#E3EEF5;
+	color:				#000000;
+}
+
+.xo-mentas-list .xo-menta .xo-body {
+	padding:			.5em;
+}
+
+.xo-mentas-list .xo-menta .xo-foot {
+	padding:			1px .5em;
+	text-align:			right;
+}
+
+
+
+table.xo-form {
+	width:					100%;
+	border-collapse:		collapse;
+	border:					1px outset #cacbd0;
+	text-align:				left;
+}
+
+table.xo-form tbody tr {
+	vertical-align:			top;
+	background:				#eef0f4;
+}
+
+table.xo-form tfoot tr {
+	text-align:				right;
+	background:				#e6eaee;
+}
+
+table.xo-form tbody th {
+	text-align:				center;
+}
+
+
+thead td, thead th {
+	background:			#e5e6ec url(img/thead_bg.png) repeat-x left bottom;
+	border:				1px solid #cacbd0;
+	border-top-color:	#e9eaef;
+	border-left-color:	#e9eaef;
+	padding:			1px 0px 1px 1em;
+}
+
+table.xo-form tfoot {
+	border-top:			1px solid #dddddd;
+	text-align:			center;
+}
+table.xo-form tfoot td, table.xo-form tfoot th {
+	padding:			3px 4px;
+}
+
+
+table.xo-form tfoot button {
+	border:				1px solid #CCCCCC;
+	
+	color:				#405A80;
+	background:			#f7f7f7;
+	font-size:			80%;
+	font-weight:		bold;
+	background:			#d9d9d9 url(img/button_bg.png) repeat-x left top;
+	padding:			1px 3px;
+}	
+table.xo-form tfoot button:hover {
+	color:				#eeeeee;
+}
+
+
+/* ----------- old XOOPS 2.0 crappy mark-up rules ----------- */
+td.head {
+	background:			#EEEEEE;
+}
+table.outer th {
+	background:			#e5e6ec url(img/thead_bg.png) repeat-x left bottom;
+}
+
+
+.itemHead {
+	margin:				2px;
+	border:				1px solid #E0E2F2;
+	background:			#EFF1FB;
+	font-size:			105%;
+	font-weight:		bold;
+	color:				#000000;
+	padding:			3px 2px;
+}
+
+.itemHead a {
+	color:				#000000;
+	text-decoration:	none;
+}
+.itemHead a:hover {
+	text-decoration:	underline;
+}
+
+.item {
+	width:				100%;
+	border:				1px solid #999999;
+}
+
+.itemFoot {
+	background:			#f5f5f5;
+	border-top:			#e5e5e5;
+	padding:			3px 2px;
+}
+
+
+

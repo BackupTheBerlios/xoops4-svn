@@ -1,0 +1,138 @@
+
+/* --------- Rules for canvas blocks --------- */
+.xo-canvas-column ul {
+	margin:				0px;
+	padding:			0px;
+	list-style-type:	none;
+}
+
+.xo-canvas-column a {
+	display:			block;
+	padding:			1px .3em;
+	text-decoration:	none;
+	font:				80%;
+	color:				#CCCCCC;
+}
+.xo-canvas-column a:hover {
+	color:				#FFFFFF;
+}
+.xo-canvas-column .menuSub a {
+	padding-left:		1em;
+}
+
+
+
+#xo-canvas-leftcolumn .xo-blocktitle {
+	background:		url(img/canvas-blocktitle_bg_grey.png) repeat-x left top;
+	color:			#ffffff;
+	border-bottom:	1px solid #666666;
+	padding:		.2em .5em;
+	font-weight:	bold;
+	text-shadow:	1px 1px #000000;
+}
+
+#xo-canvas-leftcolumn .xo-blockcontent {
+	background:		#999999 url(img/canvas-blockcontent_bg_grey.png) repeat-x left top;
+}
+
+#xo-canvas-rightcolumn .xo-block {
+	padding:		8px 0px;
+	background:		url(img/separator.png) no-repeat center bottom;
+}
+#xo-canvas-rightcolumn :last-child {
+	background:		transparent none;
+}
+
+#xo-canvas-rightcolumn .xo-blocktitle {
+	font-weight:	bold;
+}
+#xo-canvas-rightcolumn .xo-blockcontent {
+	font-size:		90%;
+}
+
+#xo-canvas-leftcolumn a:hover {
+	color:				#EEEEEE;
+	background:			#555555;
+}
+
+#xo-canvas-rightcolumn a {
+	color:				#666666;
+}
+#xo-canvas-rightcolumn a:hover {
+	color:				#333333;
+	text-decoration:	underline;
+}
+
+/* --------- Rules for page blocks --------- */
+
+#xo-content .xo-block {
+	padding:		4px;
+}
+
+#xo-content .xo-blocktitle {
+	background:		#ecedef;
+	text-align:		left;
+	font-weight:	bold;
+	font-size:		90%;
+	padding:		3px 1em 3px 32px;
+	-moz-border-radius:	5px;
+}
+
+#xo-content .xo-blockcontent {
+	border:			1px solid #CCC;
+	border-top:		0px none #000;
+	margin:			0px 7px;
+	padding:		.5em;
+}
+
+.xo-expand-switch {
+	width:				1em;
+	height:				1em;
+	float:				left;
+	border:				1px solid #000000;
+	text-align:			center;
+	color:				#000000;
+	cursor:				default;
+	font:				10px monospace;
+	padding-top:		1px;
+	margin-right:		6px;
+}
+
+
+/* --------- Rules for specific blocks --------- */
+
+
+#xo-canvas-leftcolumn .system-main_menu .xo-blocktitle {
+	background:		url(img/canvas-blocktitle_bg_blue.png) repeat-x left top;
+}
+
+#xo-canvas-leftcolumn .system-main_menu .xo-blockcontent {
+	background:		#5E77D4 url(img/canvas-blockcontent_bg_blue.png) repeat-x left top;
+}
+
+#xo-canvas-leftcolumn .system-main_menu  a {
+	color:				#B6C6EC;
+}
+#xo-canvas-leftcolumn .system-main_menu  a:hover {
+	background:			#2044A0;
+}
+
+
+
+.system-themes .xo-blockcontent {
+	padding:			.5em;
+	text-align:			center;
+}
+
+#xo-content .system-notification_select .xo-blocktitle {
+	background-image:		url(icons/notify.png);
+	background-repeat:		no-repeat;
+	background-position: 	8px center;
+}
+
+#xo-content .system-notification_select .xo-blockcontent {
+	text-align:				right;
+}
+
+
+

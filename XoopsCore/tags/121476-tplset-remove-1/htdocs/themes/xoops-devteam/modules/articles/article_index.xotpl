@@ -1,0 +1,50 @@
+([*
+articles
+    topic
+        article
+        article
+    /topic
+/articles
+*])
+
+<h3>([$category_list_title])</h3>
+
+([foreach from=$categories item=category])
+<div class="xo-block xo-mentas-list articles-topic-items">
+	<div class="xo-blocktitle">
+		<a href="index.php?cat_id=([$category.id])" title="([$category.cat_description])">
+			([$category.cat_name]) (([$category.number_articles]) ([$number_articles_caption]))
+		</a>
+	</div>
+	<div class="xo-blockcontent">
+	([foreach from=$category.articles item=article])
+		<div class="xo-menta articles-article">
+			<div class="xo-head">
+	            <a class="title" href="article.php?id=([$article.id])">([$article.title])</a>
+			</div>
+			<div class="xo-body description">
+				([$article.article_description])
+			</div>
+			<div class="xo-foot">
+            ([if $index_reads eq 1])
+              [([$article.article_views]) ([$article_views_caption])]
+            ([/if])
+			</div>
+		</div>
+	([/foreach])
+	</div>
+</div>
+([/foreach])
+
+([if $show_pagin eq 1])
+<div class="pager-widget">
+	([$articles_num]) ([$articles_numstart]) ([$articles_to]) ([$articles_numend]) ([$articles_of]) ([$articles_numtotal])
+	([$articles_prev]) ([$articles_sep]) ([$articles_next])
+</div>
+([/if])
+
+<!-- notification -->
+([include file='db:system_notification_select.html'])
+<!--  end notification -->
+
+
