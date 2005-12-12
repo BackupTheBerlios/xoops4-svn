@@ -18,6 +18,7 @@
 	</tr>
 	</thead>			
 	<tbody>
+	([assign var=index value=0])
 	([foreach name=outer item=category from=$xoops_notification.categories])
 	([foreach name=inner item=event from=$category.events])
 	<tr>
@@ -30,6 +31,7 @@
 			<input type="checkbox" name="not_list[([$index])][status]" value="1" ([if $event.subscribed])checked="checked"([/if]) />			
 		</td>
 	</tr>
+	([assign var=index value=$index+1])
 	([/foreach])
 	([/foreach])
 	</tbody>
