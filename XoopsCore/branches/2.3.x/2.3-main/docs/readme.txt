@@ -28,9 +28,5 @@ v1:
 ([include file='xotpl:my_component#rel/path/to/file.xotpl']) get the 'path/to/file.xotpl' template of the 'my_component' object (it's a components-based system, so objects can own templates now)
 v2: (not recommended, but the only way to include modules tpls right now)
 ([include file='xotpl:modules/stuff/tplname.xotpl'])
-
-
-
-
-
-
+6) Only the code part has been taken care of. All the CSS rules for old markup have not been put back in the default theme (which will make most of the actual modules look strange). Now if you want to clean up the old messy CSS file to do that and contribute your work, you're welcome.
+7) The default theme is not MSIE 5.5/6 compat yet.
