@@ -5,13 +5,15 @@ YYYY/MM/DD: Version 2.3.0-alpha1
 ============================
 - Updated Smarty to 2.6.10 (skalpa)
 - Updated Snoopy to 1.2.3 (skalpa)
-
-
-
-
-
-
-
+- Fixed module instanciation code URI rewriting compatibility (skalpa)
+- Fixed several references related notices [not all, it's gonna take centuries] (skalpa)
+- Added the 1st draft of the Exxos components system (skalpa)
+- Started to refactor the boot sequence, adding the new kernel (skalpa)
+- Completely refactored the theme / templates layers (skalpa)
+- Started the new XHTML compliant default theme (skalpa)
+- Added the devteam.xoops.org theme to showcase inheritance (skalpa)
+- Renamed the old crappy default theme to 'xoops20' (skalpa)
+- Moved the 2.0.x system templates to the xoops20 theme for old themes BC (skalpa)
 
 ============================
 2005/10/28: Version 2.0.13.2
