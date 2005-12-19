@@ -186,6 +186,11 @@ if ($op == 'install') {
 if ($op == 'install_ok') {
     $ret = array();
     $ret[] = xoops_module_install($module);
+
+	// Clear the db: resource handler cache
+    global $xoops;
+    @unlink( $xoops->path( 'var/Caches/xoops_template_Smarty/dbhandler-list.php' ) );
+    
     $contents = xoops_module_get_admin_menu();
     if (!xoops_module_write_admin_menu($contents)) {
         $ret[] = "<p>"._MD_AM_FAILWRITE."</p>";
@@ -219,6 +224,11 @@ if ($op == 'uninstall') {
 if ($op == 'uninstall_ok') {
     $ret = array();
     $ret[] = xoops_module_uninstall($module);
+
+    // Clear the db: resource handler cache
+    global $xoops;
+    @unlink( $xoops->path( 'var/Caches/xoops_template_Smarty/dbhandler-list.php' ) );
+    
     $contents = xoops_module_get_admin_menu();
     if (!xoops_module_write_admin_menu($contents)) {
         $ret[] = "<p>"._MD_AM_FAILWRITE."</p>";
@@ -271,6 +281,10 @@ if ($op == 'update_ok') {
         $msgs[] = 'Module data updated.';
         $msgs[] = '@TODO-2.3: Delete cached output from the templates cache on module ins/upd/uninst... :-)';
 
+		// Clear the db: resource handler cache
+	    global $xoops;
+	    @unlink( $xoops->path( 'var/Caches/xoops_template_Smarty/dbhandler-list.php' ) );
+      
         $contents = xoops_module_get_admin_menu();
         if (!xoops_module_write_admin_menu($contents)) {
             $msgs[] = '<p><span style="color:#ff0000;">'._MD_AM_FAILWRITE.'</span></p>';
