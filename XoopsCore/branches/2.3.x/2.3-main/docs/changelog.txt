@@ -14,6 +14,10 @@ YYYY/MM/DD: Version 2.3.0-alpha1
 - Added the devteam.xoops.org theme to showcase inheritance (skalpa)
 - Renamed the old crappy default theme to 'xoops20' (skalpa)
 - Moved the 2.0.x system templates to the xoops20 theme for old themes BC (skalpa)
+- Re-added the XoopsPersistableObjectHandler from 2.2.x (skalpa)
+
+
+
 
 ============================
 2005/10/28: Version 2.0.13.2
