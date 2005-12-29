@@ -1,20 +1,13 @@
 <?php
 /**
- * Smarty plugin
+ * Smarty xotpl resource handler
  * 
- * Kept for XOOPS 2.0 backward compatibility only !!!
+ * The xotpl resource handler is integrated with the core theming layer.
+ * It may be very resource inten
  * 
- * Use the new xotpl: handler to access XOOPS templates
+ * 
  * ------------------------------------------------------------- 
- * File:     resource.db.php
- * Type:     resource
- * Name:     db
- * Purpose:  Fetches templates from a database
- * -------------------------------------------------------------
- * @package xoops20
- * @deprecated
  */
-
 function smarty_resource_xotpl_source($tpl_name, &$tpl_source, &$smarty) {
 
 	if ( $tplPath = smarty_resource_xotpl_getpath( $tpl_name, $smarty ) ) {
@@ -47,29 +40,36 @@ function smarty_resource_xotpl_trusted($tpl_name, &$smarty) {
 function smarty_resource_xotpl_getpath( $tplName, &$smarty ) {
 	global $xoops;
 	
+	$realpath = '';
+	$name = str_replace( 'templates/', '', $tplName );
+	$pos = strrpos( $name, '.' );
+	$basename = substr( $name, 0, $pos );
+	$ext = substr( $name, $pos + 1 );
+
 	if ( $smarty->currentTheme ) {
-		$name = str_replace( '/templates/', '/', $tplName );
-		$themed = $smarty->currentTheme->resourcePath( $name );
+		// Look for an .xotpl version of the template first, then try with .html
+		// this allows modules devs to provide both 2.0.x and 2.3.x templates
+		// and ensure the correct one is used by 2.3+
+		$themed = $smarty->currentTheme->resourcePath( "$basename.xotpl" );
 		if ( substr( $themed, 0, 7 ) == 'themes/' ) {
-			$tplName = $themed;
+			$realpath = $themed;
 		} else {
-			if ( false !== ( $pos = strrpos( $tplName, '.' ) ) ) {
-				$name = substr( $tplName, 0, $pos );
-				$ext = substr( $tplName, $pos );
-				$name = ( $ext == '.xotpl' ) ? "$name.html" : "$name.xotpl";
-				$name = str_replace( '/templates/', '/', $name );
-				// If the template is not in the theme folder,
-				// check if it's not here, but with a different extension
-				$themed = $smarty->currentTheme->resourcePath( $name );
-				if ( substr( $themed, 0, 7 ) == 'themes/' ) {
-					$tplName = $themed;
-				}
+			$themed = $smarty->currentTheme->resourcePath( "$basename.html" );
+			if ( substr( $themed, 0, 7 ) == 'themes/' ) {
+				$realpath = $themed;
 			}
 		}
 	}
-	//echo $xoops->path( $tplName ) . "<br />\n";
-	return $xoops->path( $tplName );
 
+	if ( empty( $realpath ) ) {
+		$realpath = substr( $tplName, 0, $pos + 10 );
+		if ( file_exists( $xoops->path( "$realpath.xotpl" ) ) ) {
+			$realpath .=  '.xotpl';
+		} else {
+			$realpath .= '.html';
+		}
+	}
+	return $xoops->path( $realpath );
 }
 
 
