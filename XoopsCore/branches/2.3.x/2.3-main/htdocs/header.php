@@ -92,13 +92,6 @@ if (!defined("XOOPS_ROOT_PATH")) {
         $xoopsTpl->assign('xoops_pagetitle', htmlspecialchars($xoopsConfig['slogan'], ENT_QUOTES));
         $xoopsTpl->assign('xoops_dirname', "system");
     }
-
-    /////////
-    $builder =& XOS::create( 'xoops_logos_PageBuilder' );
-    $builder->retrieveBlocks();
-    
-    $builder->assignVars( $xoops->services['theme']->template );
-    
 	
     if (xoops_getenv('REQUEST_METHOD') != 'POST' && !empty($xoopsModule) && !empty($xoopsConfig['module_cache'][$xoopsModule->getVar('mid')])) {
         $xoopsTpl->xoops_setCaching(2);

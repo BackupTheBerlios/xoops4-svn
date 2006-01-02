@@ -27,8 +27,33 @@ include_once XOOPS_ROOT_PATH . '/class/xoopsblock.php';
  */
 class xoops_logos_PageBuilder {
 	
+	var $theme = false;
+	
 	var $blocks = array();	
 
+	function xoInit( $options = array() ) {
+	    if ( $this->theme ) {
+		    $this->retrieveBlocks();
+			$this->theme->template->assign( 'xoBlocks', $this->blocks );
+	    }
+	    return true;
+	}
+	
+	/**
+	 * Called before a specific zone is rendered
+	 */
+	function preRender() {
+		
+	}
+	/**
+	 * Called after a specific zone is rendered
+	 */
+	function postRender() {
+		
+	}	
+	
+	
+	
 	function retrieveBlocks() {
 		global $xoopsUser, $xoopsModule, $xoopsConfig;
 		
@@ -71,14 +96,14 @@ class xoops_logos_PageBuilder {
 			'lastmod'	=> $xobject->getVar( 'last_modified' ),
 		);
 
-		global $xoopsTpl, $xoopsLogger;
+		global $xoopsLogger;
 		
 		$bcachetime = intval( $xobject->getVar('bcachetime') );
         if (empty($bcachetime)) {
-            $xoopsTpl->caching = 0;
+            $this->theme->template->caching = 0;
         } else {
-            $xoopsTpl->caching = 2;
-            $xoopsTpl->cache_lifetime = $bcachetime;
+            $this->theme->template->caching = 2;
+            $this->theme->template->cache_lifetime = $bcachetime;
         }
 		if ( '' != ( $tplName = $xobject->getVar('template') ) ) {
 			$tplName = "xotpl:modules/{$block['module']}/templates/blocks/$tplName";
@@ -92,18 +117,14 @@ class xoops_logos_PageBuilder {
             if ( ! ( $bresult = $xobject->buildBlock() ) ) {
                 return false;
             }
-			$xoopsTpl->assign( 'block', $bresult );
-            $block['content'] = $xoopsTpl->fetch( $tplName, $cacheid );
-            $xoopsTpl->clear_assign('block');
+			$this->theme->template->assign( 'block', $bresult );
+            $block['content'] = $this->theme->template->fetch( $tplName, $cacheid );
+            $this->theme->template->clear_assign('block');
         } else {
             $xoopsLogger->addBlock( $xobject->getVar('name'), true, $bcachetime );
-            $block['content'] = $xoopsTpl->fetch( $tplName, $cacheid );
+            $block['content'] = $this->theme->template->fetch( $tplName, $cacheid );
         }
         return $block;
-	}
-	
-	function assignVars( &$template ) {
-		$template->assign( 'xoBlocks', $this->blocks );
 	}
 	
 	
