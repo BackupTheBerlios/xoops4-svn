@@ -49,7 +49,11 @@ if ( defined( 'XOOPS_FOOTER_INCLUDED' ) )	return;
 	global $xoops;
 	if ( !$xoops->services['theme']->renderCount ) {
 		if ( isset( $xoopsOption['template_main'] ) ) {
-			$xoops->services['theme']->contentTemplate = 'db:' . $xoopsOption['template_main'];
+			if ( strpos( $xoopsOption['template_main'], ':' ) === false ) {
+				$xoops->services['theme']->contentTemplate = 'db:' . $xoopsOption['template_main'];
+			} else {
+				$xoops->services['theme']->contentTemplate = $xoopsOption['template_main'];
+			}
 		}
 		$xoops->services['theme']->template->assign( $xoopsTpl->_tpl_vars );
 		$xoops->services['theme']->render();
