@@ -102,6 +102,16 @@ function xoops_template_touch($tpl_id, $clear_old = true) {
  * @return 
  **/
 function xoops_template_clear_module_cache($mid) {
-	trigger_error( "Function removed", E_USER_ERROR );
+	$block_arr =& XoopsBlock::getByModule($mid);
+	$count = count($block_arr);
+	if ($count > 0) {
+		$xoopsTpl = new XoopsTpl();	
+		$xoopsTpl->xoops_setCaching(2);
+		for ($i = 0; $i < $count; $i++) {
+			if ($block_arr[$i]->getVar('template') != '') {
+				$xoopsTpl->clear_cache('db:'.$block_arr[$i]->getVar('template'), 'blk_'.$block_arr[$i]->getVar('bid'));
+			}
+		}
+	}
 }
 ?>
