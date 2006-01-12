@@ -10,6 +10,10 @@
 
 	<link rel="stylesheet" type="text/css" media="screen" href="([xoImgUrl page-default.css])" />
 
+<!--[if lte IE 6]>
+	<link rel="stylesheet" type="text/css" media="screen" href="([xoImgUrl msie.css])" />
+<![endif]-->
+
 	
 	<title>([$xoops_sitename]) - ([$xoops_pagetitle])</title>
 
@@ -18,7 +22,15 @@
 </head>
 <body>
 
-<div id="xo-canvas">
+([if $xoBlocks.canvas_left and $xoBlocks.canvas_right])
+	([assign var=canvas_class value="xo-with_both"])
+([elseif $xoBlocks.canvas_left])
+	([assign var=canvas_class value="xo-with_left"])
+([elseif $xoBlocks.canvas_right])
+	([assign var=canvas_class value="xo-with_right"])
+([/if])
+
+<div id="xo-canvas"([if $canvas_class]) class="([$canvas_class])"([/if])>
 	<div id="xo-canvas-header">
 		<div id="xo-banner">
 			<div id="xo-banner-logo">
