@@ -16,6 +16,7 @@
 if ( !defined( 'XOOPS_PATH' ) )	exit();
 
 include_once XOOPS_ROOT_PATH . '/class/xoopsblock.php';
+include_once XOOPS_ROOT_PATH . '/class/template.php';
 
 /**
  * xoops_logos_PageBuilder main class
@@ -99,11 +100,12 @@ class xoops_logos_PageBuilder {
 		global $xoopsLogger;
 		
 		$bcachetime = intval( $xobject->getVar('bcachetime') );
+		$template =& new XoopsTpl();
         if (empty($bcachetime)) {
-            $this->theme->template->caching = 0;
+            $template->caching = 0;
         } else {
-            $this->theme->template->caching = 2;
-            $this->theme->template->cache_lifetime = $bcachetime;
+            $template->caching = 2;
+            $template->cache_lifetime = $bcachetime;
         }
 		if ( '' != ( $tplName = $xobject->getVar('template') ) ) {
 			$tplName = "xotpl:modules/{$block['module']}/templates/blocks/$tplName";
@@ -117,12 +119,11 @@ class xoops_logos_PageBuilder {
             if ( ! ( $bresult = $xobject->buildBlock() ) ) {
                 return false;
             }
-			$this->theme->template->assign( 'block', $bresult );
-            $block['content'] = $this->theme->template->fetch( $tplName, $cacheid );
-            $this->theme->template->clear_assign('block');
+			$template->assign( 'block', $bresult );
+            $block['content'] = $template->fetch( $tplName, $cacheid );
         } else {
             $xoopsLogger->addBlock( $xobject->getVar('name'), true, $bcachetime );
-            $block['content'] = $this->theme->template->fetch( $tplName, $cacheid );
+            $block['content'] = $template->fetch( $tplName, $cacheid );
         }
         return $block;
 	}
