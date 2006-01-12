@@ -8,7 +8,6 @@
 
 #xo-canvas-rightcolumn {
 	float:			left;
-	background-image:		url(img/canvas-rightcolumn_bg.png);
 }
 
 #xo-canvas-leftcolumn + #xo-page {
