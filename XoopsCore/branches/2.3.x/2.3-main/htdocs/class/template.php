@@ -29,18 +29,20 @@ XOS::import( 'xoops_template_Smarty' );
 class XoopsTpl extends xoops_template_Smarty {
 
 	function XoopsTpl() {
-		global $xoopsConfig;
+		global $xoopsConfig, $xoopsUser;
 
 		$this->xoops_template_Smarty();
 		$this->assign( array(
 			'xoops_url' => XOOPS_URL,
-			'xoops_rootpath' => XOOPS_ROOT_PATH,
-			'xoops_langcode' => _LANGCODE,
-			'xoops_charset' => _CHARSET,
-			'xoops_version' => XOOPS_VERSION,
-			'xoops_upload_url' => XOOPS_UPLOAD_URL
+			'xoops_rootpath'	=> XOOPS_ROOT_PATH,
+			'xoops_langcode'	=> _LANGCODE,
+			'xoops_charset'		=> _CHARSET,
+			'xoops_version'		=> XOOPS_VERSION,
+			'xoops_upload_url'	=> XOOPS_UPLOAD_URL,
 		) );
-
+		if ( $xoopsUser ) {
+			$this->assign( 'xoops_isadmin', $xoopsUser->isAdmin() );
+		}
 	}
 
 	function xoops_setTemplateDir($dirname) {
