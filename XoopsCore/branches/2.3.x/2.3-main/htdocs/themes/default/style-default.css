@@ -1,6 +1,6 @@
 
-@import url(style-blocks.css);
-@import url(style-elements.css);
+@import url(blocks.css);
+@import url(elements.css);
 
 
 html, body {
