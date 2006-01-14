@@ -27,7 +27,7 @@
 class xoops_kernel_Xoops2 {
 	var $xoBundleIdentifier		= 'xoops_kernel_Xoops2';
 	var $xoRunMode				= XO_MODE_PROD;
-	var $xoShortVersionString	= 'XOOPS 2.3.0-dev "Cheerleaders"';
+	var $xoShortVersionString	= 'XOOPS 2.3.0-alpha1 "Cheerleaders"';
 
 	var $xoBundleRoot = 'XOOPS/Frameworks/XoopsCore/Foundation/Kernel.xofrm';
 	
