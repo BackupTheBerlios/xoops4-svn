@@ -17,6 +17,11 @@
 		<th scope="col"><input type="checkbox" onclick="xoopsCheckAll(this.form,this);" /></th>
 	</tr>
 	</thead>			
+	<tfoot>
+	<tr>
+		<td colspan="3"><button type="submit">([$lang_updatenow])</button></td>
+	</tr>
+	</tfoot>
 	<tbody>
 	([assign var=index value=0])
 	([foreach name=outer item=category from=$xoops_notification.categories])
@@ -35,11 +40,6 @@
 	([/foreach])
 	([/foreach])
 	</tbody>
-	<tfoot>
-	<tr>
-		<td colspan="3"><button type="submit">([$lang_updatenow])</button></td>
-	</tr>
-	</tfoot>
 	</table>
 	</form>
 	([$lang_notificationmethodis]):
