@@ -100,7 +100,7 @@ class xoops_template_Smarty extends Smarty {
 	 */
     function filterOldTemplates( $data, &$compiler ) {
     	$file = ( substr( $compiler->_current_file, 0, 6 ) == 'xotpl:' ) ? $compiler->template_engine->realTemplatePath : $compiler->_current_file;
-		if ( substr( $file, -5 ) == '.html' ) {
+		if ( substr( $file, -6 ) != '.xotpl' ) {
 			$data = str_replace( array( '<{', '}>' ), array( '([', '])' ), $data );
 		}
     	return $data;
