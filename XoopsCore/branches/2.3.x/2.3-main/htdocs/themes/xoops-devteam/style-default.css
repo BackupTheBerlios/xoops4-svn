@@ -1,5 +1,5 @@
 
-@import url(../default/page-default.css);
+@import url(../default/style-default.css);
 
 
 #xo-canvas-leftcolumn {
@@ -10,15 +10,17 @@
 	float:			left;
 }
 
-#xo-canvas-leftcolumn + #xo-page {
+#xo-canvas.xo-with_left #xo-page {
 	margin-left:	0px;
 	margin-right:	176px;
 }
-#xo-canvas-rightcolumn + #xo-page {
+
+#xo-canvas.xo-with_right #xo-page {
 	margin-right:	0px;
 	margin-left:	176px;
 }
-#xo-canvas-leftcolumn + #xo-canvas-rightcolumn + #xo-page {
+
+#xo-canvas.xo-with_both #xo-page {
 	margin-left:	176px;
 	margin-right:	176px;
 }
