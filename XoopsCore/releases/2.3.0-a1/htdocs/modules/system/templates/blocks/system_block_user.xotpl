@@ -1,0 +1,14 @@
+<ul>
+	<li><a href="([xoAppUrl /www/user.php])">([$block.lang_youraccount])</a></li>
+	<li><a href="([xoAppUrl /www/edituser.php])">([$block.lang_editaccount])</a></li>
+	<li><a href="([xoAppUrl /www/notifications.php])">([$block.lang_notifications])</a></li>
+	<li><a href="([xoAppUrl /www/user.php?op=logout])">([$block.lang_logout])</a></li>
+	([if $block.new_messages ne 0])
+	<li><a href="([xoAppUrl /www/viewpmsg.php])"><em>([$block.lang_inbox]) (([$block.new_messages]))</em></a></li>
+	([else])
+	<li><a href="([xoAppUrl /www/viewpmsg.php])">([$block.lang_inbox])</a></li>
+	([/if])
+	([if $xoops_isadmin])
+	<li><a href="([xoAppUrl  /www/admin.php])">([$block.lang_adminmenu])</a></li>
+	([/if])
+</ul>
