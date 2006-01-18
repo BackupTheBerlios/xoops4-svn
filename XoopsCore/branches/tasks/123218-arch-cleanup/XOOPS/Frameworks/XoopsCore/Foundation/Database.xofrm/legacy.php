@@ -221,7 +221,7 @@ class xoops_db_Database_legacy extends xoops_db_Database_mysql {
 		return $this->queryF( $sql, $limit, $start );
     }
     
-    function queryF( $sql, $limit, $start = 0 ) {
+    function queryF( $sql, $limit = 0, $start = 0 ) {
     	if ( !empty($limit) ) {
 			$sql = $sql . ' LIMIT ' . (int)$start . ', ' . (int)$limit;
 		}
