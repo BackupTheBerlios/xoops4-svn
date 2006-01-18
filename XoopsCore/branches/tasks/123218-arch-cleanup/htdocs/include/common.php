@@ -84,12 +84,14 @@ if (!defined("XOOPS_MAINFILE_INCLUDED")) {
     include_once XOOPS_ROOT_PATH.'/include/functions.php';
 
     // #################### Connect to DB ##################
-    require_once XOOPS_ROOT_PATH.'/class/database/databasefactory.php';
-    if ($_SERVER['REQUEST_METHOD'] != 'POST' || !$xoopsSecurity->checkReferer(XOOPS_DB_CHKREF)) {
+    require_once XOOPS_ROOT_PATH.'/class/database/database.php';
+
+    global $xoops;
+    $xoopsDB =& $xoops->loadService( 'legacydb' );
+    if ( !$xoopsDB->allowWebChanges ) {
         define('XOOPS_DB_PROXY', 1);
     }
-    $xoopsDB =& XoopsDatabaseFactory::getDatabaseConnection();
-
+    
     // ################# Include required files ##############
     require_once XOOPS_ROOT_PATH.'/kernel/object.php';
     require_once XOOPS_ROOT_PATH.'/class/criteria.php';
