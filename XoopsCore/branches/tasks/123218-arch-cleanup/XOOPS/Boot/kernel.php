@@ -82,6 +82,7 @@ class xoops_kernel_Xoops2 {
 	var $captures				= array(
 		'http'		=> 'xoops_http_HAL',
 		'session'	=> 'xoops_http_SessionService',
+		'legacydb'	=> array( 'xoops_db_Database', array( 'driverName' => 'xoops.legacy' ) ),
 	);
 
 	/** 
@@ -168,12 +169,16 @@ class xoops_kernel_Xoops2 {
 	 * @param array  $options	Parameters to send to the service during instanciation
 	 */
 	function &loadService( $name, $bundleId = '', $options = array() ) {
-		if ( isset( $this->captures[$name] ) ) {
-			$bundleId = $this->captures[$name];
-		} elseif ( empty( $bundleId ) ) {
-			$bundleId = $name;
-		}
 		if ( !isset( $this->services[$name] ) ) {
+			if ( isset( $this->captures[$name] ) ) {
+				if ( is_array( $this->captures[$name] ) ) {
+					list( $bundleId, $options ) = $this->captures[$name];
+				} else {
+					$bundleId = $this->captures[$name];
+				}
+			} elseif ( empty( $bundleId ) ) {
+				$bundleId = $name;
+			}
 			$this->services[$name] =& XOS::create( $bundleId, $options );
 		}
 		return $this->services[$name];
