@@ -1,96 +1,45 @@
 <?php
-// $Id$
-//  ------------------------------------------------------------------------ //
-//                XOOPS - PHP Content Management System                      //
-//                    Copyright (c) 2000 XOOPS.org                           //
-//                       <http://www.xoops.org/>                             //
-//  ------------------------------------------------------------------------ //
-//  This program is free software; you can redistribute it and/or modify     //
-//  it under the terms of the GNU General Public License as published by     //
-//  the Free Software Foundation; either version 2 of the License, or        //
-//  (at your option) any later version.                                      //
-//                                                                           //
-//  You may not change or alter any portion of this comment or credits       //
-//  of supporting developers from this source code or any supporting         //
-//  source code which is considered copyrighted (c) material of the          //
-//  original comment or credit authors.                                      //
-//                                                                           //
-//  This program is distributed in the hope that it will be useful,          //
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of           //
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            //
-//  GNU General Public License for more details.                             //
-//                                                                           //
-//  You should have received a copy of the GNU General Public License        //
-//  along with this program; if not, write to the Free Software              //
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA //
-//  ------------------------------------------------------------------------ //
-// Author: Kazumi Ono (AKA onokazu)                                          //
-// URL: http://www.myweb.ne.jp/, http://www.xoops.org/, http://jp.xoops.org/ //
-// Project: The XOOPS Project                                                //
-// ------------------------------------------------------------------------- //
-if (!defined("XOOPS_ROOT_PATH")) {
-    die("XOOPS root path not defined");
-}
 /**
- * @package     kernel
- * @subpackage  database
- * 
- * @author	    Kazumi Ono	<onokazu@xoops.org>
- * @copyright	copyright (c) 2000-2003 XOOPS.org
+ * Legacy (XOOPS 2.0.x) xoops_db_Database driver class definition
+ *
+ * See the enclosed file LICENSE for licensing information.
+ * If you did not receive this file, get it at http://www.fsf.org/copyleft/gpl.html
+ *
+ * @copyright	The XOOPS project http://www.xoops.org/
+ * @license		http://www.fsf.org/copyleft/gpl.html GNU public license
+ * @author		Kazumi Ono <onokazu@xoops.org>
+ * @author		Skalpa Keo <skalpa@xoops.org>
+ * @since		2.3.0
+ * @package		xoops_db
+ * @subpackage	xoops_db_Database
+ * @version		$Id$
  */
 
 /**
- * base class
+ * This file cannot be requested directly
  */
-include_once XOOPS_ROOT_PATH."/class/database/database.php";
+if ( !defined( 'XOOPS_PATH' ) ) exit();
+
+XOS::import( 'xoops_db_Database_mysql' );
 
 /**
- * connection to a mysql database
- * 
- * @abstract
- * 
- * @author      Kazumi Ono  <onokazu@xoops.org>
- * @copyright   copyright (c) 2000-2003 XOOPS.org
- * 
- * @package     kernel
- * @subpackage  database
+ * Legacy xoops_db_Database driver main class
  */
-class XoopsMySQLDatabase extends XoopsDatabase
-{
+class xoops_db_Database_legacy extends xoops_db_Database_mysql {
 	/**
-	 * Database connection
-	 * @var resource
+	 * assign a {@link XoopsLogger} object to the database
+	 * @deprecated (assign the logger public property)
 	 */
-	var $conn;
-
-	/**
-	 * connect to the database
-	 * 
-     * @param bool $selectdb select the database now?
-     * @return bool successful?
-	 */
-	function connect($selectdb = true)
-	{
-		if (XOOPS_DB_PCONNECT == 1) {
-			$this->conn = @mysql_pconnect(XOOPS_DB_HOST, XOOPS_DB_USER, XOOPS_DB_PASS);
-		} else {
-			$this->conn = @mysql_connect(XOOPS_DB_HOST, XOOPS_DB_USER, XOOPS_DB_PASS);
-		}
-	
-		if (!$this->conn) {
-			$this->logger->addQuery('', $this->error(), $this->errno());
-			return false;
-		}
-		
-		if($selectdb != false){
-			if (!mysql_select_db(XOOPS_DB_NAME)) {
-				$this->logger->addQuery('', $this->error(), $this->errno());
-				return false;
-			}
-		}
-		return true;
+	function setLogger(&$logger) {
+		$this->logger =& $logger;
 	}
-
+	/**
+	 * set the prefix for tables in the database
+	 * @deprecated (assign the prefix public property)
+	 */
+	function setPrefix($value) {
+		$this->prefix = $value;
+	}
 	/**
 	 * generate an ID for a new row
      * 
@@ -215,79 +164,10 @@ class XoopsMySQLDatabase extends XoopsDatabase
      */
     function quoteString($str)
     {
-         $str = "'".str_replace('\\"', '"', addslashes($str))."'";
-         return $str;
+         //return "'".str_replace('\\"', '"', addslashes($str))."'";
+         return $this->quote( $str );
     }
 
-    /**
-     * perform a query on the database
-     * 
-     * @param string $sql a valid MySQL query
-     * @param int $limit number of records to return
-     * @param int $start offset of first record to return
-     * @return resource query result or FALSE if successful
-     * or TRUE if successful and no result
-     */
-    function queryF($sql, $limit=0, $start=0)
-	{
-		if ( !empty($limit) ) {
-			if (empty($start)) {
-				$start = 0;
-			}
-			$sql = $sql. ' LIMIT '.(int)$start.', '.(int)$limit;
-		}
-		$result = mysql_query($sql, $this->conn);
-		if ( $result ) {
-			$this->logger->addQuery($sql);
-			return $result;
-        } else {
-			$this->logger->addQuery($sql, $this->error(), $this->errno());
-			return false;
-        }
-    }
-
-	/**
-	 * perform a query
-     * 
-     * This method is empty and does nothing! It should therefore only be
-     * used if nothing is exactly what you want done! ;-)
-	 * 
-     * @param string $sql a valid MySQL query
-     * @param int $limit number of records to return
-     * @param int $start offset of first record to return
-     * 
-     * @abstract
-	 */
-	function query($sql, $limit=0, $start=0)
-	{
-
-    }
-
-    /**
-	 * perform queries from SQL dump file in a batch
-	 * 
-     * @param string $file file path to an SQL dump file
-     * 
-     * @return bool FALSE if failed reading SQL file or TRUE if the file has been read and queries executed
-	 */
-	function queryFromFile($file){
-        if (false !== ($fp = fopen($file, 'r'))) {
-			include_once XOOPS_ROOT_PATH.'/class/database/sqlutility.php';
-            $sql_queries = trim(fread($fp, filesize($file)));
-            SqlUtility::splitMySqlFile($pieces, $sql_queries);
-            foreach ($pieces as $query) {
-                // [0] contains the prefixed query
-                // [4] contains unprefixed table name
-                $prefixed_query = SqlUtility::prefixQuery(trim($query), $this->prefix());
-                if ($prefixed_query != false) {
-                    $this->query($prefixed_query[0]);
-                }
-            }
-            return true;
-        }
-        return false;
-    }
-    
     /**
 	 * Get field name
 	 *
@@ -322,22 +202,8 @@ class XoopsMySQLDatabase extends XoopsDatabase
 	{
 		return mysql_num_fields($result);
 	}
-}
 
-/**
- * Safe Connection to a MySQL database.
- * 
- * 
- * @author Kazumi Ono <onokazu@xoops.org>
- * @copyright copyright (c) 2000-2003 XOOPS.org
- * 
- * @package kernel
- * @subpackage database
- */
-class XoopsMySQLDatabaseSafe extends XoopsMySQLDatabase
-{
-
-    /**
+	/**
      * perform a query on the database
      * 
      * @param string $sql a valid MySQL query
@@ -346,47 +212,52 @@ class XoopsMySQLDatabaseSafe extends XoopsMySQLDatabase
      * @return resource query result or FALSE if successful
      * or TRUE if successful and no result
      */
-	function query($sql, $limit=0, $start=0)
-	{
-		return $this->queryF($sql, $limit, $start);
-	}
-}
-
-/**
- * Read-Only connection to a MySQL database.
- * 
- * This class allows only SELECT queries to be performed through its 
- * {@link query()} method for security reasons.
- * 
- * 
- * @author Kazumi Ono <onokazu@xoops.org>
- * @copyright copyright (c) 2000-2003 XOOPS.org
- * 
- * @package kernel
- * @subpackage database
- */
-class XoopsMySQLDatabaseProxy extends XoopsMySQLDatabase
-{
+    function query($sql, $limit=0, $start=0) {
+	    $sql = ltrim($sql);
+		if ( !$this->allowWebChanges && strtolower( substr($sql, 0, 6) ) != 'select' )  {
+			trigger_error( 'Database updates are not allowed during processing of a GET request', E_USER_WARNING );
+			return false;
+		}
+		return $this->queryF( $sql, $limit, $start );
+    }
+    
+    function queryF( $sql, $limit, $start = 0 ) {
+    	if ( !empty($limit) ) {
+			$sql = $sql . ' LIMIT ' . (int)$start . ', ' . (int)$limit;
+		}
+		if ( $result = mysql_query($sql, $this->conn) ) {
+			$this->logEvent($sql);
+        } else {
+        	$this->logError();
+        }
+        return $result;
+    }
 
     /**
-     * perform a query on the database
+	 * perform queries from SQL dump file in a batch
+	 * 
+     * @param string $file file path to an SQL dump file
      * 
-     * this method allows only SELECT queries for safety.
-     * 
-     * @param string $sql a valid MySQL query
-     * @param int $limit number of records to return
-     * @param int $start offset of first record to return
-     * @return resource query result or FALSE if unsuccessful
-     */
-	function query($sql, $limit=0, $start=0)
-	{
-	    $sql = ltrim($sql);
-		if (strtolower(substr($sql, 0, 6)) == 'select') {
-		//if (preg_match("/^SELECT.*/i", $sql)) {
-			return $this->queryF($sql, $limit, $start);
-		}
-		$this->logger->addQuery($sql, 'Database update not allowed during processing of a GET request', 0);
-		return false;
-	}
+     * @return bool FALSE if failed reading SQL file or TRUE if the file has been read and queries executed
+	 */
+	function queryFromFile($file){
+        if (false !== ($fp = fopen($file, 'r'))) {
+			include_once XOOPS_ROOT_PATH.'/class/database/sqlutility.php';
+            $sql_queries = trim(fread($fp, filesize($file)));
+            SqlUtility::splitMySqlFile($pieces, $sql_queries);
+            foreach ($pieces as $query) {
+                // [0] contains the prefixed query
+                // [4] contains unprefixed table name
+                $prefixed_query = SqlUtility::prefixQuery(trim($query), $this->prefix());
+                if ($prefixed_query != false) {
+                    $this->query($prefixed_query[0]);
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+    
 }
+
 ?>

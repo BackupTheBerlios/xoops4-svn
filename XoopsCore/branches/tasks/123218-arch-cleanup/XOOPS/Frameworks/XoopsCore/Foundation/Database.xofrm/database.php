@@ -23,7 +23,7 @@ class xoops_db_DatabaseFactory {
 	 */
 	var $availableStores = array(
 		'system' => array(
-			'driverName' => 'xoops.legacy',
+			'driverName' => 'xoops.mysql',
 			'host' => XOOPS_DB_HOST,
 			'user' => XOOPS_DB_USER,
 			'password' => XOOPS_DB_PASS,
@@ -64,22 +64,24 @@ class xoops_db_DatabaseFactory {
 			$options = array_merge( $this->availableStores[$parsed[0]], $options );
 		} else {
 			// A real DSN was specified
-			if ( substr( $parsed[0], 0, 5 ) != 'xoops' ) {
-				trigger_error( "Direct PDO drivers access is not implemented yet.", E_USER_WARNING );
-				return $inst;
-			} else {
-				$driverName = substr( $parsed[0], 6 );
+			if ( substr( $parsed[0], 0, 5 ) == 'xoops' ) {
 				// Convert the rest of the dsn string to properties
 				$parsed = explode( ';', $parsed[1] );
 				foreach ( $parsed as $prop ) {
 					list( $name, $value ) = explode( '=', $prop, 2 );
 					$options[$name] = $value;		
 				}
-				$options['driverName'] = $driverName;
+				$options['driverName'] = $parsed[0];
 			}
 		}
-		$inst =& XOS::createInstanceOf( "xoops_db_Database_{$options['driverName']}", $options );
-		$this->instances[$dsn] =& $inst;
+		if ( substr( $options['driverName'], 0, 5 ) != 'xoops' ) {
+			trigger_error( "Direct PDO drivers access is not implemented yet.", E_USER_WARNING );
+			return $inst;
+		} else {
+			$options['driverName'] = substr( $options['driverName'], 6 );
+			$inst =& XOS::create( "xoops_db_Database_{$options['driverName']}", $options );
+			$this->instances[$dsn] =& $inst;
+		}
 		return $inst;
 	}
 }
@@ -124,7 +126,12 @@ class xoops_db_Database {
 	 * @var boolean
 	 */
 	var $autoConnect = true;
-
+	/**
+	 * If statements that modify the database are selected (see forceExec() to override this)
+	 * @var boolean
+	 */
+	var $allowWebChanges = false;
+	
 	/**
 	 * reference to a {@link XoopsLogger} object
      * @see XoopsLogger
@@ -136,7 +143,8 @@ class xoops_db_Database {
 	function xoInit( $options = array() ) {
 		global $xoops;
 
-		$this->logger =& $xoops->services['logger'];
+		$this->allowWebChanges = ( $_SERVER['REQUEST_METHOD'] != 'GET' );
+		//$this->logger =& $xoops->services['logger'];
 		if ( $this->autoConnect ) {
 			return $this->connect();
 		}
@@ -151,6 +159,23 @@ class xoops_db_Database {
 	 */
 	function connect( $selectdb = true ) {
 		return false;
+	}
+	/**
+	 * Send information about an event to the attached logger
+	 */
+	function logEvent( $msg ) {
+		if ( $this->logger ) {
+			$this->logger->logEvent( $msg, $this->xoBundleIdentifier );
+		}
+	}
+	/**
+	 * Send information about an error to the attached logger
+	 */
+	function logError() {
+		if ( $this->logger ) {
+			$error = $this->errorInfo();
+			$this->logger->logEvent( "Error {$error[1]} ({$error[0]}): {$error[2]}", $this->xoBundleIdentifier );
+		}
 	}
 	
 	/**
@@ -168,7 +193,45 @@ class xoops_db_Database {
 		return empty($this->prefix) ? $table : ( $this->prefix . '_' . $table );
 	}
 	
-	
+	/**
+	 * Fetch the SQLSTATE associated with the last operation on the database handle 
+	 */
+	function errorCode() {
+		return 'HY000';
+	}
+	/**
+	 * Fetch extended error information associated with the last operation on the database handle 
+	 * 
+	 * <p>errorInfo() returns an array of error information about the last operation performed 
+	 * by this database handle. The array consists of the following fields:<br />
+	 * 0: SQLSTATE error code (a five-character alphanumeric identifier defined in the ANSI SQL standard).<br />
+	 * 1: Driver-specific error code
+	 * 2: Driver-specific error message</p>
+	 * 
+	 * <p class="note">This implementation doesn't support SQLSTATE (it will always be HY000)</p>
+	 */
+	function errorInfo() {
+		return array( 'HY000', 0, 0 );
+	}	
+	/**
+	 * Execute an SQL statement and return the number of affected rows
+	 * 
+	 * PDO::exec() does not return results from a SELECT statement. For a SELECT statement that 
+	 * you only need to issue once during your program, consider issuing PDO::query().
+	 * For a statement that you need to issue multiple times, prepare a PDOStatement object 
+	 * with PDO::prepare() and issue the statement with PDOStatement::execute().
+	 * 
+	 * @param string $statement The SQL statement to prepare and execute
+	 */
+	function exec( $statement ) {
+		return false;	
+	}
+	/**
+	 * Returns the ID of the last inserted row or sequence value
+	 */
+	function lastInsertId( $name = '' ) {
+		return 0;
+	}
 }
 
 

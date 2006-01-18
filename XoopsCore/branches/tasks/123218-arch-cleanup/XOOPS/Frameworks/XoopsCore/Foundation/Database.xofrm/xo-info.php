@@ -26,8 +26,12 @@ return array(
 			'xoBundleDisplayName' => 'Connection to a database',
 			'xoClassPath' => '/database.php',
 		),
+		'xoops_db_Database_mysql' => array(
+			'xoBundleDisplayName' => 'XOOPS MySQL database driver (PDO compatible)',
+			'xoClassPath' => '/mysql.php',
+		),
 		'xoops_db_Database_legacy' => array(
-			'xoBundleDisplayName' => 'Legacy (XOOPS 2.0) database driver',
+			'xoBundleDisplayName' => 'XOOPS Legacy (XOOPS 2.0) database driver',
 			'xoClassPath' => '/legacy.php',
 		),
 	),
