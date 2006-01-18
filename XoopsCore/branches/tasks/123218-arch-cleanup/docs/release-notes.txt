@@ -1,0 +1,79 @@
+
+XOOPS 2.3.0 alpha 1 release notes
+==========================================================
+(NB: An HTML version of this file is available at http://devteam.xoops.org/releases/xoops-2.3.0a1.html )
+
+
+ The XOOPS development team is pleased to announce the release of XOOPS 2.3.0-alpha1, that inaugurates the start of the 2.3 branch development cycle. This is a very early release only containing a very limited set of changes, made to ensure modules developers and themes designers can get aware of some of the forthcoming enhancements and give us early feedback about them.
+
+Other alpha releases will be made regularly from now on, as soon as specific enhancements are implemented.
+
+IN THIS RELEASE THE XOOPS KERNEL IS CONFIGURED TO RUN IN DEVELOPMENT MODE BY DEFAULT.
+THIS MODE IS INTENDED TO BE USED BY DEVELOPERS OR DESIGNERS IN SAFE ENVIRONMENTS AND SHOULD NEVER BE USED ON A PUBLIC SERVER (INDICATIONS ARE PROVIDED BELOW TO SWITCH THE SYSTEM BACK TO PRODUCTION MODE).
+
+What's new
+----------------------------------------
+
+    * The new XOOPS Object System (XOS) component architecture foundations that will allow XOOPS to evolve to a completely object-based and fully configurable system.
+    * Fixed URI rewriting mechanisms support, that will allow the switch to a real URI-based system for the final release of 2.3.0.
+    * A redesigned theming engine that brings more structure to pages (now built using 3 templates instead of 2, separating global,local and contextual zones) and gives modules writers full control over the output page meta-information.
+    * Themes inheritance suppport to allow themes designer to make themes that would be derivatives of a parent easily.
+    * Themes and templates sets integration that brings more flexibility to themes, by allowing them to customize every single template used by the XOOPS system.
+
+
+System requirements
+----------------------------------------
+
+PHP
+    Any PHP 4 version >= 4.3.0
+    Any PHP 5 version 
+MySQL
+    MySQL server 3.23.xx
+    MySQL server 4.x
+Web server
+    Any server supporting the required PHP version (Apache highly recommended) 
+
+MySQL 5 compatibility hasn't been fixed yet, but is planned for 2.3.0 final.
+We are strongly considering to drop support for PHP versions anterior to 4.3.0. People really concerned about this should contact us using the Sourceforge forums.
+
+
+Installing XOOPS
+----------------------------------------
+
+   1. Copy the content of the htdocs/ folder where it can be accessed by your server
+   2. Copy the XOOPS and XOOPS-data folders where you want to (it's recommended to let them out of the webroot)
+   3. Make all the folders inside 'XOOPS-data' server writable
+   4. Access to the folder where you installed the htdocs/ files using your web browser to launch the installation wizard
+
+The installation wizard hasn't been updated to handle some of the system new features yet, so you'll have to help it a little: start the installation procedure normally, until the mainfile.php generation (the page with the "writing constants"... dont worry about the one that fails). Once it's done, manually edit mainfile.php and set the values of XOOPS_PATH and XOOPS_VAR_PATH to the physical paths of your XOOPS and XOOPS-data folders. Then click "next" in the installer to go on with the installation procedure.
+
+
+Known issues / Things you should be aware of
+----------------------------------------
+Default configuration
+
+The system is configured in development mode by default upon installation. While XOOPS is extremely reactive when running in this mode (for instance, changes made to templates and themes are taken into account immediately, allowing you to edit templates using your favorite text editor), it is also slow and has some drawbacks (one of them being that error messages are not caught and displayed within the pages).
+This may have consequences in some pages, when such messages are sent before custom response headers (like, for instance, modules pages generating PDF documents).
+
+To switch back to production mode, you have to manually edit the hosts file, located in XOOPS/Boot/hosts.php and change the line defining the xoRunMode variable, replacing XO_MODE_DEV with 0 (a zero).
+Enhancements will be done to this system in a forthcoming alpha, so people can get back all the features they were used to with the debug mode (which has been temporarily disabled).
+
+Output caching might have some problems too (well, it's not sure but is has not been tested at all). Anyway, the actual system will be totally replaced with a quite more performant one, so if that was the case it would only be temporarily.
+
+Default theme
+
+The default theme is being redone and a fully standards-compliant theme will be provided in the final release. This task has only been started, thus the theme provided with this alpha is not completely usable: only CSS rules for the global layout have been written, and most of the modules content will display unstyled.
+You can however switch to the old 2.0.x default theme, which has been renamed to xoops20, or use any 2.0.x theme (no compatibility problem should be encountered, and in fact any problem preventing old themes to show correctly should be reported in the SF bug trackers).
+
+The only things that should not show up properly is the theme selection block, but this will be fixed at a later stage. In the meantime you can still change the current theme without being required to do it though the administation interface by setting the xoops_theme_select var in your request (ie: http://mysite.com/?xoops_theme_select=themename).
+
+Because of the method used to contruct the page layout in CSS-based themes, some modules will show up incorrectly with their content pushed below the content of the left and right columns (more precisely: modules with clear rules on some elements).
+This is however not a XOOPS specific issue, and there's nothing we can do about it. People who would want to use such modules with the final 2.3.0 will have to edit their templates/wait for a module update, or stick to a table-based theme.
+Some articles will be published on the XOOPS development site to help module writers ensure their output plays well with CSS-based themes.
+
+Templates integration
+
+The old templates sets system has been removed, but a few more changes have still to be done: some fields related to the old system may still be present in the administation interface, although they don't do anything anymore. Also, the old templates editing page will come back later one with the birth of a completely new templates/theme edition module.
+
+Themes that require to be used with a specific template set can still be used, as long as you copy the templates to the appropriate place inside these themes folder. Please have a look at the xoops20 theme files to see how to do this.
+The update scripts that will be provided starting with the beta/RC releases will take care of exporting all your old templates sets automatically.
