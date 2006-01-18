@@ -28,6 +28,7 @@ class xoops_db_DatabaseFactory {
 			'user' => XOOPS_DB_USER,
 			'password' => XOOPS_DB_PASS,
 			'dbname' => XOOPS_DB_NAME,
+			'prefix' => XOOPS_DB_PREFIX,
 			'persistent' => XOOPS_DB_PCONNECT,
 		),
 	);
