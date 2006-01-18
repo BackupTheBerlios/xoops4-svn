@@ -147,12 +147,12 @@ class XOS {
 			// Initialize the component instance
 			if ( method_exists( $inst, 'xoInit' ) ) {
 				if ( !$inst->xoInit( $options ) ) {
-					return false;
+					return $inst;
 				}
 			}
 			return $inst;
 		}
-		return false;
+		return $inst;
 	}
 
 	/**
