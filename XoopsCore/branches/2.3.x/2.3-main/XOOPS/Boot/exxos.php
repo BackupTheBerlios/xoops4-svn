@@ -102,6 +102,8 @@ class XOS {
 		}
 		XOS::import($id);
 		if ( isset( $me->registry[$id] ) ) {
+			$options['xoBundleIdentifier'] = $id;
+			$options['xoBundleRoot'] = $me->registry[$id]['xoBundleRoot'];
 			if ( !isset($me->factories[$id]) && isset($me->registry[$id]['xoFactory']) ) {
 				$me->factories[$id] =& XOS::create( $me->registry[$id]['xoFactory'] );
 				unset($me->registry[$id]['xoFactory']);
