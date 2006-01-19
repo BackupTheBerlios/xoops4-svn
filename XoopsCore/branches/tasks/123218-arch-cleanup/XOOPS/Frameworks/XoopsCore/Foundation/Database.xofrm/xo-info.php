@@ -30,6 +30,10 @@ return array(
 			'xoBundleDisplayName' => 'XOOPS MySQL database driver (PDO compatible)',
 			'xoClassPath' => '/mysql.php',
 		),
+		'xoops_db_Statement_mysql' => array(
+			'xoBundleDisplayName' => 'XOOPS MySQL driver prepared statement',
+			'xoClassPath' => '/mysql.php',
+		),
 		'xoops_db_Database_legacy' => array(
 			'xoBundleDisplayName' => 'XOOPS Legacy (XOOPS 2.0) database driver',
 			'xoClassPath' => '/legacy.php',
