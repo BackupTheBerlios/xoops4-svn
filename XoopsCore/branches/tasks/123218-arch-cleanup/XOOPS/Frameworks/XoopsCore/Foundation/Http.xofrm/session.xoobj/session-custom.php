@@ -97,6 +97,11 @@ class xoops_http_CustomSessionService extends xoops_http_SessionService {
 	 * @var string
 	 */
 	var $urlRewriterTags	= 'a=href,area=href,frame=src,iframe=src,input=src,form=,fieldset=';
+	/**
+	 * String used as parameters separator in rewritting tags
+	 * @var string
+	 */
+	var $outputArgSeparator = '&amp;';
 
 	// ---------- Garbage collection option ----------
 	/**
@@ -140,6 +145,7 @@ class xoops_http_CustomSessionService extends xoops_http_SessionService {
 		'gcDivisor'			=> 'session.gc_divisor',
 		'useTransparentSid'	=> 'session.use_trans_sid',
 		'urlRewriterTags'	=> 'url_rewriter.tags',
+		'outputArgSeparator'=> 'arg_separator.output',
 	);
 	/**
 	* Initialize the session service
