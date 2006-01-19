@@ -65,8 +65,6 @@ if (!defined("XOOPS_MAINFILE_INCLUDED")) {
     define( "XOOPS_COMPILE_PATH", XOOPS_VAR_PATH . "/Application Support/xoops_template_Smarty" );
 
 	// ----- END: Already refactored stuff just kept for compat purposes -----
-
-    
     
     define("XOOPS_THEME_URL", XOOPS_URL."/themes");
     define("XOOPS_UPLOAD_URL", XOOPS_URL."/uploads");
@@ -166,38 +164,22 @@ if (!defined("XOOPS_MAINFILE_INCLUDED")) {
     $xoopsRequestUri = $_SERVER[ 'REQUEST_URI' ];       // Deprecated (use the corrected $_SERVER variable now)
     /**#@-*/
 
-    // ############## Login a user with a valid session ##############
     $xoopsUser = '';
     $xoopsUserIsAdmin = false;
     $member_handler =& xoops_gethandler('member');
-    $sess_handler =& xoops_gethandler('session');
-    if ($xoopsConfig['use_ssl'] && isset($_POST[$xoopsConfig['sslpost_name']]) && $_POST[$xoopsConfig['sslpost_name']] != '') {
-        session_id($_POST[$xoopsConfig['sslpost_name']]);
-    } elseif ($xoopsConfig['use_mysession'] && $xoopsConfig['session_name'] != '') {
-        if (isset($_COOKIE[$xoopsConfig['session_name']])) {
-            session_id($_COOKIE[$xoopsConfig['session_name']]);
-        } else {
-            // no custom session cookie set, destroy session if any
-            $_SESSION = array();
-            //session_destroy();
-        }
-        if (function_exists('session_cache_expire')) {
-            session_cache_expire($xoopsConfig['session_expire']);
-        }
-    }
-    session_set_save_handler(array(&$sess_handler, 'open'), array(&$sess_handler, 'close'), array(&$sess_handler, 'read'), array(&$sess_handler, 'write'), array(&$sess_handler, 'destroy'), array(&$sess_handler, 'gc'));
-    session_start();
 
-    if (!empty($_SESSION['xoopsUserId'])) {
-        $xoopsUser =& $member_handler->getUser($_SESSION['xoopsUserId']);
+	// NB: SSL login has been temporarily disabled until the birth of the user-login module
+	// Code kept here for reference:	
+    //if ($xoopsConfig['use_ssl'] && isset($_POST[$xoopsConfig['sslpost_name']]) && $_POST[$xoopsConfig['sslpost_name']] != '') {
+	//session_id($_POST[$xoopsConfig['sslpost_name']]);
+
+    if ( !empty( $_SESSION['xoopsUserId'] ) ) {
+        $xoopsUser =& $member_handler->getUser( $_SESSION['xoopsUserId'] );
         if (!is_object($xoopsUser)) {
             $xoopsUser = '';
             $_SESSION = array();
         } else {
-            if ($xoopsConfig['use_mysession'] && $xoopsConfig['session_name'] != '') {
-                setcookie($xoopsConfig['session_name'], session_id(), time()+(60*$xoopsConfig['session_expire']), '/',  '', 0);
-            }
-            $xoopsUser->setGroups($_SESSION['xoopsUserGroups']);
+            $xoopsUser->setGroups( $_SESSION['xoopsUserGroups'] );
             $xoopsUserIsAdmin = $xoopsUser->isAdmin();
         }
     }

@@ -18,9 +18,9 @@
  */
 if ( !defined( 'XO_MODE_DEV' ) ) exit();
 
-
-
-
+if ( isset( $_SERVER['SERVER_NAME'] ) ) {
+	$this->loadService( 'session' );
+}
 
 
 
