@@ -45,11 +45,6 @@ class xoops_http_SessionService {
 	 * @var string
 	 */
 	var $cacheLimiter = '';
-	/**
-	 * Default cache lifetime for content
-	 * @var integer
-	 */
-	var $cacheLifetime = '';
 	
 	/**
 	* Initialize the session service
@@ -103,7 +98,7 @@ class xoops_http_SessionService {
 		if ( @$var = $this->getObjectVar( $this, 'cacheLimiter' ) ) {
 			$this->cacheLimiter = $var;
 		}
-		$this->resetCacheLimiting( $this->cacheLimiter, 60 * $this->cacheLifetime );
+		$this->resetCacheLimiting( $this->cacheLimiter, 60 * session_cache_expire() );
 		return $this->sessionId;
 	}
 	/**
