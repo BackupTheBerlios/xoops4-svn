@@ -34,7 +34,7 @@ class xoops_http_SessionService {
 	* Save handler to use for reading/writing session data
 	* @var mixed
 	*/
-	var $saveHandler = '';
+	var $saveHandler = 'xoops_http_DatabaseSessionHandler';
 	/**
 	 * Identifier of the current session
 	 * @var string
