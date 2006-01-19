@@ -97,7 +97,7 @@ class xoops_http_SessionService {
 			$this->cacheLimiter = session_cache_limiter();
 		}
 		session_cache_limiter( 'none' );
-		session_start();
+		@session_start();
 		$this->sessionId = session_id();
 		// Do this here to allow user-dependent cacheLimiter setting
 		if ( @$var = $this->getObjectVar( $this, 'cacheLimiter' ) ) {
