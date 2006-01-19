@@ -95,9 +95,9 @@ class xoops_http_SessionService {
 		@session_start();
 		$this->sessionId = session_id();
 		// Do this here to allow user-dependent cacheLimiter setting
-		if ( @$var = $this->getObjectVar( $this, 'cacheLimiter' ) ) {
-			$this->cacheLimiter = $var;
-		}
+		//if ( @$var = $this->getObjectVar( $this, 'cacheLimiter' ) ) {
+		//	$this->cacheLimiter = $var;
+		//}
 		$this->resetCacheLimiting( $this->cacheLimiter, 60 * session_cache_expire() );
 		return $this->sessionId;
 	}
@@ -140,6 +140,7 @@ class xoops_http_SessionService {
 		case 'none':
 			break;
 		case 'no-cache':
+		case 'nocache':
 			header( 'Expires: ' . $this->date( time() - 3600 ) );
 			header( 'Cache-Control: no-store,no-cache,must-revalidate,post-check=0,pre-check=0' );
 			break;
