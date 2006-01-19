@@ -219,7 +219,7 @@ class xoops_db_Database_mysql extends xoops_db_Database {
 	/**
 	 * Rolls back a transaction
 	 */
-	function commit() {
+	function rollBack() {
 		return true;
 	}
 
