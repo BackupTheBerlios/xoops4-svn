@@ -14,6 +14,13 @@
  * @version		$Id$
  */
 
+/**
+ * This file cannot be requested directly
+ */
+if ( !defined( 'XOOPS_PATH' ) ) exit();
+
+XOS::import( 'xoops_http_SessionService' );
+
 /**Only use cookies to propagate session ID*/
 define( 'XO_SID_USE_COOKIE', 1 );
 /**Only use URI to propagate session ID*/
@@ -58,7 +65,7 @@ class xoops_http_CustomSessionService extends xoops_http_SessionService {
 	 * Name of the cookie used to store the session identifier
 	 * @var string
 	 */
-	var $cookieName		= 'XOOPS_SESSION_ID';
+	var $cookieName		= 'XOSESSIONID';
 	/**
 	 * Maximum allowed duration of a session (if set to 0: until the user closes its browser)
 	 *
@@ -110,12 +117,17 @@ class xoops_http_CustomSessionService extends xoops_http_SessionService {
 	 */
 	var $gcDivisor		= 100;
 
-	// ---------- Cache expiration ----------
+	// ---------- Content caching ----------
 	/**
 	 * Default cache lifetime for content (in minutes)
 	 * @var integer
 	 */
-	var $cacheLifetime = 180;
+	var $cacheLimiter = 'private_no_expire';
+	/**
+	 * Default cache lifetime for content (in minutes)
+	 * @var integer
+	 */
+	var $cacheLifetime = 1;
 	
 	/**
 	 * Property => php.ini setting lookup table
@@ -155,15 +167,24 @@ class xoops_http_CustomSessionService extends xoops_http_SessionService {
 	 		}
 	 	}
 
-	 	if ( !empty($this->cookieName) ) {
-			session_name( $this->cookieName );
+		if ( $this->sidPolicy & XO_SID_USE_COOKIE ) {
+			if ( isset( $_COOKIE[$this->cookieName] ) ) {
+				$this->sessionId = $_COOKIE[$this->cookieName];
+			}
+			session_set_cookie_params( $this->cookieLifetime, $this->cookiePath, $this->cookieDomain );
 		}
+		session_name( $this->cookieName );
 		session_cache_expire( $this->cacheLifetime );
-
-		session_set_cookie_params( $this->cookieLifetime, $this->cookiePath, $this->cookieDomain );
 
 		return parent::xoInit( $options );
 	}
+	function start() {
+		if ( $id = parent::start() ) {
+			$expire = $this->cookieLifetime ? ( $this->cookieLifetime + time() ) : 0;
+			setcookie( $this->cookieName, $id, $expire, $this->cookiePath, $this->cookieDomain );
+		}
+	}
+	
 	/**
 	 * Destroy the current session
 	 */
