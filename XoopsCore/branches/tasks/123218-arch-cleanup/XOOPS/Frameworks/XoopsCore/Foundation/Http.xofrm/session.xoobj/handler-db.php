@@ -39,6 +39,22 @@ class xoops_http_DatabaseSessionHandler {
     	$this->tableName =& $this->db->prefix( $this->tableName );
     	return true;
     }
+    
+    /**
+     * Open a session
+     * @return	bool
+     */
+    function open($save_path, $session_name) {
+        return true;
+    }
+    /**
+     * Close a session
+     * 
+     * @return	bool
+     */
+    function close() {
+        return true;
+    }
     /**
      * Read a session from the database
      *
@@ -47,9 +63,10 @@ class xoops_http_DatabaseSessionHandler {
      * @return	array   Session data
      */
     function read( $sessionId ) {
-    	$res = $this->db->query(  "SELECT `sess_data` FROM `$this->tableName` WHERE `sess_id`=" . $this->db->quote( $sessionId ) );
-    	if ( $res !== false ) {
-            list( $data ) = $db->fetchRow($result);
+    	$sessionId = $this->db->quote( $sessionId );
+    	$res = $this->db->query(  "SELECT `sess_data` FROM `$this->tableName` WHERE `sess_id`=$sessionId" );
+    	if ( $res ) {
+            list( $data ) = $this->db->fetchRow( $res );
             return $data;
         }
         return '';
@@ -86,7 +103,7 @@ class xoops_http_DatabaseSessionHandler {
      **/
     function destroy( $sessionId ) {
     	$sessionId = $this->db->quote( $sessionId );
-    	return $this->db->queryF( "DELETE FROM `$this->tableName` WHERE sess_id=$sessionId" ) ? true : false;
+    	return $this->db->queryF( "DELETE FROM `$this->tableName` WHERE sess_id=$sessionId" );
     }
     /**
      * Garbage Collector
