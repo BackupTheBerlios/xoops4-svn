@@ -87,6 +87,7 @@ class xoops_db_DatabaseFactory {
 	}
 }
 
+
 /**
  * Base class for database drivers
  */
@@ -194,45 +195,6 @@ class xoops_db_Database {
 		return empty($this->prefix) ? $table : ( $this->prefix . '_' . $table );
 	}
 	
-	/**
-	 * Fetch the SQLSTATE associated with the last operation on the database handle 
-	 */
-	function errorCode() {
-		return 'HY000';
-	}
-	/**
-	 * Fetch extended error information associated with the last operation on the database handle 
-	 * 
-	 * <p>errorInfo() returns an array of error information about the last operation performed 
-	 * by this database handle. The array consists of the following fields:<br />
-	 * 0: SQLSTATE error code (a five-character alphanumeric identifier defined in the ANSI SQL standard).<br />
-	 * 1: Driver-specific error code
-	 * 2: Driver-specific error message</p>
-	 * 
-	 * <p class="note">This implementation doesn't support SQLSTATE (it will always be HY000)</p>
-	 */
-	function errorInfo() {
-		return array( 'HY000', 0, 0 );
-	}	
-	/**
-	 * Execute an SQL statement and return the number of affected rows
-	 * 
-	 * PDO::exec() does not return results from a SELECT statement. For a SELECT statement that 
-	 * you only need to issue once during your program, consider issuing PDO::query().
-	 * For a statement that you need to issue multiple times, prepare a PDOStatement object 
-	 * with PDO::prepare() and issue the statement with PDOStatement::execute().
-	 * 
-	 * @param string $statement The SQL statement to prepare and execute
-	 */
-	function exec( $statement ) {
-		return false;	
-	}
-	/**
-	 * Returns the ID of the last inserted row or sequence value
-	 */
-	function lastInsertId( $name = '' ) {
-		return 0;
-	}
 }
 
 
