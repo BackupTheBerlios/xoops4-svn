@@ -55,24 +55,34 @@ class xoops_http_SessionService {
 	* Initialize the session service
 	*/
 	function xoInit( $options = array() ) {
-	 	global $xoops;
-
-		if ( $this->saveHandler && !is_object( $this->saveHandler ) ) {
-			if ( ! ( $this->saveHandler = XOS::create( $this->saveHandler ) ) ) {
-				trigger_error( "Failed to initialize the session save handler: session cannot start.", E_USER_WARNING );
+		if ( $this->saveHandler && !$this->attachHandler( $this->saveHandler ) ) {
+			return false;
+		}
+		$this->start();
+	 	return true;
+	}
+	/**
+	 * Initialize the specified object as a save handler
+	 *
+	 * @param mixed $handler Object to attach (or bundleIdentifier of the handler to instanciate)
+	 * @return boolean true on success, false otherwise
+	 */
+	function attachHandler( $handler ) {
+		if ( !is_object( $handler ) ) {
+			if ( ! ( $handler = XOS::create( $handler ) ) ) {
+				trigger_error( "Failed to initialize the session save handler.", E_USER_WARNING );
 				return false;
 			}
 		}
-		if ( $this->saveHandler ) {
-	    	session_set_save_handler(
-	    		array( &$this->saveHandler, 'open' ), array( &$this->saveHandler, 'close'),
-	    		array( &$this->saveHandler, 'read'), array( &$this->saveHandler, 'write'),
-	    		array( &$this->saveHandler, 'destroy'), array( &$this->saveHandler, 'gc')
-	    	);
-		}
+    	session_set_save_handler(
+    		array( &$handler, 'open' ), array( &$handler, 'close'),
+    		array( &$handler, 'read'), array( &$handler, 'write'),
+    		array( &$handler, 'destroy'), array( &$handler, 'gc')
+    	);
+		$this->saveHandler =& $handler;
 		return true;
 	}
-
+	
 	/**
 	* Create a new session
 	*/
