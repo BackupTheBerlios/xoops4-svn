@@ -35,9 +35,10 @@ class xoops_auth_DatabaseDriver extends xoops_auth_AuthenticationDriver {
 			$password = md5( $password );
 		}
 		$db =& XOS::create( 'xoops_db_Database' );
-		$stmt = $db->prepare( "SELECT COUNT(*) FROM `users` WHERE `uname`=:login AND `pass`=:pwd" );
-		$stmt->bindValue( ':login', $login );
-		$stmt->bindValue( ':pass', $pass );
+		$table = $db->prefix( 'users' );
+		$stmt = $db->prepare( "SELECT COUNT(*) FROM `$table` WHERE `uname`=:login AND `pass`=:password" );
+		$stmt->bindValue( ':login', $login, PDO_PARAM_STR );
+		$stmt->bindValue( ':password', $password, PDO_PARAM_STR );
 		if ( $stmt->execute() ) {
 			list( $count ) = $stmt->fetch( PDO_FETCH_NUM );
 			$stmt->closeCursor();
