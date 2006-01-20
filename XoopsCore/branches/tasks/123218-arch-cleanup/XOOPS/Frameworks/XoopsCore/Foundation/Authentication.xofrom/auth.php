@@ -60,7 +60,7 @@ class xoops_auth_AuthenticationService {
 				$driver = $this->authDrivers[$k] = $instance;
 			}
 			if ( $xoopsLogin = $driver->checkCredentials( $login, $password, $hash ) ) {
-				return is_string($xoopsLogin) ? $xoopsLogin : true;
+				return ( $xoopsLogin !== true ) ? $xoopsLogin : $login;
 			}
 		}
 		return false;
