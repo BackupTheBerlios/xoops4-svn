@@ -16,7 +16,14 @@
 /**
  * This file cannot be requested directly
  */
-if ( !defined( 'XO_MODE_DEV' ) ) exit();
+if ( !defined( 'XOOPS_PATH' ) ) exit();
+
+
+if ( $this->xoRunMode ) {
+	// If the server is not in production mode, instanciate the logger and error handling services	
+	$this->loadService( 'logger' );
+	$this->loadService( 'error' );
+}
 
 if ( isset( $_SERVER['SERVER_NAME'] ) ) {
 	$this->loadService( 'session' );
