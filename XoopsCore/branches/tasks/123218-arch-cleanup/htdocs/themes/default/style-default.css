@@ -12,6 +12,7 @@ html, body {
 }
 
 #xo-canvas {
+	position:		relative;
 	margin:			15px;
 	background:		#EEEEEE;
 }
@@ -42,6 +43,19 @@ html, body {
 	display:		block;
 	text-align:		left;
 	margin:			0px auto;
+}
+
+#xo-redirect-message {
+	position:		absolute;
+	z-index:		20;
+	left:			25%;
+	width:			50%;
+	top:			62px;
+	padding:		.2em 1em;
+	background:		#000000;
+	color:			#EEEEEE;
+	text-align:		center;
+	font-weight:	bold;
 }
 
 #xo-canvas-main {
