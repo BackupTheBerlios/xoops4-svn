@@ -329,7 +329,6 @@ class xoops_db_Statement_mysql {
 			$replace[] = $this->castValue( $v[0], $v[1] );
 		}
 		$sql = str_replace( $search, $replace, $this->preparedQuery );
-		echo $sql;
 		$this->result = mysql_unbuffered_query( $sql, $this->db->conn );
 		return (bool)$this->result;
 	}
