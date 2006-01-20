@@ -262,9 +262,9 @@ class xoops_db_Statement_mysql {
 	
 	function xoInit( $options = array() ) {
 		if ( strpos( $this->query, '?' ) !== false ) {
-			$this->preparedQuery = preg_replace( '/(\\?)/', '\\{__p$1\\}', $this->query );
+			$this->preparedQuery = preg_replace( '/(\\?)/', '{__p$1}', $this->query );
 		} else {
-			$this->preparedQuery = preg_replace( '/:([a-zA-Z_]*)/', '\\{$1\\}', $this->query );
+			$this->preparedQuery = preg_replace( '/:([a-zA-Z_]*)/', '{$1}', $this->query );
 		}
 		return true;
 	}
@@ -302,6 +302,16 @@ class xoops_db_Statement_mysql {
 		$this->paramBindings[$param] = array( $value, $type );
 	}
 	/**
+	 * Closes the cursor, enabling the statement to be executed again
+	 */	
+	function closeCursor() {
+		if ( $this->result ) {
+			mysql_free_result( $this->result );
+			$this->result = false;
+		}
+		return true;
+	}	
+	/**
 	 * Returns the number of columns in the result set
 	 * @return integer
 	 */
@@ -319,7 +329,8 @@ class xoops_db_Statement_mysql {
 			$replace[] = $this->castValue( $v[0], $v[1] );
 		}
 		$sql = str_replace( $search, $replace, $this->preparedQuery );
-		$this->result = mysql_query( $sql, $this->db->conn );
+		echo $sql;
+		$this->result = mysql_unbuffered_query( $sql, $this->db->conn );
 		return (bool)$this->result;
 	}
 	
