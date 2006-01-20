@@ -35,7 +35,7 @@ class xoops_kernel_Logger {
 	 * Whether or not to keep record of events
 	 * @var boolean
 	 */
- 	var $activated = false;
+ 	var $activated = true;
 	/**
 	 * Recorded events, grouped by category
 	 * @var array
@@ -74,6 +74,8 @@ class xoops_kernel_Logger {
 		}
 		if ( $this->activated ) {
 			$this->renderEvents( $output );
+		} else {
+			echo $output;
 		}
 	}
 	/**
@@ -125,7 +127,19 @@ class xoops_kernel_Logger {
 	 * @param string $output The content generated during the current request
 	 */
 	function renderEvents( $output ) {
-		$log = "events log";
+		$log = "\n<div class=\"xo-logger-output\">\n";
+		foreach ( $this->events as $category => $events ) {
+			$log .= "<div class=\"xo-events $category\">\n";
+			foreach ( $events as $event ) {
+				$date = date( "H:i:s", intval( $event['time'] ) );
+				$date .= substr( sprintf( '%.04f', $event['time'] - ceil( $event['time'] ) ), 2 );
+				$msg = htmlspecialchars( $event['message'], ENT_QUOTES );
+				$log .= "<div class=\"xo-event\">\n<span class=\"time\">$date</span>\n<span class=\"message\">$msg</span>\n</div>";
+			}
+			$log .= "</div>";
+		}
+		$log .= "</div>";
+				
 		$pattern = '<!--{xo-logger-output}-->';
 		$pos = strpos( $output, $pattern );
 		if ( $pos !== false ) {

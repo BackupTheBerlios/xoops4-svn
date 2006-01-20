@@ -47,7 +47,7 @@ class xoops_kernel_ErrorHandler {
 	 * Default error reporting levels is $errorReporting is not specified
 	 * @var array
 	 */
-	var $defaultReporting = array( XO_MOD_PROD => 0, XO_MODE_DEBUG => E_ALL ^ E_NOTICE, XO_MODE_DEV => E_ALL );
+	var $defaultReporting = array( XO_MODE_PROD => 0, XO_MODE_DEBUG => 2039, XO_MODE_DEV => E_ALL );
 	/**
 	 * The reporting level that was set before the handler has been activated
 	 * @var integer
@@ -106,7 +106,7 @@ class xoops_kernel_ErrorHandler {
 			$file = $this->sanitizePaths( $file );
 			$str = "$name: $str in $file on line $line";
 			if ( $xoops->services['logger'] ) {
-				$xoops->services['logger']->logError( $str );
+				$xoops->services['logger']->logEvent( $str, 'error' );
 			} else {
 				echo "$str<br />\r\n";
 			}
