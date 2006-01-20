@@ -80,7 +80,7 @@ class xoops_kernel_Xoops2 {
 	 */
 	var $services				= null;
 	var $captures				= array(
-		'http'		=> 'xoops_http_HAL',
+		'http'		=> 'xoops_http_HttpHandler',
 		'session'	=> 'xoops_http_SessionService',
 		'legacydb'	=> array( 'xoops_db_Database', array( 'driverName' => 'xoops.legacy' ) ),
 	);
