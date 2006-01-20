@@ -21,6 +21,9 @@ return array(
 		'xoops_kernel_ErrorHandler' => array(
 			'xoClassPath' => '/errorhandler.php',
 		),
+		'xoops_kernel_Logger' => array(
+			'xoClassPath' => '/logger.php',
+		),
 		'xoops_kernel_Module' => array(
 			'xoClassPath' => '/module.php',
 			'xoFactory' => 'xoops_kernel_ModuleFactory',
