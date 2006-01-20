@@ -80,9 +80,11 @@ class xoops_kernel_Xoops2 {
 	 */
 	var $services				= null;
 	var $captures				= array(
-		'auth'		=> 'xoops_auth_AuthenticationService',
+		'error'		=> 'xoops_kernel_ErrorHandler',
+		'logger'	=> 'xoops_kernel_Logger',
 		'http'		=> 'xoops_http_HttpHandler',
 		'session'	=> 'xoops_http_SessionService',
+		'auth'		=> 'xoops_auth_AuthenticationService',
 		'legacydb'	=> array( 'xoops_db_Database', array( 'driverName' => 'xoops.legacy' ) ),
 	);
 	/** 
@@ -144,12 +146,6 @@ class xoops_kernel_Xoops2 {
 	 */
 	var $isVirtual				= false;
 
-	var $previousErrorHandler	= false;
-
-	var $isHandlingErrors		= false;
-	var $_oldReporting			= 0;
-	var $errorReporting			= 0;
-	
 	function xoops_kernel_Xoops2( $hostId, $hostVars ) {
 	 	$GLOBALS['xoops']	=& $this;
 	 	$GLOBALS['exxos']->pathHandler =& $this;
@@ -157,13 +153,10 @@ class xoops_kernel_Xoops2 {
 	 	$this->hostId = $hostId;
 	 	XOS::apply( $this, $hostVars );
 	 	
-		if ( $this->xoRunMode & XO_MODE_DEV_MASK ) {
-			$this->errorReporting |= E_ALL;
-		}
-		//error_reporting(E_ALL);
-		$this->activateErrorHandler( true );
+	 	// Enable error reporting by default in development mode, enable it otherwise
+ 		error_reporting( ( $this->xoRunMode == XO_MODE_DEV ) ? E_ALL : 0 );
 
-		$this->loadRegistry();
+ 		$this->loadRegistry();
 	 	$this->services =& $GLOBALS['exxos']->services;
 
 	 	$captures = @include $this->path( 'var/Application Support/xoops_kernel_Xoops2/services.php' );
@@ -179,7 +172,6 @@ class xoops_kernel_Xoops2 {
 		} else {
 			$this->baseLocation = '';
 		}
-		//$this->services['logger'] = $this->services['errorhandler'] = $this;
 	}
 
 	/**
@@ -196,7 +188,7 @@ class xoops_kernel_Xoops2 {
 	 */
 	function boot() {
 		if ( !$this->hasBooted ) {
-			//register_shutdown_function( array( &$this, 'shutdown' ) );
+			register_shutdown_function( array( &$this, 'shutdown' ) );
 			if ( !empty($this->bootFile) ) {
 				require_once $this->path( "/XOOPS/Boot/$this->bootFile" );
 			}
@@ -211,7 +203,10 @@ class xoops_kernel_Xoops2 {
 		return true;
 	}
 	/**
-	 * Perform the shutdown sequence
+	 * Perform the system-wide shutdown sequence
+	 * 
+	 * During kernel shutdown, instanciated services are checked for an 'xoShutdown'
+	 * method and if they provide one it will be called.
 	 *
 	 * @access public
 	 * @return bool
@@ -219,6 +214,12 @@ class xoops_kernel_Xoops2 {
 	function shutdown() {
 		if ( !$this->hasShutdown ) {
 			$this->hasShutdown = true;
+			$services = array_reverse( array_keys( $this->services ) );
+			foreach ( $services as $srv ) {
+				if ( method_exists( $this->services[$srv], 'xoShutdown' ) ) {
+					$this->services[$srv]->xoShutdown();
+				}
+			}
 		}
 	}
 	/**
@@ -324,49 +325,6 @@ class xoops_kernel_Xoops2 {
 			return true;
 		}
 		return false;
-	}
-	
-	/**
-	 * Enable/disable the errorhandler.
-	 *
-	 * When set to active, the error handler set the php error reporting level to E_ALL and uses its own
-	 * $errorReporting property to mask the errors to report (so the @ operator still works :-)
-	 * 
-	 * @param bool	$enable		Whether to enable or disable the error handler
-	 */
-	function activateErrorHandler( $enable = true ) {
-		if ( $enable && !$this->isHandlingErrors ) {
-			set_error_handler( array( &$this, 'handleError' ) );
-			$this->_oldReporting = error_reporting( E_ALL );
-			return $this->isHandlingErrors = true;
-		} elseif ( !$enable && $this->isHandlingErrors ) {
-		 	restore_error_handler();
-			error_reporting( $this->_oldReporting );
-			return $this->isHandlingErrors = false;
-		}
-		return $this->isHandlingErrors;
-	}
-	
-	function handleError( $num, $str, $file = '', $line = 0, $context = false ) {
-		static $names = array(
-			E_ERROR => 'Error', E_USER_ERROR => 'Error', E_WARNING => 'Warning', E_USER_WARNING => 'Warning',
-			E_NOTICE => 'Notice', E_USER_NOTICE => 'Notice',
-		);
-		if ( $num & $this->errorReporting & error_reporting() ) {
-			foreach ( $this->paths as $root => $v ) {
-				$str  = str_replace( $v[0] . '/', "/$root/", $str );
-			}
-			$name = isset( $names[$num] ) ? $names[$num] : 'Undefined error';
-			$msg = "$name: $str";
-			if ( $file && $line ) {
-				$file = str_replace( DIRECTORY_SEPARATOR, '/', $file );
-				foreach ( $this->paths as $root => $v ) {
-					$file = str_replace( $v[0] . '/', "/$root/", $file );
-				}
-				$msg .= " in $file on line $line";
-			}
-			echo "$msg<br />\r\n";
-		}
 	}
 	
 	/**
