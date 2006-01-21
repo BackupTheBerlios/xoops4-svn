@@ -52,7 +52,7 @@ class xoops_http_HttpHandler {
 	<div style="text-align:center; background-color: #EBEBEB; border-top: 1px solid #FFFFFF; border-left: 1px solid #FFFFFF; border-right: 1px solid #AAAAAA; border-bottom: 1px solid #AAAAAA; font-weight : bold;">
 		<h4>{message}</h4><p>{ifnotreload}</p>
 	</div>
-	<!--{xo-debug-output}-->
+	<!--{xo-logger-output}-->
 </body></html>';
 	/**
 	* Default strings to add to the response status header (indexed by status code)
@@ -185,7 +185,7 @@ class xoops_http_HttpHandler {
 			} else {
 				$this->sendResponseCode( 200, $message );
 				$vars = array(
-					'{refresh}' => '<meta http_equiv="refresh" content="' . $this->fakeRedirectPageDelay . ';url=' . htmlspecialchars( $location, ENT_QUOTES ) . '" />',
+					'{refresh}' => '<meta http-equiv="refresh" content="' . $this->fakeRedirectPageDelay . '; url=' . htmlspecialchars( $location, ENT_QUOTES ) . '" />',
 					'{message}' => $message,
 					'{ifnotreload}' => sprintf( _IFNOTRELOAD, $location )
 				);
