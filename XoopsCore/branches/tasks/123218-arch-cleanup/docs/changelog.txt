@@ -1,6 +1,18 @@
 XOOPS 2 changelog
 
 ============================
+2006/01/xx: Version 2.3.0-alpha2
+============================
+- Componentized and cleaned up the architectural services: error handler,logger,db,http,session and auth (skalpa)
+- Fixed activation/deactivation of the error handler (skalpa)
+- Fixed the support of the '@' operator in the error handler (skalpa)
+- Users can customize where the logger output is inserted by adding <!--{xo-logger-output}--> in their theme (skalpa)
+- Added real HTTP redirections support (skalpa)
+- Added a new fully configurable session manager (skalpa)
+- Added a PDO compatible database driver for PHP4 users [still experimental] (skalpa)
+- Fixed common.php to make it work when not included from the global scope (skalpa)
+
+============================
 2006/01/15: Version 2.3.0-alpha1
 ============================
 - Updated Smarty to 2.6.10 (skalpa)
