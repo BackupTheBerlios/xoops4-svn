@@ -36,7 +36,7 @@ if (!defined("XOOPS_MAINFILE_INCLUDED")) {
 	$GLOBALS['xoopsUser'] = $GLOBALS['xoopsUserId'] = $GLOBALS['xoopsUserGroups'] = $GLOBALS['xoopsUserIsAdmin'] = false;
 	$GLOBALS['xoopsDB'] = $GLOBALS['xoopsConfig'] = $GLOBALS['xoopsModule'] = $GLOBALS['xoopsModuleConfig'] = null;
 
-	global $xoops;
+	global $xoops, $xoopsOption;
 
 	//Instantiate security object
     require_once XOOPS_ROOT_PATH."/class/xoopssecurity.php";
