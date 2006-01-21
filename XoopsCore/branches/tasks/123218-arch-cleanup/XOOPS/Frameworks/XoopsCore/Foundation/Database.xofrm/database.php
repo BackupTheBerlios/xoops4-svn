@@ -146,7 +146,9 @@ class xoops_db_Database {
 		global $xoops;
 
 		$this->allowWebChanges = ( $_SERVER['REQUEST_METHOD'] != 'GET' );
-		//$this->logger =& $xoops->services['logger'];
+		if ( $xoops->services['logger'] ) {
+			$this->logger =& $xoops->services['logger'];
+		}
 		if ( $this->autoConnect ) {
 			return $this->connect();
 		}
