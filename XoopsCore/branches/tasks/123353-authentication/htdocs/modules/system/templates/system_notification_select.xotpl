@@ -1,0 +1,51 @@
+([if $xoops_notification.show])
+
+<div class="xo-block system-notification_select">
+	<div class="xo-blocktitle">
+		<div class="xo-expand-switch" onclick="switchBlockDisplay(this.parentNode.parentNode,this)">-</div>
+		([$lang_notificationoptions])
+	</div>
+	<div class="xo-blockcontent">
+	<form name="notification_select" action="([$xoops_notification.target_page])" method="post">
+	<input type="hidden" name="not_redirect" value="([$xoops_notification.redirect_script])" />
+	<input type="hidden" name="XOOPS_TOKEN_REQUEST" value="([php])echo $GLOBALS['xoopsSecurity']->createToken();([/php])" />
+	<table class="xo-form">
+	<thead>
+	<tr>
+		<th scope="col">([$lang_category])</th>
+		<th scope="col">([$lang_events])</th>
+		<th scope="col"><input type="checkbox" onclick="xoopsCheckAll(this.form,this);" /></th>
+	</tr>
+	</thead>			
+	<tfoot>
+	<tr>
+		<td colspan="3"><button type="submit">([$lang_updatenow])</button></td>
+	</tr>
+	</tfoot>
+	<tbody>
+	([assign var=index value=0])
+	([foreach name=outer item=category from=$xoops_notification.categories])
+	([foreach name=inner item=event from=$category.events])
+	<tr>
+	([if $smarty.foreach.inner.first])
+		<th scope="row" rowspan="([$smarty.foreach.inner.total])">([$category.title])</th>
+	([/if])
+		<td>([$event.caption])</td>
+		<td>
+			<input type="hidden" name="not_list[([$index])][params]" value="([$category.name]),([$category.itemid]),([$event.name])" />
+			<input type="checkbox" name="not_list[([$index])][status]" value="1" ([if $event.subscribed])checked="checked"([/if]) />			
+		</td>
+	</tr>
+	([assign var=index value=$index+1])
+	([/foreach])
+	([/foreach])
+	</tbody>
+	</table>
+	</form>
+	([$lang_notificationmethodis]):
+	([$user_method])
+	(<a href="([$editprofile_url])">([$lang_change])</a>)
+	</div>
+</div>
+
+([/if])

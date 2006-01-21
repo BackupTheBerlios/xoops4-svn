@@ -1,0 +1,107 @@
+
+@import url(blocks.css);
+@import url(elements.css);
+
+
+html, body {
+	margin:					0px;
+	background:				#ffffff url(img/body_bg.png) repeat-x left top;
+	background-attachment:	fixed;
+	color:					#000000;
+	font:					10pt sans-serif;
+}
+
+#xo-canvas {
+	position:		relative;
+	margin:			15px;
+	background:		#EEEEEE;
+}
+
+#xo-canvas-header {
+	border-bottom:	1px solid #CCCCCC;
+	background:		#FFFFFF;
+	padding:		3px 3px 3px;
+}
+
+#xo-banner {
+	position:		relative;
+	height:			60px;
+	border:			1px solid #000000;
+	padding:		2px;
+	background:		#2A75C5 url(img/canvas-banner_bg.png) repeat-x left top;
+}
+
+#xo-banner-ad {
+	position:		absolute;
+	top:			2px;
+	left:			0px;
+	width:			100%;
+	text-align:		center;
+}
+
+#xo-banner-ad object, #xo-banner-ad img {
+	display:		block;
+	text-align:		left;
+	margin:			0px auto;
+}
+
+#xo-redirect-message {
+	position:		absolute;
+	z-index:		20;
+	left:			25%;
+	width:			50%;
+	top:			62px;
+	padding:		.2em 1em;
+	background:		#000000;
+	color:			#EEEEEE;
+	text-align:		center;
+	font-weight:	bold;
+}
+
+#xo-canvas-main {
+	clear:			both;
+	border-top:		1px solid #FFFFFF;
+	padding:		6px;
+}
+
+.xo-canvas-column {
+	width:			160px;
+}
+
+#xo-canvas-leftcolumn {
+	float:			left;
+	border:			1px solid #666666;
+}
+
+#xo-canvas-rightcolumn {
+	float:			right;
+	padding-bottom:	96px;
+	background:		url(img/canvas-rightcolumn_bg.png) no-repeat center bottom;
+}
+
+#xo-page {
+	background:		#ffffff;
+	padding:		0px;
+	border:			1px solid #CCCCCC;
+	min-height:		300px;
+}
+
+#xo-canvas.xo-with_left #xo-page, #xo-canvas.xo-with_both #xo-page {
+	margin-left:	176px;
+}
+
+#xo-canvas.xo-with_right #xo-page, #xo-canvas.xo-with_both #xo-page {
+	margin-right:	176px;
+}
+
+#xo-canvas-footer {
+	padding:		1px;
+	background:		#DDDDDD;
+	text-align:		center;
+	font-size:		90%;
+	font-family:	monospace;
+}
+#xo-canvas-footer, #xo-canvas-footer a {
+	color:				#666666;
+	text-decoration:	none;
+}

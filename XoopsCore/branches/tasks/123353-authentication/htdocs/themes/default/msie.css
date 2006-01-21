@@ -1,0 +1,6 @@
+
+
+#xo-page {
+	/* Fix to allow 100% large elements inside the content zone (this browser is so lame... it's unbelievable) */
+	height:			1%;
+}
