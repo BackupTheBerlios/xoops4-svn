@@ -113,13 +113,16 @@ class xoops_kernel_Logger {
      * @return float The duration of the stopped timer (in seconds)
 	 */
 	function stopTimer( $name = 'XOOPS', $clear = false ) {
-	 	$dur = ( $end = $this->microtime() ) - $this->timers[$name]['start'];
-		if ( $clear ) {
-			unset($this->timers[$name]);
-		} else {
-			$this->timers[$name]['stop'] = $end;
+		$dur = 0;
+		if ( isset( $this->timers[$name] ) ) {
+			$dur = ( $end = $this->microtime() ) - $this->timers[$name]['start'];
+			if ( $clear ) {
+				unset($this->timers[$name]);
+			} else {
+				$this->timers[$name]['stop'] = $end;
+			}
+			return $dur;
 		}
-	 	return $dur;
 	}
 
 	/**
