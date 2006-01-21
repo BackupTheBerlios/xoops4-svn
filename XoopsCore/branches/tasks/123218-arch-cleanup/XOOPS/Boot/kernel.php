@@ -192,6 +192,10 @@ class xoops_kernel_Xoops2 {
 			if ( !empty($this->bootFile) ) {
 				require_once $this->path( "/XOOPS/Boot/$this->bootFile" );
 			}
+			// @TODO-2.3: This shouldn't be there but is kept temporarily until the
+			// old common.php has been cleaned up as it should
+			include_once XOOPS_ROOT_PATH."/include/common.php";
+
 			if ( isset( $_SESSION[$this->xoBundleIdentifier]['currentUser'] ) ) {
 				$this->acceptUser( $_SESSION[$this->xoBundleIdentifier]['currentUser'] );
 			}
@@ -310,7 +314,11 @@ class xoops_kernel_Xoops2 {
 	 * @param boolean $permanent Whether to accept this user permanently or for the current request only
 	 * @return boolean
 	 */
-	function acceptUser( $login, $permanent = false ) {
+	function acceptUser( $login = '', $permanent = false ) {
+		if ( empty( $login ) && isset( $_SESSION[$this->xoBundleIdentifier]['currentUser'] ) ) {
+			$login = $_SESSION[$this->xoBundleIdentifier]['currentUser'];
+			$permanent = true;
+		}
 		// @TODO-2.3: Clean this up later... This handler stuff is so, so lame... :-(
 		$handler =& xoops_gethandler('member');
 	
@@ -364,9 +372,16 @@ class xoops_kernel_Xoops2 {
 		return $this->path( $url, true );
 	}
 
-	
-	
 } // class xoops_kernel_Xoops2
+
+/**
+ * Returns a translated string
+ */
+function XO_( $str ) {
+	global $xoops;
+	return $xoops->services['lang'] ? $xoops->services['lang']->translate( $str ) : $str;	
+}
+
 
 
 ?>

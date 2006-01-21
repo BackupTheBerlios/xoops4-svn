@@ -28,19 +28,20 @@
 if (!defined("XOOPS_MAINFILE_INCLUDED")) {
     exit();
 } else {
-    //Instantiate security object
-    require_once XOOPS_ROOT_PATH."/class/xoopssecurity.php";
-    $xoopsSecurity = new XoopsSecurity();
-    global $xoopsSecurity;
-    //Check super globals
-    $xoopsSecurity->checkSuperglobals();
-    
-    // ############## Activate error handler ##############
-    //include_once XOOPS_ROOT_PATH . '/class/errorhandler.php';
-    //$xoopsErrorHandler =& XoopsErrorHandler::getInstance();
-    // Turn on error handler by default (until config value obtained from DB)
-    //$xoopsErrorHandler->activate(true);
+	if ( defined( 'XOOPS_COMMON_INCLUDED' ) )	return;
+	define( 'XOOPS_COMMON_INCLUDED', 1 );
+	
+	// Initialize the old XOOPS global vars
+	// This ensures this file can be included from within a function with no prob
+	$GLOBALS['xoopsUser'] = $GLOBALS['xoopsUserId'] = $GLOBALS['xoopsUserGroups'] = $GLOBALS['xoopsUserIsAdmin'] = false;
+	$GLOBALS['xoopsDB'] = $GLOBALS['xoopsConfig'] = $GLOBALS['xoopsModule'] = $GLOBALS['xoopsModuleConfig'] = null;
 
+	global $xoops;
+
+	//Instantiate security object
+    require_once XOOPS_ROOT_PATH."/class/xoopssecurity.php";
+    $GLOBALS['xoopsSecurity'] = new XoopsSecurity();
+    
     define("XOOPS_SIDEBLOCK_LEFT",0);
     define("XOOPS_SIDEBLOCK_RIGHT",1);
     define("XOOPS_SIDEBLOCK_BOTH",2);
@@ -70,7 +71,7 @@ if (!defined("XOOPS_MAINFILE_INCLUDED")) {
     define("XOOPS_UPLOAD_URL", XOOPS_URL."/uploads");
     set_magic_quotes_runtime(0);
     include_once XOOPS_ROOT_PATH.'/class/logger.php';
-    $xoopsLogger =& XoopsLogger::instance();
+    $GLOBALS['xoopsLogger'] =& XoopsLogger::instance();
     if (!defined('XOOPS_XMLRPC')) {
         define('XOOPS_DB_CHKREF', 1);
     } else {
@@ -83,9 +84,8 @@ if (!defined("XOOPS_MAINFILE_INCLUDED")) {
     // #################### Connect to DB ##################
     require_once XOOPS_ROOT_PATH.'/class/database/database.php';
 
-    global $xoops;
-    $xoopsDB =& $xoops->loadService( 'legacydb' );
-    if ( !$xoopsDB->allowWebChanges ) {
+	$GLOBALS['xoopsDB'] = $xoops->loadService( 'legacydb' );
+	if ( !$GLOBALS['xoopsDB']->allowWebChanges ) {
         define('XOOPS_DB_PROXY', 1);
     }
     
@@ -97,10 +97,12 @@ if (!defined("XOOPS_MAINFILE_INCLUDED")) {
     include_once XOOPS_ROOT_PATH."/class/module.textsanitizer.php";
 
     // ################# Load Config Settings ##############
-    $config_handler =& xoops_gethandler('config');
-    $xoopsConfig =& $config_handler->getConfigsByCat(XOOPS_CONF);
+    $GLOBALS['config_handler'] =& xoops_gethandler('config');
+    global $config_handler;
+    $GLOBALS['xoopsConfig'] = $config_handler->getConfigsByCat(XOOPS_CONF);
+    global $xoopsConfig;
 
-    $xoopsSecurity->checkBadips();
+    $GLOBALS['xoopsSecurity']->checkBadips();
 
     // ################# Include version info file ##############
     include_once XOOPS_ROOT_PATH."/include/version.php";
@@ -149,11 +151,10 @@ if (!defined("XOOPS_MAINFILE_INCLUDED")) {
             $_SERVER[ 'REQUEST_URI' ] .= '?' . $_SERVER[ 'QUERY_STRING' ];
         }
     }
-    $xoopsRequestUri = $_SERVER[ 'REQUEST_URI' ];       // Deprecated (use the corrected $_SERVER variable now)
+    $GLOBALS['xoopsRequestUri'] = $_SERVER[ 'REQUEST_URI' ];       // Deprecated (use the corrected $_SERVER variable now)
     /**#@-*/
 
-    $xoopsUser = '';
-    $xoopsUserIsAdmin = false;
+    $GLOBALS['xoopsUser'] = '';
     $member_handler =& xoops_gethandler('member');
 
 	// NB: SSL login has been temporarily disabled until the birth of the user-login module
@@ -161,16 +162,16 @@ if (!defined("XOOPS_MAINFILE_INCLUDED")) {
     //if ($xoopsConfig['use_ssl'] && isset($_POST[$xoopsConfig['sslpost_name']]) && $_POST[$xoopsConfig['sslpost_name']] != '') {
 	//session_id($_POST[$xoopsConfig['sslpost_name']]);
 
-    if ( !empty( $_SESSION['xoopsUserId'] ) ) {
-        $xoopsUser =& $member_handler->getUser( $_SESSION['xoopsUserId'] );
-        if (!is_object($xoopsUser)) {
-            $xoopsUser = '';
-            $_SESSION = array();
-        } else {
-            $xoopsUser->setGroups( $_SESSION['xoopsUserGroups'] );
-            $xoopsUserIsAdmin = $xoopsUser->isAdmin();
-        }
-    }
+	// NB: User mgmt is not stabilized, so keep using $xoopsUser for the moment
+	if ( !@empty( $_SESSION ) ) {
+		$xoops->acceptUser();
+		if ( $xoops->currentUser ) {
+			$GLOBALS['xoopsUser'] = $xoops->currentUser;
+			//$xoopsUserIsAdmin = $xoopsUser->isAdmin();
+		}
+	}
+	global $xoopsUser;
+	
     if (!empty($_REQUEST['xoops_theme_select']) && in_array($_REQUEST['xoops_theme_select'], $xoopsConfig['theme_set_allowed'])) {
         $xoopsConfig['theme_set'] = $_REQUEST['xoops_theme_select'];
         $_SESSION['xoopsUserTheme'] = $_REQUEST['xoops_theme_select'];
@@ -178,34 +179,11 @@ if (!defined("XOOPS_MAINFILE_INCLUDED")) {
         $xoopsConfig['theme_set'] = $_SESSION['xoopsUserTheme'];
     }
 
-    if ($xoopsConfig['closesite'] == 1) {
-        $allowed = false;
-        if (is_object($xoopsUser)) {
-            foreach ($xoopsUser->getGroups() as $group) {
-                if (in_array($group, $xoopsConfig['closesite_okgrp']) || XOOPS_GROUP_ADMIN == $group) {
-                    $allowed = true;
-                    break;
-                }
-            }
-        } elseif (!empty($_POST['xoops_login'])) {
-            include_once XOOPS_ROOT_PATH.'/include/checklogin.php';
-            exit();
-        }
-        if (!$allowed) {
-            include_once XOOPS_ROOT_PATH.'/class/template.php';
-            $xoopsTpl = new XoopsTpl();
-            $xoopsTpl->assign(array('sitename' => $xoopsConfig['sitename'], 'xoops_themecss' => xoops_getcss(), 'xoops_imageurl' => XOOPS_THEME_URL.'/'.$xoopsConfig['theme_set'].'/', 'lang_login' => _LOGIN, 'lang_username' => _USERNAME, 'lang_password' => _PASSWORD, 'lang_siteclosemsg' => $xoopsConfig['closesite_text']));
-            $xoopsTpl->xoops_setCaching(1);
-            $xoopsTpl->display('db:system_siteclosed.html');
-            exit();
-        }
-        unset($allowed, $group);
-    }
-
     if ( file_exists('./xoops_version.php') ) {
         $url_arr = explode( '/', strstr( $_SERVER['SCRIPT_NAME'], '/modules/' ) );
         $module_handler =& xoops_gethandler('module');
-        $xoopsModule =& $module_handler->getByDirname($url_arr[2]);
+        $GLOBALS['xoopsModule'] = $module_handler->getByDirname($url_arr[2]);
+        global $xoopsModule;
         unset($url_arr);
         if (!$xoopsModule || !$xoopsModule->getVar('isactive')) {
             include_once XOOPS_ROOT_PATH."/header.php";
@@ -219,7 +197,7 @@ if (!defined("XOOPS_MAINFILE_INCLUDED")) {
                 redirect_header(XOOPS_URL."/user.php",1,_NOPERM);
                 exit();
             }
-            $xoopsUserIsAdmin = $xoopsUser->isAdmin($xoopsModule->getVar('mid'));
+            $GLOBALS['xoopsUserIsAdmin'] = $xoopsUser->isAdmin($xoopsModule->getVar('mid'));
         } else {
             if (!$moduleperm_handler->checkRight('module_read', $xoopsModule->getVar('mid'), XOOPS_GROUP_ANONYMOUS)) {
                 redirect_header(XOOPS_URL."/user.php",1,_NOPERM);
@@ -234,10 +212,10 @@ if (!defined("XOOPS_MAINFILE_INCLUDED")) {
             }
         }
         if ($xoopsModule->getVar('hasconfig') == 1 || $xoopsModule->getVar('hascomments') == 1 || $xoopsModule->getVar( 'hasnotification' ) == 1) {
-            $xoopsModuleConfig =& $config_handler->getConfigsByCat(0, $xoopsModule->getVar('mid'));
+            $GLOBALS['xoopsModuleConfig'] = $config_handler->getConfigsByCat(0, $xoopsModule->getVar('mid'));
         }
     } elseif($xoopsUser) {
-        $xoopsUserIsAdmin = $xoopsUser->isAdmin(1);
+        $GLOBALS['xoopsUserIsAdmin'] = $xoopsUser->isAdmin(1);
     }
     
 }
