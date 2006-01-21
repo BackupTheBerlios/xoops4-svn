@@ -71,7 +71,6 @@ if (!defined("XOOPS_MAINFILE_INCLUDED")) {
     set_magic_quotes_runtime(0);
     include_once XOOPS_ROOT_PATH.'/class/logger.php';
     $xoopsLogger =& XoopsLogger::instance();
-    $xoopsLogger->startTime();
     if (!defined('XOOPS_XMLRPC')) {
         define('XOOPS_DB_CHKREF', 1);
     } else {
@@ -101,17 +100,6 @@ if (!defined("XOOPS_MAINFILE_INCLUDED")) {
     $config_handler =& xoops_gethandler('config');
     $xoopsConfig =& $config_handler->getConfigsByCat(XOOPS_CONF);
 
-    // #################### Error reporting settings ##################
-/*
-	error_reporting(0);
-
-    if ($xoopsConfig['debug_mode'] == 1) {
-        error_reporting(E_ALL);
-    } else {
-        // Turn off error handler
-        $xoopsErrorHandler->activate(false);
-    }
-*/
     $xoopsSecurity->checkBadips();
 
     // ################# Include version info file ##############
@@ -251,5 +239,6 @@ if (!defined("XOOPS_MAINFILE_INCLUDED")) {
     } elseif($xoopsUser) {
         $xoopsUserIsAdmin = $xoopsUser->isAdmin(1);
     }
+    
 }
 ?>
