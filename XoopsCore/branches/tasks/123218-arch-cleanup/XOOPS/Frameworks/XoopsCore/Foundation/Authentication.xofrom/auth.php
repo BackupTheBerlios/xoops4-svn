@@ -87,7 +87,7 @@ class xoops_auth_AuthenticationDriver {
 	 * @var string	login		User login
 	 * @var string	password	User password (optionally encrypted)
 	 * @var string	hash		Name of the function used to hash the password (if any)
-	 * @return bool
+	 * @return mixed False if authentication failed, true if it worked, or the user login if different from the specified one
 	 */
 	function checkCredentials( $login, $password, $hash = '' ) {
 		return false;
