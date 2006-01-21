@@ -26,12 +26,20 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA //
 //  ------------------------------------------------------------------------ //
 /**
- * @package     kernel
- * @subpackage  database
- * 
- * @author	    Kazumi Ono	<onokazu@xoops.org>
- * @copyright	copyright (c) 2000-2003 XOOPS.org
+ * This file cannot be requested directly
  */
+if ( !defined( 'XOOPS_ROOT_PATH' ) ) exit();
+
+
+/**
+ * ---------------------------------------
+ * DONT USE THESE !
+ * ---------------------------------------
+ * Database instances should be created with XOS::create( 'xoops_db_Database' ),
+ * if you need a database object implementing the XOOPS 2.0.x database class
+ * methods, you can get a reference to the legacydb service using $xoops->loadService()
+ */
+
 
 /**
  * make sure this is only included once!
@@ -39,94 +47,95 @@
 if ( !defined("XOOPS_C_DATABASE_INCLUDED") ) {
 	define("XOOPS_C_DATABASE_INCLUDED",1);
 
-/**
- * Abstract base class for Database access classes
- * 
- * @abstract
- * 
- * @author Kazumi Ono <onokazu@xoops.org>
- * @copyright copyright (c) 2000-2003 XOOPS.org
- * 
- * @package kernel
- * @subpackage database
- */
-class XoopsDatabase
+class XoopsDatabase {
+	/**
+	 * constructor
+     * 
+     * will always fail, because this is an abstract class!
+	 */
+	function XoopsDatabase()
 	{
-		/**
-		 * Prefix for tables in the database
-		 * @var string
-		 */
-		var $prefix = '';
-		/**
-		 * reference to a {@link XoopsLogger} object
-         * @see XoopsLogger
-		 * @var object XoopsLogger
-		 */
-		var $logger;
+		// exit("Cannot instantiate this class directly");
+	}
 
-		/**
-		 * constructor
-         * 
-         * will always fail, because this is an abstract class!
-		 */
-		function XoopsDatabase()
-		{
-			// exit("Cannot instantiate this class directly");
-		}
+	/**
+	 * assign a {@link XoopsLogger} object to the database
+	 * 
+     * @see XoopsLogger
+     * @param object $logger reference to a {@link XoopsLogger} object
+	 */
+	function setLogger(&$logger)
+	{
+		$this->logger =& $logger;
+	}
 
-		/**
-		 * assign a {@link XoopsLogger} object to the database
-		 * 
-         * @see XoopsLogger
-         * @param object $logger reference to a {@link XoopsLogger} object
-		 */
-		function setLogger(&$logger)
-		{
-			$this->logger =& $logger;
+	/**
+	 * set the prefix for tables in the database
+	 * 
+     * @param string $value table prefix
+	 */
+	function setPrefix($value)
+	{
+		$this->prefix = $value;
+	}
+	
+	/**
+	 * attach the prefix.'_' to a given tablename
+     * 
+     * if tablename is empty, only prefix will be returned
+	 * 
+     * @param string $tablename tablename
+     * @return string prefixed tablename, just prefix if tablename is empty
+	 */
+	function prefix($tablename='')
+	{
+		if ( $tablename != '' ) {
+			return $this->prefix .'_'. $tablename;
+		} else {
+			return $this->prefix;
 		}
+	}
+}
 
-		/**
-		 * set the prefix for tables in the database
-		 * 
-         * @param string $value table prefix
-		 */
-		function setPrefix($value)
-		{
-			$this->prefix = $value;
-		}
-		
-		/**
-		 * attach the prefix.'_' to a given tablename
-         * 
-         * if tablename is empty, only prefix will be returned
-		 * 
-         * @param string $tablename tablename
-         * @return string prefixed tablename, just prefix if tablename is empty
-		 */
-		function prefix($tablename='')
-		{
-			if ( $tablename != '' ) {
-				return $this->prefix .'_'. $tablename;
+class XoopsDatabaseFactory {
+	/**
+	 * Get a reference to the only instance of database class and connects to DB
+	 * @deprecated
+	 */
+	function &getDatabaseConnection() {
+		return $GLOBALS['xoops']->loadService( 'legacydb' );
+	}
+	/**
+	 * Gets a reference to the only instance of database class.
+	 * @deprecated
+	 */
+	function &getDatabase() {
+		static $database;
+		if (!isset($database)) {
+			$file = XOOPS_ROOT_PATH.'/class/database/'.XOOPS_DB_TYPE.'database.php';
+			require_once $file;
+			if (!defined('XOOPS_DB_PROXY')) {
+				$class = 'Xoops'.ucfirst(XOOPS_DB_TYPE).'DatabaseSafe';
 			} else {
-				return $this->prefix;
+				$class = 'Xoops'.ucfirst(XOOPS_DB_TYPE).'DatabaseProxy';
 			}
+			$database =& new $class();
 		}
+		return $database;
 	}
 }
 
 
 /**
- * Only for backward compatibility
- * 
  * @deprecated
  */
-class Database
-{
-
+class Database {
 	function &getInstance() {
-		$inst =& XoopsDatabaseFactory::getDatabaseConnection();
-		return $inst;
+		return $GLOBALS['xoops']->loadService( 'legacydb' );
 	}
+}
+
+
 }
 
 ?>

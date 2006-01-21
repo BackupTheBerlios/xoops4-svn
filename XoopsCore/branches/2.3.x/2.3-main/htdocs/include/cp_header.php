@@ -7,6 +7,7 @@
 error_reporting(0);
 include_once '../../../mainfile.php';
 include_once XOOPS_ROOT_PATH . "/include/cp_functions.php";
+
 $moduleperm_handler = & xoops_gethandler( 'groupperm' );
 if ( $xoopsUser ) {
     $url_arr = explode('/',strstr($xoopsRequestUri,'/modules/'));
@@ -22,6 +23,10 @@ if ( $xoopsUser ) {
     redirect_header( XOOPS_URL . "/user.php", 1, _NOPERM );
     exit();
 }
+
+global $xoops;
+$_SESSION[$xoops->services['http']->xoBundleIdentifier]['tmpDisallowRedirections'] = true;
+
 // set config values for this module
 if ( $xoopsModule->getVar( 'hasconfig' ) == 1 || $xoopsModule->getVar( 'hascomments' ) == 1 ) {
     $config_handler = & xoops_gethandler( 'config' );

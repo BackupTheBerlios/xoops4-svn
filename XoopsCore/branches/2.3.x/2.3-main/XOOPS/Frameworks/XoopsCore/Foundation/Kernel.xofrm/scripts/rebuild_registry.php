@@ -52,13 +52,15 @@ function xoRegisterComponent( $registry, $bundleInfo, $bundleRoot ) {
 	if ( isset( $bundleInfo['xoServices'] ) ) {
 		foreach ( $bundleInfo['xoServices'] as $localId => $localInfo ) {
 			if ( @$subRoot = $localInfo['xoBundleRoot'] ) {
-				$localInfo = @include $xoops->path( $bundleRoot . $subRoot );
-				$localInfo = xoRegisterComponent( array(), $localInfo, $bundleRoot . $subRoot );
+				if ( $localInfo = @include $xoops->path( $bundleRoot . $subRoot . '/xo-info.php' ) ) {
+					$localInfo = xoRegisterComponent( array(), $localInfo, $bundleRoot . $subRoot );
+					$services = array_merge( $services, $localInfo );
+				}
 			} else {
 				$localInfo['xoBundleRoot'] = $bundleRoot;
-			}
-			if ( is_array( $localInfo ) ) {
-				$services[$localId] = $localInfo;
+				if ( is_array( $localInfo ) ) {
+					$services[$localId] = $localInfo;
+				}
 			}
 		}
 		unset( $bundleInfo['xoServices'] );

@@ -80,10 +80,13 @@ class xoops_kernel_Xoops2 {
 	 */
 	var $services				= null;
 	var $captures				= array(
-		'http'		=> 'xoops_http_HAL',
+		'error'		=> 'xoops_kernel_ErrorHandler',
+		'logger'	=> 'xoops_kernel_Logger',
+		'http'		=> 'xoops_http_HttpHandler',
 		'session'	=> 'xoops_http_SessionService',
+		'auth'		=> 'xoops_auth_AuthenticationService',
+		'legacydb'	=> array( 'xoops_db_Database', array( 'driverName' => 'xoops.legacy' ) ),
 	);
-
 	/** 
 	 * Indicates whether the boot sequence has been performed or not
 	 * 
@@ -104,15 +107,45 @@ class xoops_kernel_Xoops2 {
 	 * @var string
 	 */
 	var $baseLocation			= '';
+	/**
+	 * Currently logged in user
+	 *
+	 * NOTE: This currently points to a XoopsUser instance.
+	 * THIS WILL CHANGE BEFORE THE 2.3.0 RELEASE !!
+	 * Use the $xoopsUser global if you need to access a XoopsUser
+	 * 
+	 * @var object
+	 */
+	var $currentUser			= '';
+	/**
+	 * Type of object to create when instanciating the current user (unimplemented)
+	 */
+	var $userBundleIdentifier = 'xoops_kernel_User';
 
+	/**
+	 * Whether or not we want to enable somebody to login using the system user credentials (unimplemented)
+	 *
+	 * $enableSystemUser and $systemUserProperties allow you to define a virtual user identity
+	 * that you'll be able to use to login to your site in case of problems with the current
+	 * authentication drivers or database.
+	 *
+	 * For security purposes, people are advised to disable this function, and should only enable it
+	 * when it is needed.
+	 */
+	var $enableSystemUser = false;
+	/**
+	 * Values of the properties used to build the system user object
+	 */
+	var $systemUserProperties = array(
+		'login'		=> 'xoopsadmin',
+		'password'	=> '',
+		'groups'	=> array( 1, 2 ),
+	);
+	/**
+	 * Indicates if the kernel is currently performing a virtual page request
+	 */
 	var $isVirtual				= false;
 
-	var $previousErrorHandler	= false;
-
-	var $isHandlingErrors		= false;
-	var $_oldReporting			= 0;
-	var $errorReporting			= 0;
-	
 	function xoops_kernel_Xoops2( $hostId, $hostVars ) {
 	 	$GLOBALS['xoops']	=& $this;
 	 	$GLOBALS['exxos']->pathHandler =& $this;
@@ -120,15 +153,11 @@ class xoops_kernel_Xoops2 {
 	 	$this->hostId = $hostId;
 	 	XOS::apply( $this, $hostVars );
 	 	
-		if ( $this->xoRunMode & XO_MODE_DEV_MASK ) {
-			$this->errorReporting |= E_ALL;
-		}
-		//error_reporting(E_ALL);
-		$this->activateErrorHandler( true );
+	 	// Enable error reporting by default in development mode, enable it otherwise
+ 		error_reporting( ( $this->xoRunMode == XO_MODE_DEV ) ? E_ALL : 0 );
 
-		$this->loadRegistry();
+ 		$this->loadRegistry();
 	 	$this->services =& $GLOBALS['exxos']->services;
-
 
 	 	$captures = @include $this->path( 'var/Application Support/xoops_kernel_Xoops2/services.php' );
 	 	if ( is_array($captures) ) {
@@ -143,146 +172,45 @@ class xoops_kernel_Xoops2 {
 		} else {
 			$this->baseLocation = '';
 		}
-		//$this->services['logger'] = $this->services['errorhandler'] = $this;
-
 	}
 
-	/**
-	 * Load the components registry from persistent storage
-	 * 
-	 * @access private
-	 */
-	function loadRegistry() {
-		$reg = @include $this->path( 'var/Application Support/xoops_kernel_Xoops2/registry.php' );
-		if ( !is_array($reg) || ( $this->xoRunMode & XO_MODE_DEV_MASK ) ) {
-			$reg = include $this->path( "$this->xoBundleRoot/scripts/rebuild_registry.php" );
-		}
-		$GLOBALS['exxos']->registry = $reg;
-	}
-	
-	/**
-	 * Create an instance of the specified service by name
-	 * 
-	 * @param string $name		Name under which the service will be available
-	 * @param string $bundleId	ID of the class to instanciate
-	 * @param array  $options	Parameters to send to the service during instanciation
-	 */
-	function &loadService( $name, $bundleId = '', $options = array() ) {
-		if ( isset( $this->captures[$name] ) ) {
-			$bundleId = $this->captures[$name];
-		} elseif ( empty( $bundleId ) ) {
-			$bundleId = $name;
-		}
-		if ( !isset( $this->services[$name] ) ) {
-			$this->services[$name] =& XOS::create( $bundleId, $options );
-		}
-		return $this->services[$name];
-	}
-	
-	/**
-	 * Enable/disable the errorhandler.
-	 *
-	 * When set to active, the error handler set the php error reporting level to E_ALL and uses its own
-	 * $errorReporting property to mask the errors to report (so the @ operator still works :-)
-	 * 
-	 * @param bool	$enable		Whether to enable or disable the error handler
-	 */
-	function activateErrorHandler( $enable = true ) {
-		if ( $enable && !$this->isHandlingErrors ) {
-			set_error_handler( array( &$this, 'handleError' ) );
-			$this->_oldReporting = error_reporting( E_ALL );
-			return $this->isHandlingErrors = true;
-		} elseif ( !$enable && $this->isHandlingErrors ) {
-		 	restore_error_handler();
-			error_reporting( $this->_oldReporting );
-			return $this->isHandlingErrors = false;
-		}
-		return $this->isHandlingErrors;
-	}
-	
-	function handleError( $num, $str, $file = '', $line = 0, $context = false ) {
-		static $names = array(
-			E_ERROR => 'Error', E_USER_ERROR => 'Error', E_WARNING => 'Warning', E_USER_WARNING => 'Warning',
-			E_NOTICE => 'Notice', E_USER_NOTICE => 'Notice',
-		);
-		if ( $num & $this->errorReporting & error_reporting() ) {
-			foreach ( $this->paths as $root => $v ) {
-				$str  = str_replace( $v[0] . '/', "/$root/", $str );
-			}
-			$name = isset( $names[$num] ) ? $names[$num] : 'Undefined error';
-			$msg = "$name: $str";
-			if ( $file && $line ) {
-				$file = str_replace( DIRECTORY_SEPARATOR, '/', $file );
-				foreach ( $this->paths as $root => $v ) {
-					$file = str_replace( $v[0] . '/', "/$root/", $file );
-				}
-				$msg .= " in $file on line $line";
-			}
-			echo "$msg<br />\r\n";
-		}
-	}
-	
-	/**
-	* Convert a XOOPS path to a physical one
-	*/
-	function path( $url, $virtual = false ) {
-		// If the URL begins with protocol:// then remove it
-		if ( $pos = strpos( $url, '://' ) ) {
-			$url = substr( $url, $pos + 3 );
-		}
-		$parts = explode( '#', $url );
-		if ( count( $parts ) == 1 ) {
-			if ( $parts[0]{0} == '/' ) {
-				$parts[0] = substr( $parts[0], 1 );
-			}
-			$parts = explode( '/', $parts[0], 2 );
-			if ( !$virtual ) {
-				return !isset( $this->paths[$parts[0]] ) ? '' : ( $this->paths[$parts[0]][0] . '/' . $parts[1] );
-			} else {
-				if ( !isset( $this->paths[$parts[0]][1] ) ) {
-					return false;
-				}
-				if ( empty( $this->paths[$parts[0]][1] ) ) {
-					return $this->baseLocation . '/' . $parts[1];
-				}
-				return $this->baseLocation . '/' . $this->paths[$parts[0]][1] . '/' . $parts[1];
-			}
-		} else {
-			$root = XOS::classVar( $parts[0], 'xoBundleRoot' );
-			return $this->path( $root . '/' . $parts[1] );
-		}
-	}
-	/**
-	* Convert a XOOPS path to an URL
-	*/
-	function url( $url ) {
-		return $this->path( $url, true );
-	}
-
-	
 	/**
 	 * Perform the boot sequence
+	 * 
+	 * The following operations are done in order during the boot-sequence:
+	 * - The startup-sequence file (rc.php by default) is executed
+	 * - The authenticated user object is created (if any)
+	 * - The current module is initialized
+	 * - Startup items are executed
 	 *
 	 * @access public
 	 * @return bool
 	 */
 	function boot() {
-		//$this->setupModule();
 		if ( !$this->hasBooted ) {
-			//register_shutdown_function( array( &$this, 'shutdown' ) );
+			register_shutdown_function( array( &$this, 'shutdown' ) );
 			if ( !empty($this->bootFile) ) {
 				require_once $this->path( "/XOOPS/Boot/$this->bootFile" );
 			}
-			$this->hasBooted = true;
+			// @TODO-2.3: This shouldn't be there but is kept temporarily until the
+			// old common.php has been cleaned up as it should
+			include_once XOOPS_ROOT_PATH."/include/common.php";
+
+			if ( isset( $_SESSION[$this->xoBundleIdentifier]['currentUser'] ) ) {
+				$this->acceptUser( $_SESSION[$this->xoBundleIdentifier]['currentUser'] );
+			}
 			if ( $this->launchStartupItems() ) {
 				return true;
 			} 
+			$this->hasBooted = true;
 		}
 		return true;
 	}
-
 	/**
-	 * Perform the shutdown sequence
+	 * Perform the system-wide shutdown sequence
+	 * 
+	 * During kernel shutdown, instanciated services are checked for an 'xoShutdown'
+	 * method and if they provide one it will be called.
 	 *
 	 * @access public
 	 * @return bool
@@ -290,9 +218,14 @@ class xoops_kernel_Xoops2 {
 	function shutdown() {
 		if ( !$this->hasShutdown ) {
 			$this->hasShutdown = true;
+			$services = array_reverse( array_keys( $this->services ) );
+			foreach ( $services as $srv ) {
+				if ( method_exists( $this->services[$srv], 'xoShutdown' ) ) {
+					$this->services[$srv]->xoShutdown();
+				}
+			}
 		}
 	}
-
 	/**
 	 * Launch the kernel startup items
 	 *
@@ -337,8 +270,120 @@ class xoops_kernel_Xoops2 {
 		return $this->services['module']->xoBundleIdentifier;
 	}
 
+
+	/**
+	 * Load the components registry from persistent storage
+	 * 
+	 * @access private
+	 */
+	function loadRegistry() {
+		$reg = @include $this->path( 'var/Application Support/xoops_kernel_Xoops2/registry.php' );
+		if ( !is_array($reg) || ( $this->xoRunMode & XO_MODE_DEV_MASK ) ) {
+			$reg = include $this->path( "$this->xoBundleRoot/scripts/rebuild_registry.php" );
+		}
+		$GLOBALS['exxos']->registry = $reg;
+	}
 	
+	/**
+	 * Create an instance of the specified service by name
+	 * 
+	 * @param string $name		Name under which the service will be available
+	 * @param string $bundleId	ID of the class to instanciate
+	 * @param array  $options	Parameters to send to the service during instanciation
+	 */
+	function &loadService( $name, $bundleId = '', $options = array() ) {
+		if ( !isset( $this->services[$name] ) ) {
+			if ( isset( $this->captures[$name] ) ) {
+				if ( is_array( $this->captures[$name] ) ) {
+					list( $bundleId, $options ) = $this->captures[$name];
+				} else {
+					$bundleId = $this->captures[$name];
+				}
+			} elseif ( empty( $bundleId ) ) {
+				$bundleId = $name;
+			}
+			$this->services[$name] =& XOS::create( $bundleId, $options );
+		}
+		return $this->services[$name];
+	}
+
+	/**
+	 * Accept the specified user as the currently logged in user
+	 *
+	 * @param string $login Login of the user to accept
+	 * @param boolean $permanent Whether to accept this user permanently or for the current request only
+	 * @return boolean
+	 */
+	function acceptUser( $login = '', $permanent = false ) {
+		if ( empty( $login ) && isset( $_SESSION[$this->xoBundleIdentifier]['currentUser'] ) ) {
+			$login = $_SESSION[$this->xoBundleIdentifier]['currentUser'];
+			$permanent = true;
+		}
+		if ( !$login ) {
+			return false;
+		}
+		// @TODO-2.3: Clean this up later... This handler stuff is so, so lame... :-(
+		$handler =& xoops_gethandler('member');
+		list($user) = $handler->getUsers( new Criteria( 'uname', $login ) );
+		if ( is_object( $user ) ) {
+			$user->getGroups();
+			$this->currentUser = $user;
+			if ( $permanent && $this->services['session'] ) {
+				$this->services['session']->start();
+				$_SESSION[$this->xoBundleIdentifier]['currentUser'] = $login;
+			}
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	* Convert a XOOPS path to a physical one
+	*/
+	function path( $url, $virtual = false ) {
+		// If the URL begins with protocol:// then remove it
+		if ( $pos = strpos( $url, '://' ) ) {
+			$url = substr( $url, $pos + 3 );
+		}
+		$parts = explode( '#', $url );
+		if ( count( $parts ) == 1 ) {
+			if ( $parts[0]{0} == '/' ) {
+				$parts[0] = substr( $parts[0], 1 );
+			}
+			$parts = explode( '/', $parts[0], 2 );
+			if ( !$virtual ) {
+				return !isset( $this->paths[$parts[0]] ) ? '' : ( $this->paths[$parts[0]][0] . '/' . $parts[1] );
+			} else {
+				if ( !isset( $this->paths[$parts[0]][1] ) ) {
+					return false;
+				}
+				if ( empty( $this->paths[$parts[0]][1] ) ) {
+					return $this->baseLocation . '/' . $parts[1];
+				}
+				return $this->baseLocation . '/' . $this->paths[$parts[0]][1] . '/' . $parts[1];
+			}
+		} else {
+			$root = XOS::classVar( $parts[0], 'xoBundleRoot' );
+			return $this->path( $root . '/' . $parts[1] );
+		}
+	}
+	/**
+	* Convert a XOOPS path to an URL
+	*/
+	function url( $url ) {
+		return $this->path( $url, true );
+	}
+
 } // class xoops_kernel_Xoops2
+
+/**
+ * Returns a translated string
+ */
+function XO_( $str ) {
+	global $xoops;
+	return $xoops->services['lang'] ? $xoops->services['lang']->translate( $str ) : $str;	
+}
+
 
 
 ?>

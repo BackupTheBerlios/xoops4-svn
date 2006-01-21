@@ -77,7 +77,7 @@ if (!defined("XOOPS_ROOT_PATH")) {
         $xoopsTpl->assign('xoops_banner', '&nbsp;');
     }
     // get all blocks and assign to smarty
-    if ($xoopsUser != '') {
+    if ( !empty( $xoopsUser ) ) {
         $xoopsTpl->assign(array('xoops_isuser' => true, 'xoops_userid' => $xoopsUser->getVar('uid'), 'xoops_uname' => $xoopsUser->getVar('uname'), 'xoops_isadmin' => $xoopsUserIsAdmin));
         $groups = $xoopsUser->getGroups();
     } else {

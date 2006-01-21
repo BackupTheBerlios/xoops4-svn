@@ -18,6 +18,24 @@
 
 	([$xoops_module_header])
 
+	
+<script type="text/javascript">//<![CDATA[
+	function xoHideRedirectMessage() {
+		var msg = document.getElementById( "xo-redirect-message" );
+		var dec = .05;
+		if (!msg) return;
+		if ( msg.style.opacity === '' ) {
+			if (document.defaultView) {
+				msg.style.opacity = document.defaultView.getComputedStyle(msg, "").getPropertyValue("opacity") - dec;
+			} else msg.style.opacity = 1-dec;
+		} else msg.style.opacity -= dec;
+		if ( msg.style.opacity ) {
+			window.setTimeout( "xoHideRedirectMessage()", 75 );
+		}
+	}
+//]]>
+</script>
+	
 </head>
 <body>
 
@@ -40,6 +58,12 @@
 			([/if])
 		</div>
 	</div>
+([if $xoops->services.http->redirectMessage])
+	<div id="xo-redirect-message">
+		([$xoops->services.http->redirectMessage])
+	</div>
+	<script type="text/javascript">if (xoHideRedirectMessage) window.setTimeout( 'xoHideRedirectMessage()', 4200 );</script>
+([/if])
 	<div id="xo-canvas-main">
 		([if !empty($xoBlocks.canvas_left)])
 		<div class="xo-canvas-column xo-blockszone" id="xo-canvas-leftcolumn">

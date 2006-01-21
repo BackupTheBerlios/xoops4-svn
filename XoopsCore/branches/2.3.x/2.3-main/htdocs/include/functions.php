@@ -370,50 +370,27 @@ function xoops_getbanner()
     }
 }
 
-/*
-* Function to redirect a user to certain pages
-*/
-function redirect_header($url, $time = 3, $message = '', $addredirect = true)
-{
-    global $xoopsConfig, $xoopsRequestUri, $xoopsLogger, $xoopsUserIsAdmin;
-    if ( preg_match( "/[\\0-\\31]|about:|script:/i", $url) ) {
-        $url = XOOPS_URL;
+/**
+ * Function to redirect a user to certain pages
+ * @deprecated (Use xoops_http_HttpHandler::sendResponse() instead)
+ */
+function redirect_header($url, $time = 3, $message = '', $addredirect = true) {
+	global $xoops;
+	
+	if ( !trim( $message ) ) {
+		$message = _TAKINGBACK;
+	}
+    if ( $addredirect && strstr( $url, 'user.php' ) ) {
+    	$url .= ( strpos( $url, '?' ) ? '&' : '?' ) . rawurlencode( $_SERVER['REQUEST_URI'] );
     }
-    if (defined('XOOPS_CPFUNC_LOADED')) {
-        $theme = 'default';
-    } else {
-        $theme = $xoopsConfig['theme_set'];
-    }
-    require_once XOOPS_ROOT_PATH.'/class/template.php';
-    $xoopsTpl = new XoopsTpl();
-    $xoopsTpl->assign(array('xoops_theme' => $theme, 'xoops_imageurl' => XOOPS_THEME_URL.'/'.$theme.'/', 'xoops_themecss'=> xoops_getcss($theme), 'xoops_requesturi' => htmlspecialchars($GLOBALS['xoopsRequestUri'], ENT_QUOTES), 'xoops_sitename' => htmlspecialchars($xoopsConfig['sitename'], ENT_QUOTES), 'xoops_slogan' => htmlspecialchars($xoopsConfig['slogan'], ENT_QUOTES)));
-    if ($xoopsConfig['debug_mode'] == 2 && $xoopsUserIsAdmin) {
-        $xoopsTpl->assign('time', 300);
-        $xoopsTpl->assign('xoops_logdump', $xoopsLogger->dumpAll());
-    } else {
-        $xoopsTpl->assign('time', intval($time));
-    }
-    if ($addredirect && strstr($url, 'user.php')) {
-        if (!strstr($url, '?')) {
-            $url .= '?xoops_redirect='.urlencode($xoopsRequestUri);
-        } else {
-            $url .= '&amp;xoops_redirect='.urlencode($xoopsRequestUri);
-        }
-    }
-    if (defined('SID') && (! isset($_COOKIE[session_name()]) || ($xoopsConfig['use_mysession'] && $xoopsConfig['session_name'] != '' && !isset($_COOKIE[$xoopsConfig['session_name']])))) {
-        if (!strstr($url, '?')) {
-            $url .= '?' . SID;
-        } else {
-            $url .= '&amp;'.SID;
-        }
-    }
-    $url = preg_replace("/&amp;/i", '&', htmlspecialchars($url, ENT_QUOTES));
-    $xoopsTpl->assign('url', $url);
-    $message = trim($message) != '' ? $message : _TAKINGBACK;
-    $xoopsTpl->assign('message', $message);
-    $xoopsTpl->assign('lang_ifnotreload', sprintf(_IFNOTRELOAD, $url));
-    $xoopsTpl->display('db:system_redirect.html');
-    exit();
+	if ( defined('SID') && !isset( $_COOKIE[session_name()] ) ) {
+		$url .= ( strpos( $url, '?' ) ? '&' : '?' ) . SID;
+	}
+	if ( !strpos( $url, '://' ) && substr( $url, 0, 1 ) != '/' ) {
+		$url = $xoops->services['http']->absoluteUrl( $url );
+	}
+	$xoops->services['http']->sendResponse( 303, $message, $url );
+	exit();
 }
 
 function xoops_getenv($key)

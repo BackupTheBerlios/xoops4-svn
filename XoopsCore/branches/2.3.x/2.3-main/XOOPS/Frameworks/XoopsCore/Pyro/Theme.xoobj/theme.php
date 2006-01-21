@@ -156,9 +156,13 @@ class xoops_pyro_Theme {
 
 		if ( $info = @include "$this->path/xo-info.php" ) {
 			XOS::apply( $this, $info );
+			if ( isset( $_SESSION ) ) {
+				unset( $_SESSION[$xoops->services['http']->xoBundleIdentifier]['tmpDisallowRedirections'] );
+			}
 		} else {
 			$this->themeAPI = '2.0';
 			$this->parentTheme = ( $this->folderName == 'xoops20' ? '' : 'xoops20' );
+			$_SESSION[$xoops->services['http']->xoBundleIdentifier]['tmpDisallowRedirections'] = true;
 		}
 		if ( $this->bufferOutput ) {
 			ob_start();
