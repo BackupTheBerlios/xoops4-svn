@@ -319,9 +319,11 @@ class xoops_kernel_Xoops2 {
 			$login = $_SESSION[$this->xoBundleIdentifier]['currentUser'];
 			$permanent = true;
 		}
+		if ( !$login ) {
+			return false;
+		}
 		// @TODO-2.3: Clean this up later... This handler stuff is so, so lame... :-(
 		$handler =& xoops_gethandler('member');
-	
 		list($user) = $handler->getUsers( new Criteria( 'uname', $login ) );
 		if ( is_object( $user ) ) {
 			$user->getGroups();

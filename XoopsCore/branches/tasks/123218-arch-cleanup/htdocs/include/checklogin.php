@@ -63,9 +63,12 @@ if (false != $user) {
     $user->setVar('last_login', time());
     if (!$member_handler->insertUser($user)) {
     }
+    global $xoops;
     $_SESSION = array();
     $_SESSION['xoopsUserId'] = $user->getVar('uid');
     $_SESSION['xoopsUserGroups'] = $user->getGroups();
+	$_SESSION[$xoops->xoBundleIdentifier]['currentUser'] = $user->getVar( 'uname', 'n' );
+    
     if ($xoopsConfig['use_mysession'] && $xoopsConfig['session_name'] != '') {
         setcookie($xoopsConfig['session_name'], session_id(), time()+(60 * $xoopsConfig['session_expire']), '/',  '', 0);
     }
