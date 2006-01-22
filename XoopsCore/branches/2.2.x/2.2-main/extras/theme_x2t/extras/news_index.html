@@ -1,0 +1,50 @@
+<{if $displaynav == true}>
+  <div style="text-align: center;">
+    <form name="form1" action="index.php" method="get">
+    <{$topic_select}> <select name="storynum"><{$storynum_options}></select> <input type="submit" value="<{$lang_go}>" class="formButton" /></form>
+  <hr />
+  </div>
+<{/if}>
+
+
+<{section name=i loop=$stories}>
+<{php}>
+global $totalarticulos;
+global $impar;
+$totalarticulos = $totalarticulos +1;
+<{/php}>
+<{/section}>
+
+<{php}>
+if (($totalarticulos % 2)==1){
+	$impar=true;
+	echo '<table width=100%><tr><td colspan=2 width="100%">';
+}else{
+	echo '<table width=100%><tr><td width="50%">';
+}
+<{/php}>
+<div style="text-align: right; margin: 10px;"><{$pagenav}></div>
+<br />
+<!-- start news item loop -->
+<{section name=i loop=$stories}>
+  <{include file="db:news_item.html" story=$stories[i]}>
+<{php}>
+global $contador;
+$contador = $contador +1;
+if ($contador && $impar && (!$arrancado)){
+	$arrancado = true;
+	$contador = 0;
+	echo "</td></tr><tr><td>";
+}else{
+	if (($contador % 2)==1){
+		echo "</td><td width='50%'>";
+	}else{
+		echo "</td></tr><tr><td width='50%'>";
+	}
+}
+<{/php}>
+<{/section}>
+</td></tr></table>
+<!-- end news item loop -->
+<div style="text-align: right; margin: 10px;"><{$pagenav}></div>
+<br />

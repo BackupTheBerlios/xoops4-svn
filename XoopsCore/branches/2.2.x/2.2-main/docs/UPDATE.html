@@ -1,0 +1,59 @@
+<html>
+<head>
+  <title>Xoops Upgrade Guide</title>
+  <meta name="keywords" content="XOOPS docs" />
+  <meta name="description" content="XOOPS" />
+  <style>
+    P, TD, LI, INPUT, BODY, SELECT, TEXTAREA { font-family: Verdana; font-size: 13px; line-height: 1.3 }
+    .error { color: #CC3333; font-weight: bold; }
+    UL { margin-top: 0px; margin-bottom: 0px; padding-top: 0px; padding-bottom: 0px; }
+    OL { margin-top: 0px; margin-bottom: 0px; padding-top: 0px; padding-bottom: 0px; }
+    .indent { margin-left: 40px; }
+    FORM { margin: 0px; padding: 0px; }
+
+    H1, H2, H3, H4, H5 { margin: 0px; padding: 0px; }
+
+    .additions { color: #008800; }
+    .deletions { color: #880000; }
+
+	.header { padding: 10px; padding-top: 0px }
+    .page { background-color: #FFFFFF; padding: 10px; border: 1px inset;}
+	.footer { background-color: #DDDDDD; padding: 5px 10px; border: 1px inset; border-top: none; border-top: 1px solid #CCCCCC }
+	.code { background: #FFFFFF; border: solid #888888 2px; font-family: "Courier New"; color: black; font-size: 10pt; width: 100%; height: 400px; overflow: scroll; padding: 3px; }
+
+    .revisioninfo { color: #AAAAAA; padding-bottom: 20px; }
+
+	.copyright { font-size: 11px; color: #AAAAAA; text-align: right; }
+	.copyright A { color: #AAAAAA; }
+</style>
+</head>
+
+<body
+	bgcolor="#F8F8F8" text="#000000">
+
+<div class="page">
+<h3>Upgrade to XOOPS 2.2.x From 2.0.x</h3>
+<hr noshade size="1" />
+<br />
+<h4>Enable PHP debug</h4>
+Go to your administration area => system module => preferences => general settings and enable PHP debug
+<h4>Run pre-upgrade script</h4>
+After uploading all files in the patch archive, access www.example.com/xoopsupdate.php, replacing www.example.com with your site's URL. This will show error messages and no real content, but don't worry, just proceed to next step<br />
+<h4>Reload the page</h4>
+<h4>Press the submit button to update the system</h4>
+
+<h3>Upgrade From 2.2.x</h3>
+<hr noshade size="1" />
+<br />
+<h4>Enable PHP debug</h4>
+Go to your administration area => system module => preferences => general settings and enable PHP debug
+<h4>Upload XOOPS 2.2.x files</h4>
+Upload the 2.2.x files, overwriting existing files
+<h4>Update the System Module through the administration area</h4>
+
+<br /><br />
+<h4>Congratulations!</h4>
+Your update should now be complete. If all went well, then your updated site should be up and running. If not, please refer to the <a href="http://www.xoops.org/modules/smartfaq">FAQ</a> or <a href="http://www.xoops.org">XOOPS Forums</a> for further assistance.</div>
+
+</body>
+</html>

@@ -1,0 +1,44 @@
+<table width="100%" border="0" cellpadding="0" cellspacing="5" align="center">
+  <tr>
+    <td width="100%" valign="top" class="newsTitle" colspan="2"><img src="<{$xoops_imageurl}>/folder.gif" align="middle" alt="" /> <b><{$story.title}></b></td>
+  </tr>
+  <tr>
+    <td width="100%" colspan="2" class="newsPoster">  <{$lang_postedby}> <{$story.poster}> <span class="textPoster"><{$lang_on}> <{$story.posttime}> (<{$story.hits}> <{$lang_reads}>)</span></td>
+  </tr>
+  <tr>
+ <{if $story.align == "left" }>
+    <td width="17%" valign="top" class="newsMisc">
+    <table width="100%" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+    <td width="100%" valign="top" align="center">
+    <{$story.imglink}></td>
+    <tr>
+    <td width="100%" valign="top" align="center" style="padding: 3px;">
+    <a href="print.php?storyid=<{$story.id}>" target="_BLANK"><{$lang_printerpage}></a>
+    <a target="_top" href="<{$story.mail_link}>"><{$lang_sendstory}></a>
+    </td></tr></table>
+    </td>
+    <td width="83%" class="newsContent" valign="top">
+    <{$story.text}>
+    </td>
+  <{else}>
+    <td width="83%" class="newsContent" valign="top">
+    <{$story.text}>
+    </td>
+    <td width="17%" valign="top" class="newsMisc">
+    <table width="100%" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+    <tr>
+    <td width="100%" valign="top" align="center" style="padding: 3px;" class="newsPoster">
+   <a href="print.php?storyid=<{$story.id}>" target="_BLANK"><img src="images/print.gif" alt="<{$lang_printerpage}>" /></a>
+    <a target="_top" href="<{$story.mail_link}>"><img src="images/friend.gif" alt="<{$lang_sendstory}>" /></a>
+    </td></tr></table>
+
+    </td>
+  <{/if}>
+  </tr>
+  <tr>
+    <td width="100%" colspan="2" class="newsPoster" align="right"><span class="textPoster"><{$story.adminlink}> <{$story.morelink}>  </span></td>
+  </tr>
+</table>
+<br />

@@ -1,0 +1,9 @@
+<table cellpadding="1" cellspacing="4">
+<tr>
+<td>
+  <{foreach item=comment from=$comments}>
+    <{include file="db:system_comment.html" comment=$comment}>
+  <{/foreach}>
+</td>
+</tr>
+</table>

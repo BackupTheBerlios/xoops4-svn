@@ -1,0 +1,33 @@
+					<!-- USER NAVIGATION BAR START -->
+					<div id="navbar">
+        				<table cellspacing="0" cellpadding="0" id="menu1" class="NavMenu">
+        					<tr>
+								<{if $xoops_isuser == 1}>
+								    <td>
+    								    <a class="button" href="javascript:void(0)"><{$smarty.const._MA_NAV_ACTIONS}></a>
+    								    <div class="section">
+        									<a class="item" href="<{$xoops_url}>/user.php"><{$smarty.const._MA_NAV_VIEWACCOUNT}></a>
+                                            <a class="item" href="<{$xoops_url}>/edituser.php"><{$smarty.const._MA_NAV_EDITACCOUNT}></a>
+                                            <a class="item" href="<{$xoops_url}>/notifications.php"><{$smarty.const._MA_NAV_NOTIFICATIONS}></a>
+                                            <a class="item" href="<{$xoops_url}>/user.php?op=logout"><{$smarty.const._MA_NAV_LOGOUT}></a>
+                                            <{if $xoops_isadmin}>
+                                                <a class="item" href="<{$xoops_url}>/admin.php"><{$smarty.const._MA_NAV_ADMINISTRATION}></a>
+                                            <{/if}>
+                                        </div>
+                                    </td>
+								<{/if}>
+                                    <td><a class="button" href="http://www.link.it">First Link</a></td>
+                                    <td><a class="button" href="http://www.link.it">Second Link</a></td>
+                                    <td><a class="button" href="http://www.link.it">Third Link</a></td>
+                                    <td><a class="button" href="http://www.link.it">Fourth Link</a></td>
+									<td id="date">
+                                         <{if $xoops_isuser == 1}>
+                                            <{$smarty.const._MA_NAV_WELCOME}><{$xoops_uname}>!
+                                         <{else}>
+                                         <{$smarty.now|date_format:"%A, %e %B %Y"}>
+                                         <{/if}>
+									</td>
+        					</tr>
+        				</table>
+    				</div>
+                    <!-- USER NAVIGATION BAR END -->

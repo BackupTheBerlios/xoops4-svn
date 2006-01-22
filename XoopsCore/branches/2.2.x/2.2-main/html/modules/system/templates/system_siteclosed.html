@@ -1,0 +1,21 @@
+<table cellspacing="1" align="center" width="80%" border="0" cellpadding="10px;">
+    <tr>
+      <td align="center"><div style="background-color: #DDFFDF; color: #136C99; text-align: center; border-top: 1px solid #DDDDFF; border-left: 1px solid #DDDDFF; border-right: 1px solid #AAAAAA; border-bottom: 1px solid #AAAAAA; font-weight: bold; padding: 10px;"><{$lang_siteclosemsg}></div></td>
+    </tr>
+  </table>
+  
+  <form action="<{$xoops_url}>/user.php" method="post">
+    <table cellspacing="0" align="center" style="border: 0px solid silver; width: 200px;">
+      <tr>
+			<td>
+				<fieldset style="padding: 10px;border: 1px solid #aca899;">
+					<legend style="font-weight: bold;"><{$lang_login}></legend>
+						<{$lang_username}> <input type="text" name="uname" size="21" maxlength="25" value="<{$usercookie}>" /><br />
+    					<{$lang_password}> <input type="password" name="pass" size="21" maxlength="32" /><br />
+						<input type="hidden" name="xoops_login" value="1" />
+						<input class="formbutton" type="submit" value="<{$lang_login}>" />
+				</fieldset>
+			</td>
+       </tr>
+    </table>
+  </form>
