@@ -52,7 +52,7 @@ $modversion['tables'][0] = "priv_msgs";
 //install
 $modversion['onInstall'] = 'include/install.php';
 //update
-$modversion['onUpdate'] = 'include/update.php';
+//$modversion['onUpdate'] = 'include/update.php';
 
 // Templates
 $modversion['templates'][1]['file'] = 'pm_pmlite.html';
@@ -106,10 +106,10 @@ $modversion['profile']['field'][1]['name'] = 'pm_link';
 $modversion['profile']['field'][1]['type'] = 'autotext';
 $modversion['profile']['field'][1]['valuetype'] = XOBJ_DTYPE_TXTAREA;
 $modversion['profile']['field'][1]['default'] = "<a href=\"javascript:openWithSelfMain('{X_URL}/modules/pm/pmlite.php?send2=1&to_userid={X_UID}', 'pmlite', 550, 450);\" title=\""._PM_MI_MESSAGE." {X_UNAME}\"><img src=\"{X_URL}/modules/pm/images/pm.gif\" alt=\""._PM_MI_MESSAGE." {X_UNAME}\" /></a>";
-$modversion['profile']['field'][1]['show'] = 1; 
-$modversion['profile']['field'][1]['title'] = _PM_MI_LINK_TITLE; 
+$modversion['profile']['field'][1]['show'] = 1;
+$modversion['profile']['field'][1]['title'] = _PM_MI_LINK_TITLE;
 $modversion['profile']['field'][1]['edit'] = 0;
-$modversion['profile']['field'][1]['description'] = _PM_MI_LINK_DESCRIPTION; 
+$modversion['profile']['field'][1]['description'] = _PM_MI_LINK_DESCRIPTION;
 $modversion['profile']['field'][1]['required'] = 0;
 $modversion['profile']['field'][1]['config'] = 0;
 $modversion['profile']['field'][1]['options'] = array();

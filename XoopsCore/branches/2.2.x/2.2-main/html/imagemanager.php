@@ -242,7 +242,7 @@ if ($op == 'doupload') {
                 $fp = @fopen($uploader->getSavedDestination(), 'rb');
                 $fbinary = @fread($fp, filesize($uploader->getSavedDestination()));
                 @fclose($fp);
-                $image->setVar('image_body', addslashes($fbinary));
+                $image->setVar('image_body', $fbinary, true);
                 @unlink($uploader->getSavedDestination());
             }
             if (!$image_handler->insert($image)) {

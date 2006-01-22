@@ -56,7 +56,9 @@ if ($op == 'main') {
         $xoopsTpl->assign('lang_sendpassword', _US_SENDPASSWORD);
         $xoopsTpl->assign('mailpasswd_token', $GLOBALS['xoopsSecurity']->createToken());
         include 'footer.php';
-    } elseif ( $xoopsUser ) {
+    } elseif ( trim($_GET['xoops_redirect']) ) {
+        header('Location: '.trim($_GET['xoops_redirect']));
+    } else {
         header('Location: '.XOOPS_URL.'/modules/profile/userinfo.php?uid='.$xoopsUser->getVar('uid'));
     }
     exit();

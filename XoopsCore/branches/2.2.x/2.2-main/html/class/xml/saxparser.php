@@ -160,8 +160,11 @@ class SaxParser
     {
         xml_parser_free($this->parser);
 
-        unset($this);
-        // $this = null; // for PHP5 compatibility
+        if (!method_exists($this, '__destruct')) {
+             unset($this);
+        } else {
+            $this->__destruct();
+        }
     }
 
     /****************************************************************************

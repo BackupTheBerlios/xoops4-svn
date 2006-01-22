@@ -294,12 +294,12 @@ class XoopsComments extends XoopsObject
 				$icq_image = "";
 			}
 			if ( $poster->getVar("user_aim") != "" ) {
-				$aim_image = "<a href='aim:goim?screenname=".$poster->getVar("user_aim", "E")."&message=Hi+".$poster->getVar("user_aim")."+Are+you+there?'><img src='".XOOPS_URL."/images/icons/aim.gif' alt='aim' /></a>";
+				$aim_image = "<a href='aim:goim?screenname=".$poster->getVar("user_aim", "E")."&amp;message=Hi+".$poster->getVar("user_aim")."+Are+you+there?'><img src='".XOOPS_URL."/images/icons/aim.gif' alt='aim' /></a>";
 			} else {
 				$aim_image = "";
 			}
    			if ( $poster->getVar("user_yim") != "" ) {
-				$yim_image = "<a href='http://edit.yahoo.com/config/send_webmesg?.target=".$poster->getVar("user_yim", "E")."&.src=pg'><img src='".XOOPS_URL."/images/icons/yim.gif' alt='yim' /></a>";
+				$yim_image = "<a href='http://edit.yahoo.com/config/send_webmesg?.target=".$poster->getVar("user_yim", "E")."&amp;.src=pg'><img src='".XOOPS_URL."/images/icons/yim.gif' alt='yim' /></a>";
 			} else {
 				$yim_image = "";
 			}

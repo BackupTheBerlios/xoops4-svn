@@ -258,7 +258,7 @@ class XoopsTplfileHandler extends XoopsObjectHandler
     function getModuleTplCount($tplset)
     {
         $ret = array();
-        $sql = "SELECT tpl_module, COUNT(tpl_id) AS count FROM ".$this->db->prefix('tplfile')." WHERE tpl_tplset='".$tplset."' GROUP BY tpl_module";
+        $sql = "SELECT tpl_module, COUNT(tpl_id) AS count FROM ".$this->db->prefix('tplfile')." WHERE tpl_tplset=".$this->db->quoteString($tplset)." GROUP BY tpl_module";
         $result = $this->db->query($sql);
         if (!$result) {
             return $ret;

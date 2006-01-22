@@ -180,6 +180,9 @@ if ( !is_object($xoopsUser) || !is_object($xoopsModule) || !$xoopsUser->isAdmin(
                         $form->addElement($group_hidden);
                     }
                 }
+                if (!empty($_POST['mail_mailok'])) {
+                    $mailok_hidden = new XoopsFormHidden("mail_mailok", 1);
+                }
                 $inactive_hidden = new XoopsFormHidden("mail_inactive", $mail_inactive);
                 $lastlog_min_hidden = new XoopsFormHidden("mail_lastlog_min", $myts->makeTboxData4PreviewInForm($_POST['mail_lastlog_min']));
                 $lastlog_max_hidden = new XoopsFormHidden("mail_lastlog_max", $myts->makeTboxData4PreviewInForm($_POST['mail_lastlog_max']));
@@ -197,6 +200,7 @@ if ( !is_object($xoopsUser) || !is_object($xoopsModule) || !$xoopsUser->isAdmin(
                 $submit_button = new XoopsFormButton("", "mail_submit", _AM_SENDNEXT, "submit");
                 $sent_label = new XoopsFormLabel(_AM_SENT, sprintf(_AM_SENTNUM, $_POST['mail_start']+1, $mail_end, $added_count));
                 $form->addElement($sent_label);
+                $form->addElement($mailok_hidden);
                 $form->addElement($inactive_hidden);
                 $form->addElement($lastlog_min_hidden);
                 $form->addElement($lastlog_max_hidden);

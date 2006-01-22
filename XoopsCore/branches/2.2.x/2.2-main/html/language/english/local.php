@@ -40,7 +40,8 @@ class XoopsLocal
 
 	function &trim($text)
 	{
-	    return trim($text);
+	    $ret = trim($text);
+	    return $ret;
 	}
 	
 	/*
@@ -49,6 +50,17 @@ class XoopsLocal
 	function formatTimestamp($time, $format="l", $timeoffset="")
 	{
 	    global $xoopsConfig, $xoopsUser;
+	    if(strtolower($format) == "rss" ||strtolower($format) == "r"){
+        	$TIME_ZONE = "";
+        	if(!empty($GLOBALS['xoopsConfig']['server_TZ'])){
+				$server_TZ = abs(intval($GLOBALS['xoopsConfig']['server_TZ']*3600.0));
+				$prefix = ($GLOBALS['xoopsConfig']['server_TZ']<0)?" -":" +";
+				$TIME_ZONE = $prefix.date("Hi",$server_TZ);
+			}
+			$date = gmdate("D, d M Y H:i:s", intval($time)).$TIME_ZONE;
+			return $date;
+    	}
+    	
 	    $usertimestamp = xoops_getUserTimestamp($time, $timeoffset);
 	    switch (strtolower($format)) {
 	        case 's':
@@ -68,15 +80,16 @@ class XoopsLocal
 	        break;
 	        case 'c':
 	        case 'custom':	        
-	        if(date("Ymd", $usertimestamp) == date("Ymd")){
+	        $current_timestamp = xoops_getUserTimestamp(time(), $timeoffset);
+	        if(date("Ymd", $usertimestamp) == date("Ymd", $current_timestamp)){
 				$datestring = _TODAY;
-			}elseif(date("Ymd", $usertimestamp+24*60*60) == date("Ymd")){
+			}elseif(date("Ymd", $usertimestamp+24*60*60) == date("Ymd", $current_timestamp)){
 				$datestring = _YESTERDAY;
-			}elseif(date("Y", $usertimestamp) == date("Y")){
+			}elseif(date("Y", $usertimestamp) == date("Y", $current_timestamp)){
 				$datestring = _MONTHDAY;
 			}else{
 				$datestring = _YEARMONTHDAY;
-			}			
+			}
 	        break;
 	        default:
 	        if ($format != '') {
@@ -96,7 +109,8 @@ class XoopsLocal
 	// Method 2: echo XoopsLocal::hello("Some greeting words");
 	function &hello($text)
 	{
-		return "<div>Hello, ".$text."</div>";
+		$ret = "<div>Hello, ".$text."</div>";
+		return $ret;
 	}
 }
 ?>

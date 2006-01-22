@@ -118,7 +118,7 @@ foreach (array_keys($redirect_args) as $arg) {
         $argstring .= "?" . $arg . "=" . $redirect_args[$arg];
         $first_arg = 0;
     } else {
-        $argstring .= "&" . $arg . "=" . $redirect_args[$arg];
+		$argstring .= "&amp;" . $arg . "=" . $redirect_args[$arg];
     }
 }
 

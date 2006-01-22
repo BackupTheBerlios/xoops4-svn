@@ -72,7 +72,9 @@ switch ( $op ) {
             $stop .= _PROFILE_MA_UNEEDAGREE.'<br />';
         }
     }
-    if (!empty($xoopsModuleConfig['minpass']) && strlen(trim($_POST['pass'])) < $xoopsModuleConfig['minpass']) {
+    if ( strcmp(trim($_POST['pass']), trim($_POST['vpass'])) ) {
+        $stop .= _PROFILE_MA_PASSNOTSAME."<br />";
+    }elseif (!empty($xoopsModuleConfig['minpass']) && strlen(trim($_POST['pass'])) < $xoopsModuleConfig['minpass']) {
         $stop .= sprintf(_PROFILE_MA_PWDTOOSHORT,$xoopsModuleConfig['minpass'])."<br />";
     }
     $stop .= userCheck($newuser);
@@ -137,7 +139,7 @@ switch ( $op ) {
 
         $profile_handler =& xoops_gethandler('profile');
         // Get fields
-        $fields =& $profile_handler->loadFields();
+        $fields = $profile_handler->loadFields();
         if (count($fields) > 0) {
             foreach (array_keys($fields) as $i) {
                 $fieldname = $fields[$i]->getVar('field_name');

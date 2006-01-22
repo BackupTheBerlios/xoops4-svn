@@ -84,7 +84,7 @@ function b_system_online_show()
     } else {
         $online_handler->write($uid, $uname, time(), 0, $_SERVER['REMOTE_ADDR']);
     }
-    $onlines =& $online_handler->getAll();
+    $onlines = $online_handler->getAll();
     if (false != $onlines) {
         $total = count($onlines);
         $block = array();
@@ -117,7 +117,7 @@ function b_system_online_show()
 function b_system_login_show()
 {
     global $xoopsUser, $xoopsConfig;
-    if (!$xoopsUser) {
+    if (!is_object($xoopsUser)) {
         $block = array();
         $block['lang_username'] = _USERNAME;
         $block['unamevalue'] = "";
@@ -151,12 +151,12 @@ function b_system_main_show()
     $modules =& $module_handler->getObjects($criteria, true);
     $moduleperm_handler =& xoops_gethandler('groupperm');
     $groups = is_object($xoopsUser) ? $xoopsUser->getGroups() : XOOPS_GROUP_ANONYMOUS;
-    $read_allowed =& $moduleperm_handler->getItemIds('module_read', $groups);
+    $read_allowed = $moduleperm_handler->getItemIds('module_read', $groups);
     foreach (array_keys($modules) as $i) {
         if (in_array($i, $read_allowed)) {
             $block['modules'][$i]['name'] = $modules[$i]->getVar('name');
             $block['modules'][$i]['directory'] = $modules[$i]->getVar('dirname');
-            $sublinks =& $modules[$i]->subLink();
+            $sublinks = $modules[$i]->subLink();
             if ((count($sublinks) > 0) && (!empty($xoopsModule)) && ($i == $xoopsModule->getVar('mid'))) {
                 foreach($sublinks as $sublink){
                     $block['modules'][$i]['sublinks'][] = array('name' => $sublink['name'], 'url' => XOOPS_URL.'/modules/'.$modules[$i]->getVar('dirname').'/'.$sublink['url']);
@@ -288,7 +288,7 @@ function b_system_info_show($options)
                     $prev_caption = $userinfo['groupname'];
                     $block['groups'][$i]['name'] = $myts->htmlSpecialChars($userinfo['groupname']);
                 }
-                if ($xoopsUser != '') {
+                if (!is_object($xoopsUser)) {
                     $block['groups'][$i]['users'][] = array('id' => $userinfo['uid'], 'name' => $myts->htmlspecialchars($userinfo['name']), 'msglink' => "<a href=\"javascript:openWithSelfMain('".XOOPS_URL."/pmlite.php?send2=1&amp;to_userid=".$userinfo['uid']."','pmlite',450,370);\"><img src=\"".XOOPS_URL."/images/icons/pm_small.gif\" border=\"0\" width=\"27\" height=\"17\" alt=\"\" /></a>", 'avatar' => XOOPS_UPLOAD_URL.'/'.$userinfo['user_avatar']);
                 } else {
                     if ($userinfo['user_viewemail']) {
@@ -317,7 +317,7 @@ function b_system_newmembers_show($options)
     $criteria->setSort('user_regdate');
     $criteria->setLimit($limit);
     $member_handler =& xoops_gethandler('member');
-    $newmembers =& $member_handler->getUsers($criteria);
+    $newmembers = $member_handler->getUsers($criteria);
     $count = count($newmembers);
     for ($i = 0; $i < $count; $i++) {
         if ( $options[1] == 1 ) {
@@ -383,7 +383,7 @@ function b_system_comments_show($options)
             $comment_config[$mid] = $modules[$mid]->getInfo('comments');
         }
         $com['id'] = $i;
-        $com['title'] = '<a href="'.XOOPS_URL.'/modules/'.$modules[$mid]->getVar('dirname').'/'.$comment_config[$mid]['pageName'].'?'.$comment_config[$mid]['itemName'].'='.$comments[$i]->getVar('com_itemid').'&amp;com_id='.$i.'&amp;com_rootid='.$comments[$i]->getVar('com_rootid').'&amp;'.$comments[$i]->getVar('com_exparams').'#comment'.$i.'">'.$comments[$i]->getVar('com_title').'</a>';
+        $com['title'] = '<a href="'.XOOPS_URL.'/modules/'.$modules[$mid]->getVar('dirname').'/'.$comment_config[$mid]['pageName'].'?'.$comment_config[$mid]['itemName'].'='.$comments[$i]->getVar('com_itemid').'&amp;com_id='.$i.'&amp;com_rootid='.$comments[$i]->getVar('com_rootid').'&amp;'.htmlspecialchars($comments[$i]->getVar('com_exparams')).'#comment'.$i.'">'.$comments[$i]->getVar('com_title').'</a>';
         $com['icon'] = htmlspecialchars( $comments[$i]->getVar('com_icon'), ENT_QUOTES );
         $com['icon'] = ($com['icon'] != '') ? "subject/".$com['icon'] : 'subject/icon1.gif';
         $com['time'] = formatTimestamp($comments[$i]->getVar('com_created'),'m');
@@ -410,7 +410,7 @@ function b_system_notification_show()
     include_once XOOPS_ROOT_PATH . '/include/notification_functions.php';
     include_once XOOPS_ROOT_PATH . '/language/' . $xoopsConfig['language'] . '/notification.php';
     // Notification must be enabled, and user must be logged in
-    if (empty($xoopsUser) || !notificationEnabled('block')) {
+    if (!is_object($xoopsUser) || !notificationEnabled('block')) {
         return false; // do not display block
     }
     $notification_handler =& xoops_gethandler('notification');

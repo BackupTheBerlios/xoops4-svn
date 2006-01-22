@@ -139,45 +139,45 @@ class XTheme {
         $GLOBALS['xoopsTpl'] =& $this->tplEngine;
         if ( $this->bufferOutput ) {
             global $xoopsConfig;
-
+            
+            /* Forced */
+            $xoopsConfig['gzip_compression'] = 0;
+            
             //if Gzip is enabled and debug is turned off
-            // DISABLED for XOOPS 2.2.3 until we figure out, why it won't work in some configurations - Mith.
-            // @TODO: Find out why gzip_compression gives blank pages
-//            if ( $xoopsConfig['gzip_compression'] == 1 && ($xoopsConfig['debug_mode'] == array(0 => 0) || $xoopsConfig['debug_mode'] == array()))
-//            {
-//                $ob_started = false;
-//                $phpver = phpversion();
-//                $useragent = ( isset( $_SERVER["HTTP_USER_AGENT"] ) ) ? $_SERVER["HTTP_USER_AGENT"] : "";
-//
-//                if ( $phpver >= '4.0.4pl1' && ( strstr( $useragent, 'compatible' ) || strstr( $useragent, 'Gecko' ) ) )
-//                {
-//                    if ( extension_loaded( 'zlib' ) ) {
-//                        ob_start( 'ob_gzhandler' );
-//                        $ob_started = true;
-//                    }
-//                }
-//                else if ( $phpver > '4.0' )
-//                {
-//                    if ( strstr( $_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip' ) )
-//                    {
-//                        if ( extension_loaded( 'zlib' ) )
-//                        {
-//                            ob_start();
-//                            ob_implicit_flush( 0 );
-//                            header( 'Content-Encoding: gzip' );
-//                            $ob_started = true;
-//                        }
-//                    }
-//                }
-//                if (!$ob_started) {
-//                    ob_start();
-//                }
-//            }
-//            else
-//            {
-//                ob_start();
-//            }
-            ob_start();
+            if ( $xoopsConfig['gzip_compression'] == 1 && ($xoopsConfig['debug_mode'] == array(0 => 0) || $xoopsConfig['debug_mode'] == array()))
+            {
+                $ob_started = false;
+                $phpver = phpversion();
+                $useragent = ( isset( $_SERVER["HTTP_USER_AGENT"] ) ) ? $_SERVER["HTTP_USER_AGENT"] : "";
+
+                if ( $phpver >= '4.0.4pl1' && ( strstr( $useragent, 'compatible' ) || strstr( $useragent, 'Gecko' ) ) )
+                {
+                    if ( extension_loaded( 'zlib' ) ) {
+                        ob_start( 'ob_gzhandler' );
+                        $ob_started = true;
+                    }
+                }
+                else if ( $phpver > '4.0' )
+                {
+                    if ( strstr( $_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip' ) )
+                    {
+                        if ( extension_loaded( 'zlib' ) )
+                        {
+                            ob_start();
+                            ob_implicit_flush( 0 );
+                            header( 'Content-Encoding: gzip' );
+                            $ob_started = true;
+                        }
+                    }
+                }
+                if (!$ob_started) {
+                    ob_start();
+                }
+            }
+            else
+            {
+                ob_start();
+            }
         }
 
         $this->loadGlobalVars();
@@ -413,14 +413,18 @@ class XTheme {
         'xoops_version' => XOOPS_VERSION,
         'xoops_upload_url' => XOOPS_UPLOAD_URL));
         $this->tplEngine->assign(
-        array('xoops_requesturi' => htmlspecialchars($GLOBALS['xoopsRequestUri'], ENT_QUOTES),
-        'xoops_sitename' => htmlspecialchars($xoopsConfig['sitename'], ENT_QUOTES),
-        'xoops_slogan' => htmlspecialchars($xoopsConfig['slogan'], ENT_QUOTES)));
+	        array('xoops_requesturi' => htmlspecialchars($GLOBALS['xoopsRequestUri'], ENT_QUOTES),
+	        'xoops_sitename' => htmlspecialchars($xoopsConfig['sitename'], ENT_QUOTES),
+	        'xoops_slogan' => htmlspecialchars($xoopsConfig['slogan'], ENT_QUOTES)));
         if ($loadConfig == true) {
             // Meta tags
             $config_handler =& xoops_gethandler('config');
             $config =& $config_handler->getConfigsByCat(XOOPS_CONF_METAFOOTER);
             foreach ($config as $name => $value) {
+	            // Sanitizer quote/single quote
+	            if("footer" != $name){
+	            	$value = htmlspecialchars($value, ENT_QUOTES);
+            	}
                 // prefix each tag with 'xoops_'
                 $this->tplEngine->assign('xoops_'.$name, $value);
             }
@@ -439,7 +443,7 @@ class XTheme {
         }
         global $xoopsUser, $xoopsModule;
         // Load user variables
-        if ($xoopsUser != '') {
+        if (is_object($xoopsUser)) {
             $this->tplEngine->assign(array(   'xoops_isuser' => true,
             'xoops_userid' => $xoopsUser->getVar('uid'),
             'xoops_uname' => $xoopsUser->getVar('uname')));
@@ -496,7 +500,10 @@ class XTheme {
         $cachegroup = isset($GLOBALS['xoopsOption']['cache_group']) ? "_".$GLOBALS['xoopsOption']['cache_group'] : "";
 
         $protocol = strtolower(substr($_SERVER['SERVER_PROTOCOL'], 0, strpos($_SERVER['SERVER_PROTOCOL'], "/", 0)));
-        return 'mod_'.$GLOBALS['xoopsModule']->getVar('dirname').'|'.md5(str_replace(XOOPS_URL, '', $protocol."://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].$cachegroup));
+        //return 'mod_'.$GLOBALS['xoopsModule']->getVar('dirname').'|'.md5(str_replace(XOOPS_URL, '', $protocol."://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].$cachegroup));
+        /* How could this happen? */
+        $mod_dirname = is_object($GLOBALS['xoopsModule'])? $GLOBALS['xoopsModule']->getVar('dirname'):"system";
+        return 'mod_'.$mod_dirname.'|'.md5(str_replace(XOOPS_URL, '', $protocol."://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].$cachegroup));
     }
 
     /**

@@ -101,7 +101,8 @@ function &notificationCategoryInfo ($category_name='', $module_id=null)
 			return $category;
 		}
 	}
-	return false;
+	$ret = false;
+	return $ret;
 }
 
 /**
@@ -119,9 +120,10 @@ function &notificationCategoryInfo ($category_name='', $module_id=null)
  */
 function &notificationCommentCategoryInfo($module_id=null)
 {
+	$ret = false;
 	$all_categories =& notificationCategoryInfo ('', $module_id);
 	if (empty($all_categories)) {
-		return false;
+		return $ret;
 	}
 	foreach ($all_categories as $category) {
 		$all_events =& notificationEvents ($category['name'], false, $module_id);
@@ -134,7 +136,7 @@ function &notificationCommentCategoryInfo($module_id=null)
 			}
 		}
 	}
-	return false;
+	return $ret;
 }
 
 // TODO: some way to include or exclude admin-only events...
@@ -306,7 +308,8 @@ function &notificationEventInfo ($category_name, $event_name, $module_id=null)
 			return $event;
 		}
 	}
-	return false;
+	$ret = false;
+	return $ret;
 }
 
 

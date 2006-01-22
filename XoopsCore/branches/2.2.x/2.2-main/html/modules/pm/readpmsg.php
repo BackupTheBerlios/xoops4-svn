@@ -39,6 +39,14 @@ if ( !is_object($xoopsUser) ) {
 	}else{
 		$pm = null;
 	}
+    if (is_object($pm) 
+    	&& (!$xoopsUser->isAdmin())
+    	&& ($pm->getVar('from_userid') != $xoopsUser->getVar('uid'))
+    	&& ($pm->getVar('to_userid') != $xoopsUser->getVar('uid'))
+    ){
+        redirect_header(XOOPS_URL.'/modules/'.$xoopsModule->getVar("dirname").'/index.php', 2, _NOPERM);
+        exit();
+    }
     if (is_object($pm) && !empty($_POST['action']) ) {
         if (!$GLOBALS['xoopsSecurity']->check()) {
             echo implode('<br />', $GLOBALS['xoopsSecurity']->getErrors());

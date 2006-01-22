@@ -42,7 +42,7 @@ switch ($op) {
     $fields =& $profile_handler->loadFields();
     // Get ids of fields that can be searched
     $gperm_handler =& xoops_gethandler('groupperm');
-    $searchable_fields =& $gperm_handler->getItemIds('profile_search', $groups, $xoopsModule->getVar('mid'));
+    $searchable_fields = $gperm_handler->getItemIds('profile_search', $groups, $xoopsModule->getVar('mid'));
 
     include_once XOOPS_ROOT_PATH."/class/xoopsformloader.php";
     $searchform = new XoopsThemeForm("", "searchform", "search.php", "post");
@@ -164,7 +164,7 @@ switch ($op) {
     $fields =& $profile_handler->loadFields();
     // Get ids of fields that can be searched
     $gperm_handler =& xoops_gethandler('groupperm');
-    $searchable_fields =& $gperm_handler->getItemIds('profile_search', $groups, $xoopsModule->getVar('mid'));
+    $searchable_fields = $gperm_handler->getItemIds('profile_search', $groups, $xoopsModule->getVar('mid'));
     $searchvars = array();
 
     $criteria = new CriteriaCompo(new Criteria('level', 0, ">"));

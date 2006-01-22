@@ -28,6 +28,11 @@ if (!defined("XOOPS_ROOT_PATH")) {
     die("XOOPS root path not defined");
 }
 
+// Ensure charset setting
+if (!headers_sent()) {
+	header('Content-Type:text/html; charset='._CHARSET);
+}
+
 $GLOBALS['xoopsLogger']->context = "core";
 
 // Get blocks

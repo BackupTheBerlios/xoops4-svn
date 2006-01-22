@@ -89,7 +89,7 @@ if ($action == "results") {
     }
 }
 
-$groups = ( $xoopsUser ) ? $xoopsUser -> getGroups() : XOOPS_GROUP_ANONYMOUS;
+$groups = is_object($xoopsUser) ? $xoopsUser -> getGroups() : XOOPS_GROUP_ANONYMOUS;
 $gperm_handler = & xoops_gethandler( 'groupperm' );
 $available_modules = $gperm_handler->getItemIds('module_read', $groups);
 
@@ -191,7 +191,7 @@ switch ($action) {
                 if ( $count == 5 ) {
                     $search_url = XOOPS_URL.'/search.php?query='.urlencode(stripslashes(implode(' ', $queries)));
                     $search_url .= "&mid=$mid&action=showall&andor=$andor";
-                    echo '<br /><a href="'.$search_url.'">'._SR_SHOWALLR.'</a></p>';
+                    echo '<br /><a href="'.htmlspecialchars($search_url).'">'._SR_SHOWALLR.'</a></p>';
                 }
             }
         }

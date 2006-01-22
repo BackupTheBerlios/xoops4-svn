@@ -7,19 +7,24 @@
 *
 * @return string
 */
-function userCheck($user)
+function userCheck(& $user)
 {
     global $xoopsModuleConfig;
+    $is_admin = (is_object($GLOBALS["xoopsUser"]) && $GLOBALS["xoopsUser"]->isAdmin());
+    $is_admin_user = ($is_admin && ($user->getVar("uid") == $GLOBALS["xoopsUser"]->getVar("uid")));
+       
     $stop = '';
     if (!checkEmail($user->getVar('email'))) {
         $stop .= _PROFILE_MA_INVALIDMAIL.'<br />'.print_r($user->getVar('email'));
     }
+    if(!$is_admin):
     foreach ($xoopsModuleConfig['bad_emails'] as $be) {
         if (!empty($be) && preg_match("/".$be."/i", $user->getVar('email'))) {
             $stop .= _PROFILE_MA_INVALIDMAIL.'<br />'.print_r($user->getVar('email'));
             break;
         }
     }
+    endif;
     if (strrpos($user->getVar('email'),' ') > 0) {
         $stop .= _PROFILE_MA_EMAILNOSPACES.'<br />';
     }
@@ -37,12 +42,13 @@ function userCheck($user)
         $restriction = '/[\000-\040]/';
         break;
     }
-    if ($user->getVar('loginname') == "" || preg_match($restriction, $user->getVar('loginname'))) {
+    if ($user->getVar('loginname') == "" || (preg_match($restriction, $user->getVar('loginname')) &&!$is_admin_user) ) {
         $stop .= _PROFILE_MA_INVALIDNICKNAME."<br />";
     }
 //    if ($user->getVar('name') == "" || preg_match($restriction, $user->getVar('name'))) {
 //        $stop .= _PROFILE_MA_INVALIDDISPLAYNAME."<br />";
 //    }
+    if(!$is_admin_user):
     if (strlen($user->getVar('loginname')) > $xoopsModuleConfig['max_uname']) {
         $stop .= sprintf(_PROFILE_MA_NICKNAMETOOLONG, $xoopsModuleConfig['max_uname'])."<br />";
     }
@@ -55,8 +61,9 @@ function userCheck($user)
     if (strlen($user->getVar('uname')) < $xoopsModuleConfig['min_uname']) {
         $stop .= sprintf(_PROFILE_MA_DISPLAYNAMETOOSHORT, $xoopsModuleConfig['min_uname'])."<br />";
     }
+    endif;
     foreach ($xoopsModuleConfig['bad_unames'] as $bu) {
-	    if(empty($bu) ||$user->isAdmin()) continue;
+	    if( empty($bu) || $is_admin_user) continue;
         if (preg_match("/".$bu."/i", $user->getVar('loginname'))) {
             $stop .= _PROFILE_MA_NAMERESERVED."<br />";
             break;

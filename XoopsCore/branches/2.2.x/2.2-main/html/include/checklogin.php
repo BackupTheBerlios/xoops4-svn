@@ -108,7 +108,7 @@ if (false != $user) {
     $notification_handler =& xoops_gethandler('notification');
     $notification_handler->doLoginMaintenance($user->getVar('uid'));
 
-    redirect_header($url, 1, sprintf(_US_LOGGINGU, $user->getVar('uname')));
+    redirect_header($url, 1, sprintf(_US_LOGGINGU, $user->getVar('uname')), false); // disable "addredirect"!!
 } else {
 
     redirect_header(XOOPS_URL.'/user.php',1,_US_INCORRECTLOGIN);

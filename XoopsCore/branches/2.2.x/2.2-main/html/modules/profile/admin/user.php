@@ -137,7 +137,7 @@ switch($op) {
         $fields =& $profile_handler->loadFields();
         // Get ids of fields that can be edited
         $gperm_handler =& xoops_gethandler('groupperm');
-        $editable_fields =& $gperm_handler->getItemIds('profile_edit', $xoopsUser->getGroups(), $xoopsModule->getVar('mid'));
+        $editable_fields = $gperm_handler->getItemIds('profile_edit', $xoopsUser->getGroups(), $xoopsModule->getVar('mid'));
 
         foreach (array_keys($fields) as $i) {
             $fieldname = $fields[$i]->getVar('field_name');

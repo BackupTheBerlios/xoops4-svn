@@ -46,7 +46,11 @@ class XoopsProfile extends XoopsObject {
     function init($fields) {
         if (is_array($fields) && count($fields) > 0) {
             foreach (array_keys($fields) as $key) {
-                $this->initVar($key, $fields[$key]->getVar('field_valuetype'), $fields[$key]->getVar('field_default', 'n'), $fields[$key]->getVar('field_required'), $fields[$key]->getVar('field_maxlength'));
+	            if(!is_object($fields[$key])){
+                	$this->initVar($key, $fields[$key]['field_valuetype'], $fields[$key]['field_default'], $fields[$key]['field_required'], $fields[$key]['field_maxlength']);
+            	}else{
+                	$this->initVar($key, $fields[$key]->getVar('field_valuetype'), $fields[$key]->getVar('field_default', 'n'), $fields[$key]->getVar('field_required'), $fields[$key]->getVar('field_maxlength'));
+            	}
             }
         }
     }
@@ -89,9 +93,16 @@ class XoopsProfileHandler extends XoopsPersistableObjectHandler {
     *
     * @return array
     */
-    function loadFields() {
+    function &loadFields($asObject = true) {
+        static $type;
+        
+        if(isset($type) && $type != $asObject){
+	        $this->_fields = array();
+        }
+        $type = !empty($asObject);
+        
         if (count($this->_fields) == 0) {
-            $this->_fields =& $this->_fHandler->loadFields();
+            $this->_fields = $this->_fHandler->loadFields(false, $asObject);
         }
         return $this->_fields;
     }

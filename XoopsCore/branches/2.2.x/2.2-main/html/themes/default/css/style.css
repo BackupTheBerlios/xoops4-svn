@@ -54,7 +54,8 @@ div.wrapper { text-align: center; }
 .comUserRank {margin: 2px;}
 .comUserRankText {font-size: 10px;font-weight:bold;}
 .comUserRankImg {border: 0;}
-.comUserName {}
+.comUserName {color: #eee;}
+.comUserName a{color: #eee;}
 .comUserImg {margin: 2px;}
 .comDate {font-weight: normal; font-style: italic; font-size: smaller}
 .comDateCaption {font-weight: bold; font-style: normal;}
@@ -125,7 +126,8 @@ td#usermenu a.highlight {background-color: #fcc;}
 .head {background-color: #e7e7e7; padding: 3px; font-weight: normal;}
 .even {background-color: #e7e7e7; padding: 3px;}
 .odd {background-color: #f7f7f7; padding: 3px;}
-.foot {background-color: #436792; padding: 3px; font-weight: bold;text-align: center;}
+.foot {color: #fff; background-color: #436792; padding: 3px; font-weight: bold;text-align: center;}
+.foot a {color: #fff;}
 tr.head td {background-color: #B6CDE4; padding: 3px; font-weight: bold;}
 tr.even td {background-color: #efefef; padding: 3px;}
 tr.odd td {background-color: #f7f7f7; padding: 3px;}

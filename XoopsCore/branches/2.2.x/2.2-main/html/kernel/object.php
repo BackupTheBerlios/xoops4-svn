@@ -782,7 +782,7 @@ class XoopsPersistableObjectHandler extends XoopsObjectHandler {
      *
      * @return array
      */
-    function getObjects($criteria = null, $id_as_key = false, $as_object = true)
+    function &getObjects($criteria = null, $id_as_key = false, $as_object = true)
     {
         $ret = array();
         $limit = $start = 0;
@@ -800,7 +800,8 @@ class XoopsPersistableObjectHandler extends XoopsObjectHandler {
             return $ret;
         }
 
-        return $this->convertResultSet($result, $id_as_key, $as_object);
+        $ret = $this->convertResultSet($result, $id_as_key, $as_object);
+        return $ret;
     }
 
     /**

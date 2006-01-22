@@ -60,11 +60,12 @@ function getFieldForm(&$field, $action = false) {
         $element_select = new XoopsFormSelect(_PROFILE_AM_TYPE, 'field_type', $field->getVar('field_type', 'e'));
         $element_select->addOptionArray($fieldtypes);
 
-        $form->addElement($type_select);
+        //$form->addElement($type_select);
         $form->addElement($element_select);
 
         switch ($field->getVar('field_type')) {
             case "textbox":
+            /*
             $valuetypes = array(XOBJ_DTYPE_ARRAY => _PROFILE_AM_ARRAY,
                         XOBJ_DTYPE_EMAIL => _PROFILE_AM_EMAIL,
                         XOBJ_DTYPE_INT => _PROFILE_AM_INT,
@@ -74,8 +75,9 @@ function getFieldForm(&$field, $action = false) {
                         XOBJ_DTYPE_OTHER => _PROFILE_AM_OTHER);
             $type_select = new XoopsFormSelect(_PROFILE_AM_VALUETYPE, 'field_valuetype', $field->getVar('field_valuetype', 'e'));
             $type_select->addOptionArray($valuetypes);
-            $form->addElement($valuetypes);
+            $form->addElement($type_select);
             break;
+            */
 
             case "select":
             case "radio":
@@ -88,7 +90,7 @@ function getFieldForm(&$field, $action = false) {
                         XOBJ_DTYPE_OTHER => _PROFILE_AM_OTHER);
             $type_select = new XoopsFormSelect(_PROFILE_AM_VALUETYPE, 'field_valuetype', $field->getVar('field_valuetype', 'e'));
             $type_select->addOptionArray($valuetypes);
-            $form->addElement($valuetypes);
+            $form->addElement($type_select);
             break;
 
 
@@ -171,7 +173,15 @@ function getFieldForm(&$field, $action = false) {
             break;
 
             case "theme":
-            $form->addElement(new XoopsFormSelectTheme(_PROFILE_AM_DEFAULT, 'field_default', $field->getVar('field_default', 'e')));
+           	$element = new XoopsFormSelect(_PROFILE_AM_DEFAULT, 'field_default', $field->getVar('field_default', 'e'));
+            $element->addOption("0", _SITEDEFAULT);
+            $theme_list = XoopsLists::getThemesList();
+            foreach($theme_list as $key=>$val){
+	            if(!in_array($key, $GLOBALS['xoopsConfig']['theme_set_allowed'])) continue;
+            	$element->addOption($key, $val);
+            }
+            $form->addElement($element);
+            //$form->addElement(new XoopsFormSelectTheme(_PROFILE_AM_DEFAULT, 'field_default', $field->getVar('field_default', 'e')));
             break;
 
             case "autotext":
@@ -389,7 +399,7 @@ function getUserForm(&$user, $action = false) {
     $weights[0][] = 0;
 
     $email_tray = new XoopsFormElementTray(_PROFILE_MA_EMAIL, '<br />');
-    if ($user->isNew() || $xoopsUser->isAdmin()) {
+    if ($user->isNew() || $xoopsModuleConfig['allow_chgmail'] == 1 || $xoopsUser->isAdmin()) {
         $email_text = new XoopsFormText('', 'email', 30, 60, $user->getVar('email'));
     } else {
         $email_text = new XoopsFormLabel('', $user->getVar('email'));
@@ -452,7 +462,7 @@ function getUserForm(&$user, $action = false) {
     $fields =& $profile_handler->loadFields();
     // Get ids of fields that can be edited
     $gperm_handler =& xoops_gethandler('groupperm');
-    $editable_fields =& $gperm_handler->getItemIds('profile_edit', $xoopsUser->getGroups(), $xoopsModule->getVar('mid'));
+    $editable_fields = $gperm_handler->getItemIds('profile_edit', $xoopsUser->getGroups(), $xoopsModule->getVar('mid'));
 
     $profile_fieldcat_handler =& xoops_getmodulehandler('fieldcategory');
     /* @var $profile_fieldcat_handler ProfileFieldCategoryHandler */

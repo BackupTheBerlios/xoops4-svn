@@ -1,4 +1,43 @@
 ============================
+2006/01/12: Version 2.2.4 
+============================
+- Security fix: sanitizing $xoopsConfig["language"]: multiple files (phppp) 
+- Fixed reference-related issue, partially: multiple files (phppp) 
+- Fixed aged HTML tag errors: multiple files (phppp)(*)
+- Fixed bug that not check verification password for user registration: ROOT/modules/profile/register.php (phppp/tester)
+- Fixed Bug #1340925 - Mailing a selection doesn't work correctly (Mithrandir/pinchecl)
+- Fixed Bug #1346904 - XMT theme - 404 message (Mithrandir/Peter777)
+- Fixed profile field treatement error to allow XOBJ_DTYPE_URL clickable: ROOT/kernel/profilefield.php (phppp)
+- Reduced file size for cached profile field data: ROOT/kernel/profilefield.php, profile.php (phppp) 
+- Added missing time offset for calculating time: ROOT/language/english/local.php (phppp) 
+- Changed rss time to take into account time zone: ROOT/language/english/local.php (phppp)
+- Fixed bug that a user could read any message via message ID: ROOT/modules/pm/readmsg.php (phppp) 
+- Fixed url error: ROOT/modules/pm/templates/pm_viewmsg.html (phppp) 
+- Fixed bug that webmaster could not access inactive user info: ROOT/modules/profile/userinfo.php (phppp) 
+- Fixed bug that user could not change email: ROOT/modules/profile/edituser.php (phppp) 
+- Fixed bug that profile field value type couldn't be changed: ROOT/modules/profile/include/forms.php (phppp)
+- Added rights for admin in user account check:  ROOT/modules/profile/include/functions.php (phppp)
+- Changed sort for user from name to uname:  ROOT/modules/system/admin/groups/groups.php (phppp)
+- Fixed bug for censor word update:  ROOT/modules/system/admin/preferences/main.php (phppp)
+- Fixed bug for template paths:  ROOT/modules/system/admin/tplsets/main.php (phppp/wenmingpig)
+- Added user profile default values update on system module update:  ROOT/modules/system/include/update.php (phppp)
+- Changed CSS for font color for user name and text in footer:  theme default (phppp/Steven)
+- Fixed url bug:  ROOT/modules/system/admin/templates/system_imagemanager2.html (phppp)
+- Added single quote sanitizing: ROOT/pda.php (phppp)(*)
+- Added charset setting: ROOT/header.php (phppp)
+- Added URL sanitizing: ROOT/search.php (phppp)(*)
+- Fixed error messages: ROOT/lostpass.php (phppp)
+- Fixed user login redirect error: ROOT/user.php (phppp, reported by Anne)
+- Forced disabling gzip_compression: ROOT/class/theme.php (phppp)
+- Added sanitizing for meta footer: ROOT/class/theme.php (phppp)
+- Added $xoopsModule check: ROOT/class/theme.php (phppp)
+- Changed/Rolledback(partially) "makeclicable",changed censor string process : ROOT/class/module.textsanitizer.php (phppp)
+- PHP 5 compatibility: ROOT/class/xml/saxparser.php (phppp)(*)
+- Added meta data sanitizing in header: ROOT/include/functions.php (phppp)(*)
+- Fixed typo for redirect time, added missing trimmaker for substr, changed userealname to false: ROOT/include/functions.php (phppp)(*)
+(*): from XoopsCube
+
+============================
 2005/10/30: Version 2.2.3 Final
 ============================
 - SECURITY: Fix to prevent mail headers injection (Skalpa/XOOPS Cube)
@@ -244,7 +283,7 @@ Additions:
 - Implemented new token system for validating form origination and increased protection against CSRF (Mithrandir/Onokazu)
 - Security fix to avoid the usage of fopen and unlink when previewing (Onokazu)
 - Fixed bug - Missing </a> in news/templates/blocks/news_block_bigstory.html (Mithrandir/blacKurd)
-- Fixed bug in header.php – assign $xoops_lblocks (Mithrandir/phppp)
+- Fixed bug in header.php ?assign $xoops_lblocks (Mithrandir/phppp)
 - Fixed bug #1087786 Can"t assign to $this in PHP5 (Mithrandir)
 - Included 2.0.9.3 fixes in 2.0.10 patch for easy upgrade from 2.0.9.2 (Mithrandir/rowd)
 - Fixed bug #1157029 - Bug in include/checklogin.php (Onokazu/sudhaker)

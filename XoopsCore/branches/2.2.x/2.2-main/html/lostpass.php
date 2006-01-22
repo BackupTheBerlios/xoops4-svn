@@ -60,16 +60,17 @@ if (count($getuser) == 0) {
         $xoopsMailer->assign("LOGINNAME", $getuser[0]->getVar('loginname'));
         if ( !$xoopsMailer->send() ) {
             echo $xoopsMailer->getErrors();
+	        redirect_header("user.php", 3, $xoopsMailer->getErrors(), false);
+        }else{
+	        $getuser[0]->setVar('pass', md5($newpass));
+	        if (!$member_handler->insertUser($getuser[0], true)) {
+	            include XOOPS_ROOT_PATH."/header.php";
+	            echo _US_MAILPWDNG;
+	            include XOOPS_ROOT_PATH."/footer.php";
+	            exit();
+	        }
+	        redirect_header("user.php", 3, sprintf(_US_PWDMAILED,$getuser[0]->getVar("uname")), false);
         }
-
-        $getuser[0]->setVar('pass', md5($newpass));
-        if (!$member_handler->insertUser($getuser[0], true)) {
-            include XOOPS_ROOT_PATH."/header.php";
-            echo _US_MAILPWDNG;
-            include XOOPS_ROOT_PATH."/footer.php";
-            exit();
-        }
-        redirect_header("user.php", 3, sprintf(_US_PWDMAILED,$getuser[0]->getVar("uname")), false);
         exit();
         // If no Code, send it
     } else {
@@ -82,10 +83,11 @@ if (count($getuser) == 0) {
         include XOOPS_ROOT_PATH."/header.php";
         if ( !$xoopsMailer->send() ) {
             echo $xoopsMailer->getErrors();
+        }else{
+	        echo "<h4>";
+	        printf(_US_CONFMAIL,$getuser[0]->getVar("uname"));
+	        echo "</h4>";
         }
-        echo "<h4>";
-        printf(_US_CONFMAIL,$getuser[0]->getVar("uname"));
-        echo "</h4>";
         include XOOPS_ROOT_PATH."/footer.php";
     }
 }

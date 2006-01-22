@@ -93,11 +93,11 @@ function modifyGroup($g_id)
     $name_value = $thisgroup->getVar("name", "E");
     $desc_value = $thisgroup->getVar("description", "E");
     $moduleperm_handler =& xoops_gethandler('groupperm');
-    $a_mod_value =& $moduleperm_handler->getItemIds('module_admin', $thisgroup->getVar('groupid'));
-    $r_mod_value =& $moduleperm_handler->getItemIds('module_read', $thisgroup->getVar('groupid'));
-    
+    $a_mod_value = $moduleperm_handler->getItemIds('module_admin', $thisgroup->getVar('groupid'));
+    $r_mod_value = $moduleperm_handler->getItemIds('module_read', $thisgroup->getVar('groupid'));
+
     $gperm_handler =& xoops_gethandler('groupperm');
-    $r_block_value =& $gperm_handler->getItemIds('block_read', $g_id);
+    $r_block_value = $gperm_handler->getItemIds('block_read', $g_id);
     $op_value = "update";
     $submit_value = _AM_UPDATEADG;
     $g_id_value = $thisgroup->getVar("groupid");
@@ -108,7 +108,7 @@ function modifyGroup($g_id)
     }
 
     $sysperm_handler =& xoops_gethandler('groupperm');
-    $s_cat_value =& $sysperm_handler->getItemIds('system_admin', $g_id);
+    $s_cat_value = $sysperm_handler->getItemIds('system_admin', $g_id);
 
     include XOOPS_ROOT_PATH."/modules/system/admin/groups/groupform.php";
     echo "<br /><h4 style='text-align:left'>"._AM_EDITMEMBER."</h4>";
@@ -121,11 +121,11 @@ function modifyGroup($g_id)
         $members =& $member_handler->getUsersByGroup($g_id, false);
         if (count($members) > 0) {
             $member_criteria = new Criteria('uid', "(".implode(',', $members).")", "IN");
-            $member_criteria->setSort('name');
+            $member_criteria->setSort('uname');
             $mlist = $member_handler->getUserList($member_criteria);
         }
         $criteria = new Criteria('level', 0, '>');
-        $criteria->setSort('name');
+        $criteria->setSort('uname');
         $userslist =& $member_handler->getUserList($criteria);
         $users =& array_diff($userslist, $mlist);
         echo '<table class="outer">
@@ -168,7 +168,7 @@ function modifyGroup($g_id)
         $mlist = array();
         if (count($members) > 0) {
             $member_criteria = new Criteria('uid', "(".implode(',', $members).")", "IN");
-            $member_criteria->setSort('name');
+            $member_criteria->setSort('uname');
             $mlist = $member_handler->getUserList($member_criteria);
         }
         echo '<a href="'.XOOPS_URL.'/modules/system/admin.php?fct=findusers&amp;group='.$g_id.'">'._AM_FINDU4GROUP.'</a><br />';

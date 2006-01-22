@@ -125,9 +125,9 @@ function BannersAdmin()
     <td align='center'>"._AM_FUNCTION."</td></tr><tr align='center'>";
     $result = $xoopsDB->query("SELECT cid, name, contact, email FROM ".$xoopsDB->prefix("bannerclient")." ORDER BY cid");
     while(list($cid, $name, $contact, $email) = $xoopsDB->fetchRow($result)) {
-        $name = $myts->makeTboxData4Show($name);
-        $contact = $myts->makeTboxData4Show($contact);
-        $email = $myts->makeTboxData4Show($email);
+        $name = htmlspecialchars($name,ENT_QUOTES);
+        $contact = htmlspecialchars($contact,ENT_QUOTES);
+        $email = htmlspecialchars($email,ENT_QUOTES);
         $result2 = $xoopsDB->query("SELECT COUNT(*) FROM ".$xoopsDB->prefix("banner")." WHERE cid=$cid");
         list($numrows) = $xoopsDB->fetchRow($result2);
         echo "
@@ -297,9 +297,9 @@ function BannerEdit($bid)
     "._AM_CLICKURLT."<input type='text' name='clickurl' size='50' maxlength='200' value='".htmlspecialchars($clickurl, ENT_QUOTES)."' /><br />
     "._AM_USEHTML;
     if ($htmlbanner){
-        echo " <input type='checkbox' name='htmlbanner' value='1' checked='checked'>";
+        echo " <input type='checkbox' name='htmlbanner' value='1' checked='checked' />";
     }else{
-        echo " <input type='checkbox' name='htmlbanner' value='1'>";
+        echo " <input type='checkbox' name='htmlbanner' value='1' />";
     }
     echo "
     <br />
@@ -347,9 +347,9 @@ function BannerClientDelete($cid)
             if(strtolower(substr($imageurl,strrpos($imageurl,".")))==".swf") {
                 $bannerobject = $bannerobject
                         .'<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,40,0" width="468" height="60">'
-                        .'<param name=movie value="'.$imageurl.'">'
-                        .'<param name=quality value=high>'
-                        .'<embed src="'.$imageurl.'" quality=high pluginspage="http://www.macromedia.com/shockwave/download/index.cgi?P1_Prod_Version=ShockwaveFlash"; type="application/x-shockwave-flash" width="468" height="60">'
+                        .'<param name="movie" value="'.$imageurl.'"></param>'
+                        .'<param name="quality" value="high"></param>'
+                        .'<embed src="'.$imageurl.'" quality="high" pluginspage="http://www.macromedia.com/shockwave/download/index.cgi?P1_Prod_Version=ShockwaveFlash" type="application/x-shockwave-flash" width="468" height="60">'
                         .'</embed>'
                         .'</object>';
             } else {

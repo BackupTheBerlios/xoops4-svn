@@ -131,18 +131,22 @@ class MyTextSanitizer
 	function makeClickable( $text )
 	{
 		/*$patterns = array("/(^|[^]_a-z0-9-=\"'\/])([a-z]+?):\/\/([^, \r\n\"\(\)'<>]+)/i", "/(^|[^]_a-z0-9-=\"'\/])www\.([a-z0-9\-]+)\.([^, \r\n\"\(\)'<>]+)/i", "/(^|[^]_a-z0-9-=\"'\/])ftp\.([a-z0-9\-]+)\.([^, \r\n\"\(\)'<>]+)/i", "/(^|[^]_a-z0-9-=\"'\/:\.])([a-z0-9\-_\.]+?)@([^, \r\n\"\(\)'<>\[\]]+)/i");*/
-		$patterns = array("/(^|[^]_a-z0-9-=\"'\/])([a-z]+?):\/\/([^
-                            \r\n\"\(\)'<>]+)/i",
-                            "/(^|[^]_a-z0-9-=\"'\/])www\.([a-z0-9\-]+)\.([^
-                            \r\n\"\(\)'<>]+)/i",
-                            "/(^|[^]_a-z0-9-=\"'\/])ftp\.([a-z0-9\-]+)\.([^
-                            \r\n\"\(\)'<>]+)/i",
-                            "/(^|[^]_a-z0-9-=\"'\/:\.])([a-z0-9\-_\.]+?)@([^
-                            \r\n\"\(\)'<>\[\]]+)/i");
+		$patterns = array("/(^|[^]_a-z0-9-=\"'\/])([a-z]+?):\/\/([^,\r\n\"\(\)'<>\s\b\[\]]+)/i",
+                            "/(^|[^]_a-z0-9-=\"'\/])www\.([a-z0-9\-]+)\.([^,\r\n\"\(\)'<>\s\b\[\]]+)/i"
+                            /*
+                            ,
+                            "/(^|[^]_a-z0-9-=\"'\/])ftp\.([a-z0-9\-]+)\.([^\r\n\"\(\)'<>]+)/i",
+                            "/(^|[^]_a-z0-9-=\"'\/:\.])([a-z0-9\-_\.]+?)@([^\r\n\"\(\)'<>\[\]]+)/i"
+                            */
+                            );
 		$replacements = array("\\1<a href=\"\\2://\\3\" target=\"_blank\">\\2://\\3</a>", 
-		                      "\\1<a href=\"http://www.\\2.\\3\" target=\"_blank\">www.\\2.\\3</a>",
+		                      "\\1<a href=\"http://www.\\2.\\3\" target=\"_blank\">www.\\2.\\3</a>"
+		                      /*
+		                      ,
 		                       "\\1<a href=\"ftp://ftp.\\2.\\3\" target=\"_blank\">ftp.\\2.\\3</a>",
-		                       "\\1<script type=\"text/javascript\">var id='\\2';var host1='\\3';var host2='';document.write('<a href=\"mailto:'+id+'@'+host1+'.'+host2+'\">'+id+'@'+host1+'.'+host2+'</a>');</script>");
+		                       "\\1<script type=\"text/javascript\">var id='\\2';var host1='\\3';var host2='';document.write('<a href=\"mailto:'+id+'@'+host1+'.'+host2+'\">'+id+'@'+host1+'.'+host2+'</a>');</script>"
+		                       */
+		                       );
 		return preg_replace($patterns, $replacements, $text);
 	}
 
@@ -307,28 +311,28 @@ class MyTextSanitizer
 	{
 		if ($html != 1) {
 			// html not allowed
-			$text =& $this->htmlSpecialChars($text);
+			$text = $this->htmlSpecialChars($text);
 		}
-		$text =& $this->codePreConv($text, $xcode); // Ryuji_edit(2003-11-18)
-		$text =& $this->makeClickable($text);
+		$text = $this->codePreConv($text, $xcode); // Ryuji_edit(2003-11-18)
+		$text = $this->makeClickable($text);
 		if ($smiley != 0) {
 			// process smiley
-			$text =& $this->smiley($text);
+			$text = $this->smiley($text);
 		}
 		if ($xcode != 0) {
 			// decode xcode
 			if ($image != 0) {
 				// image allowed
-				$text =& $this->xoopsCodeDecode($text);
+				$text = $this->xoopsCodeDecode($text);
             		} else {
                 		// image not allowed
-                		$text =& $this->xoopsCodeDecode($text, 0);
+                		$text = $this->xoopsCodeDecode($text, 0);
 			}
 		}
 		if ($br != 0) {
-			$text =& $this->nl2Br($text);
+			$text = $this->nl2Br($text);
 		}
-		$text =& $this->codeConv($text, $xcode, $image);	// Ryuji_edit(2003-11-18)
+		$text = $this->codeConv($text, $xcode, $image);	// Ryuji_edit(2003-11-18)
 		return $text;
 	}
 
@@ -345,31 +349,31 @@ class MyTextSanitizer
 	 **/
 	function &previewTarea(&$text, $html = 0, $smiley = 1, $xcode = 1, $image = 1, $br = 1)
 	{
-		$text =& $this->stripSlashesGPC($text);
+		$text = $this->stripSlashesGPC($text);
 		if ($html != 1) {
 			// html not allowed
-			$text =& $this->htmlSpecialChars($text);
+			$text = $this->htmlSpecialChars($text);
 		}
-		$text =& $this->codePreConv($text, $xcode); // Ryuji_edit(2003-11-18)
-		$text =& $this->makeClickable($text);
+		$text = $this->codePreConv($text, $xcode); // Ryuji_edit(2003-11-18)
+		$text = $this->makeClickable($text);
 		if ($smiley != 0) {
 			// process smiley
-			$text =& $this->smiley($text);
+			$text = $this->smiley($text);
 		}
 		if ($xcode != 0) {
 			// decode xcode
 			if ($image != 0) {
 				// image allowed
-				$text =& $this->xoopsCodeDecode($text);
+				$text = $this->xoopsCodeDecode($text);
 			} else {
 				// image not allowed
-				$text =& $this->xoopsCodeDecode($text, 0);
+				$text = $this->xoopsCodeDecode($text, 0);
 			}
 		}
 		if ($br != 0) {
-			$text =& $this->nl2Br($text);
+			$text = $this->nl2Br($text);
 		}
-		$text =& $this->codeConv($text, $xcode, $image);	// Ryuji_edit(2003-11-18)
+		$text = $this->codeConv($text, $xcode, $image);	// Ryuji_edit(2003-11-18)
 		return $text;
 	}
 
@@ -390,6 +394,13 @@ class MyTextSanitizer
 		if ($this->censorConf['censor_enable'] == 1) {
 			$replacement = $this->censorConf['censor_replace'];
 			foreach ($this->censorConf['censor_words'] as $bad) {
+				$bad = trim($bad);
+				if(!empty($bad)){
+					$patterns[] = "/([^0-9a-z_])".$bad."([^0-9a-z_])/siU";
+					$replacements[] = "\\1".$replacement."\\2";
+					$text = preg_replace($patterns, $replacements, $text);
+				}
+				/*
 				if ( !empty($bad) && $bad != null && $bad != "" && $bad != " ") {//$bad must not be an empty string or everything will be censored. Spaces not allowed as bad strings either
 	 				$bad = quotemeta($bad);
 					$patterns[] = "/(\s)".$bad."/siU";
@@ -402,6 +413,7 @@ class MyTextSanitizer
 					$replacements[] = "]".$replacement;
 					$text = preg_replace($patterns, $replacements, $text);
 				}
+				*/
    			}
 		}
    		return $text;
@@ -573,7 +585,7 @@ class MyTextSanitizer
 	function &oopsStripSlashesRT($text)
 	{
 		if (get_magic_quotes_runtime()) {
-			$text =& stripslashes($text);
+			$text = stripslashes($text);
 		}
 		return $text;
 	}

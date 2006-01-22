@@ -53,7 +53,7 @@ if ($op == 'save') {
     }
     $errors = array();
     $myts =& MyTextSanitizer::getInstance();
-    if ($xoopsUser->isAdmin()) {
+    if ($xoopsUser->isAdmin() || $xoopsModuleConfig['allow_chgmail'] == 1) {
         $email = '';
         if (!empty($_POST['email'])) {
             $email = $myts->stripSlashesGPC(trim($_POST['email']));
@@ -73,9 +73,9 @@ if ($op == 'save') {
     } else {
         $member_handler =& xoops_gethandler('member');
         $edituser =& $member_handler->getUser($uid);
-//        if ($xoopsModuleConfig['allow_chgmail'] == 1) {
-//            $edituser->setVar('email', $email);
-//        }
+        if ($xoopsModuleConfig['allow_chgmail'] == 1) {
+            $edituser->setVar('email', $email);
+        }
         $edituser->setVar('name', $myts->stripSlashesGPC(trim($_POST['name'])));
         $edituser->setVar('uname', $myts->stripSlashesGPC(trim($_POST['uname'])));
         if ($xoopsUser->isAdmin()) {
@@ -95,7 +95,7 @@ if ($op == 'save') {
         $fields =& $profile_handler->loadFields();
         // Get ids of fields that can be edited
         $gperm_handler =& xoops_gethandler('groupperm');
-        $editable_fields =& $gperm_handler->getItemIds('profile_edit', $xoopsUser->getGroups(), $xoopsModule->getVar('mid'));
+        $editable_fields = $gperm_handler->getItemIds('profile_edit', $xoopsUser->getGroups(), $xoopsModule->getVar('mid'));
 
         foreach (array_keys($fields) as $i) {
             if (in_array($fields[$i]->getVar('fieldid'), $editable_fields)) {

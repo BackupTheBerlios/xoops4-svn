@@ -276,7 +276,7 @@ class XoopsMemberHandler{
      */
     function getUsersByGroup($group_id, $asobject = false, $limit = 0, $start = 0)
     {
-        $user_ids =& $this->_mHandler->getUsersByGroup($group_id, $limit, $start);
+        $user_ids = $this->_mHandler->getUsersByGroup($group_id, $limit, $start);
         if (!$asobject) {
            return $user_ids;
         } else {

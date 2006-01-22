@@ -86,7 +86,7 @@ function bannerstats($login, $pass)
                 <td class='b_td'><b>Imp. Left</b></td>
                 <td class='b_td'><b>Clicks</b></td>
                 <td class='b_td'><b>% Clicks</b></td>
-                <td class='b_td'><b>Functions</b></td><tr>";
+                <td class='b_td'><b>Functions</b></td></tr>";
             $result = $xoopsDB->query("select bid, imptotal, impmade, clicks, date from ".$xoopsDB->prefix("banner")." where cid=$cid");
             while ( list($bid, $imptotal, $impmade, $clicks, $date) = $xoopsDB->fetchRow($result) ) {
                 if ( $impmade == 0 ) {
@@ -99,13 +99,13 @@ function bannerstats($login, $pass)
                 } else {
                     $left = $imptotal-$impmade;
                 }
-                echo "<td align='center'>$bid</td>
+                echo "<tr><td align='center'>$bid</td>
                 <td align='center'>$impmade</td>
                 <td align='center'>$imptotal</td>
                 <td align='center'>$left</td>
                 <td align='center'>$clicks</td>
                 <td align='center'>$percent%</td>
-                <td align='center'><a href='banners.php?op=EmailStats&amp;login=$login&amp;pass=$pass&amp;cid=$cid&amp;bid=$bid&amp;t=".$GLOBALS['xoopsSecurity']->createToken()."'>E-mail Stats</a></td><tr>";
+                <td align='center'><a href='banners.php?op=EmailStats&amp;login=$login&amp;pass=$pass&amp;cid=$cid&amp;bid=$bid&amp;t=".$GLOBALS['xoopsSecurity']->createToken()."'>E-mail Stats</a></td></tr>";
             }
             echo "</table><br /><br /><div>Following are your running Banners in ".$xoopsConfig['sitename']." </div><br /><br />";
             $result = $xoopsDB->query("select bid, imageurl, clickurl, htmlbanner, htmlcode from ".$xoopsDB->prefix("banner")." where cid=$cid");

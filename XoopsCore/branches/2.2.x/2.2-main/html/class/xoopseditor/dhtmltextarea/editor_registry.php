@@ -37,9 +37,8 @@ $current_path = __FILE__;
 if ( DIRECTORY_SEPARATOR != "/" ) $current_path = str_replace( strpos( $current_path, "\\\\", 2 ) ? "\\\\" : DIRECTORY_SEPARATOR, "/", $current_path);
 $root_path = dirname($current_path);
 
-if(file_exists($root_path."/language/".$xoopsConfig['language'].".php")){
-	include_once($root_path."/language/".$xoopsConfig['language'].".php");
-}else{
+$xoopsConfig['language'] = preg_replace("/[^a-z0-9_\-]/i", "", $xoopsConfig['language']);
+if(!@include_once($root_path."/language/".$xoopsConfig['language'].".php")){
 	include_once($root_path."/language/english.php");
 }
 

@@ -186,11 +186,42 @@ function xoops_module_update_system(&$module) {
             }
         }
     }
+
+    /**
+    * update default value for some profile fields according to system preferences
+    * comments mode and order, default timezone and theme is set to the same values as in general settings
+    */
+    $module->setMessage('Updating user profile field default value...');
+    $profile_handler =& xoops_gethandler('profile');
+    $fields = $profile_handler->loadFields();
+    $fields_update = array("umode"=>"com_mode", "uorder"=>"com_order", "timezone_offset"=>"default_TZ");
+    $count = 0;
+    foreach (array_keys($fields) as $i) {
+        if ($fields[$i]->getVar('field_moduleid') == $module->getVar('mid')){
+         	$field_name = $fields[$i]->getVar('field_name');
+         	if (!in_array($field_name, array_keys($fields_update))) {
+         	    continue;
+         	}
+        	$count++;
+	        $default = $GLOBALS["xoopsConfig"][$fields_update[$field_name]];
+	        if ($default == $fields[$i]->getVar("field_default")) {
+	            continue;
+	        }
+	        $fields[$i]->setVar("field_default", $default);
+        	if ($profile_handler->insertField($fields[$i])) {
+        	    $module->setMessage("&nbsp;&nbsp;Field <strong>".$field_name."</strong> default value updated: ".$default);
+        	}
+        }
+        if ($count>=count($fields_update)) {
+            break;
+        }
+    }
+    unset($fields);
+
     return true;
 }
 
 function xoops_module_pre_update_system(&$module) {
-
     $oldversion = $module->getVar('version');
     if ($oldversion < 206) {
         $sql = "ALTER TABLE ".$GLOBALS['xoopsDB']->prefix("session")." CHANGE sess_data sess_data MEDIUMBLOB NOT NULL";
@@ -320,7 +351,7 @@ function xoops_module_pre_update_system(&$module) {
         $ids = array();
         while ($row = $GLOBALS['xoopsDB']->fetchArray($result)) {
             if (!isset($ids[$row['oldid']])) { //if "old id" is not set as the new joint id
-            $ids[$row['newid']][] = $row['oldid'];
+                $ids[$row['newid']][] = $row['oldid'];
             }
         }
 

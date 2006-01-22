@@ -93,7 +93,7 @@ if (false != $error) {
 	$all_ok = false;
 	if (!in_array(XOOPS_GROUP_ADMIN, $groups)) {
 		$sysperm_handler =& xoops_gethandler('groupperm');
-		$ok_syscats =& $sysperm_handler->getItemIds('system_admin', $groups);
+		$ok_syscats = $sysperm_handler->getItemIds('system_admin', $groups);
 	} else {
 		$all_ok = true;
 	}

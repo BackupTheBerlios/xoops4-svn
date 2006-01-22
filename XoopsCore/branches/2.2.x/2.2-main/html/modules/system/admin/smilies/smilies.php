@@ -32,7 +32,6 @@
 if ( !is_object($xoopsUser) || !is_object($xoopsModule) || !$xoopsUser->isAdmin($xoopsModule->mid()) ) {
     exit("Access Denied");
 }
-
 function SmilesAdmin()
 {
     $db =& Database::getInstance();
@@ -70,7 +69,7 @@ function SmilesAdmin()
                 if ($smiles['display'] == 1) {
                     echo ' checked="checked"';
                 }
-                echo "</td><td><a href='admin.php?fct=smilies&amp;op=SmilesEdit&amp;id=".$smiles['id']."'>" ._AM_EDIT."</a>&nbsp;";
+                echo " /></td><td><a href='admin.php?fct=smilies&amp;op=SmilesEdit&amp;id=".$smiles['id']."'>" ._AM_EDIT."</a>&nbsp;";
                 echo "<a href='admin.php?fct=smilies&amp;op=SmilesDel&amp;id=".$smiles['id']."'>" ._AM_DEL."</a></td>";
                 echo "</tr>\n";
                 $i++;

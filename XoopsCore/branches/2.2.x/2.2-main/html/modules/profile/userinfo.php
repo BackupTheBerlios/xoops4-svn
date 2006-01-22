@@ -64,7 +64,9 @@ if (is_object($xoopsUser) && $uid == $xoopsUser->getVar('uid')) {
 
     $member_handler =& xoops_gethandler('member');
     $thisUser =& $member_handler->getUser($uid);
-    if (!is_object($thisUser) || !$thisUser->isActive()) {
+    if(!is_object($thisUser) || 
+    	( !$thisUser->isActive() && (!is_object($xoopsUser) || !$xoopsUser->isAdmin()) )
+    ){
         redirect_header("index.php",3,_PROFILE_MA_SELECTNG);
         exit();
     }
@@ -82,9 +84,9 @@ if ( is_object($xoopsUser) && $xoopsUser->isAdmin() ) {
 // Dynamic User Profiles
 $thisUsergroups =& $thisUser->getGroups();
 $groupperm_handler =& xoops_gethandler('groupperm');
-$show_ids =& $groupperm_handler->getItemIds('profile_show', $thisUsergroups, $xoopsModule->getVar('mid'));
+$show_ids = $groupperm_handler->getItemIds('profile_show', $thisUsergroups, $xoopsModule->getVar('mid'));
 if (!is_object($xoopsUser) || !$xoopsUser->isAdmin()) {
-    $visible_ids =& $groupperm_handler->getItemIds('profile_visible', $groups, $xoopsModule->getVar('mid'));
+    $visible_ids = $groupperm_handler->getItemIds('profile_visible', $groups, $xoopsModule->getVar('mid'));
     $fieldids = array_intersect($show_ids, $visible_ids);
 }
 else {
@@ -167,7 +169,7 @@ if ($xoopsModuleConfig['profile_search']) {
     $criteria = new CriteriaCompo(new Criteria('hassearch', 1));
     $criteria->add(new Criteria('isactive', 1));
     $modules =& $module_handler->getObjects($criteria, true);
-    $mids =& array_keys($modules);
+    $mids = array_keys($modules);
 
     $myts =& MyTextSanitizer::getInstance();
     $allowed_mids = $gperm_handler->getItemIds('module_read', $groups);

@@ -22,7 +22,7 @@
   <tr>
     <td width="150"><a href="index.php"><img src="img/logo.gif" width="150" height="80" alt="" /></a></td>
     <td width="478" background="img/bg_darkblue.gif">&nbsp;</td>
-    <td width="150"><img src="img/xoops2.gif" width="100%" height="80"></td>
+    <td width="150"><img src="img/xoops2.gif" width="100%" height="80" /></td>
   </tr>
   <tr>
     <td width="150"><img src="img/hbar_left.gif" width="100%" height="23" alt="" /></td>
@@ -31,7 +31,7 @@
   </tr>
 </table>
 
-<table width="778" align="center" cellspacing="0" cellpadding="0" background="img/bg_table.gif"
+<table width="778" align="center" cellspacing="0" cellpadding="0" background="img/bg_table.gif">
   <tr>
     <td width='5%'>&nbsp;</td>
     <td colspan="3"><?php if(!empty($title)) echo '<h4 style="margin-top: 10px; margin-bottom: 5px; padding: 10px;">'.$title.'</h4>'; echo '<div style="padding: 10px;">'.$content.'</div>'; ?></td>

@@ -37,8 +37,15 @@ function xoops_cp_header()
     //	} else {
     //  ob_start();
     //	}
+    if (!headers_sent()) {
+        header('Content-Type:text/html; charset='._CHARSET);
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+        header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
+        header('Cache-Control: no-store, no-cache, max-age=1, s-maxage=1, must-revalidate, post-check=0, pre-check=0');
+        header("Pragma: no-cache");
+    }
     $moduleperm_handler =& xoops_gethandler('groupperm');
-    $admin_mids =& $moduleperm_handler->getItemIds('module_admin', $xoopsUser->getGroups());
+    $admin_mids = $moduleperm_handler->getItemIds('module_admin', $xoopsUser->getGroups());
 
 
     $module_handler =& xoops_gethandler('module');
@@ -55,7 +62,7 @@ function xoops_cp_header()
     $isPrefAdmin = $moduleperm_handler->checkRight('system_admin', XOOPS_SYSTEM_PREF, $xoopsUser->getGroups());
 
     //load system items
-    $system_rights =& $moduleperm_handler->getItemIds('system_admin', $xoopsUser->getGroups());
+    $system_rights = $moduleperm_handler->getItemIds('system_admin', $xoopsUser->getGroups());
     if (count($system_rights) > 0 && is_object($mods[1])) {
         $menuitems = $mods[1]->getAdminMenu();
         if (count($menuitems) > 0) {

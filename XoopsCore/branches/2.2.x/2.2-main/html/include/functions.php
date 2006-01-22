@@ -48,14 +48,14 @@ function xoops_header($closehead=true)
     <head>
     <meta http-equiv="content-type" content="text/html; charset='._CHARSET.'" />
     <meta http-equiv="content-language" content="'._LANGCODE.'" />
-    <meta name="robots" content="'.$xoopsConfigMetaFooter['meta_robots'].'" />
-    <meta name="keywords" content="'.$xoopsConfigMetaFooter['meta_keywords'].'" />
-    <meta name="description" content="'.$xoopsConfigMetaFooter['meta_desc'].'" />
-    <meta name="rating" content="'.$xoopsConfigMetaFooter['meta_rating'].'" />
-    <meta name="author" content="'.$xoopsConfigMetaFooter['meta_author'].'" />
-    <meta name="copyright" content="'.$xoopsConfigMetaFooter['meta_copyright'].'" />
+    <meta name="robots" content="'.htmlspecialchars($xoopsConfigMetaFooter['meta_robots']).'" />
+    <meta name="keywords" content="'.htmlspecialchars($xoopsConfigMetaFooter['meta_keywords']).'" />
+    <meta name="description" content="'.htmlspecialchars($xoopsConfigMetaFooter['meta_desc']).'" />
+    <meta name="rating" content="'.htmlspecialchars($xoopsConfigMetaFooter['meta_rating']).'" />
+    <meta name="author" content="'.htmlspecialchars($xoopsConfigMetaFooter['meta_author']).'" />
+    <meta name="copyright" content="'.htmlspecialchars($xoopsConfigMetaFooter['meta_copyright']).'" />
     <meta name="generator" content="XOOPS" />
-    <title>'.$xoopsConfig['sitename'].'</title>
+    <title>'.htmlspecialchars($xoopsConfig['sitename']).'</title>
     <script type="text/javascript" src="'.XOOPS_URL.'/include/xoops.js"></script>
     ';
     $themecss = getcss($xoopsConfig['theme_set']);
@@ -149,8 +149,8 @@ function xoops_confirm($hiddens, $action, $msg, $submit='', $return = '', $addto
 function xoops_load_lang_file( $filename, $module = '', $default = 'english' ) {
 	$lang = $GLOBALS['xoopsConfig']['language'];
 	$path = XOOPS_ROOT_PATH . ( empty($module) ? '/' : "/modules/$module/" ) . 'language';
-	if ( !( $ret = include_once( "$path/$lang/$filename.php" ) ) ) {
-		$ret = include_once( "$path/$default/$filename.php" );
+	if ( !( $ret = @include_once( "$path/$lang/$filename.php" ) ) ) {
+		$ret = @include_once( "$path/$default/$filename.php" );
 	}
 	return $ret;
 }
@@ -175,7 +175,8 @@ function xoops_getUserTimestamp($time, $timeoffset="")
             $timeoffset = $xoopsConfig['default_TZ'];
         }
     }
-    $usertimestamp = intval($time) + (intval($timeoffset) - $xoopsConfig['server_TZ'])*3600;
+    //$usertimestamp = intval($time) + (intval($timeoffset) - $xoopsConfig['server_TZ'])*3600;
+    $usertimestamp = intval($time) + intval((floatval($timeoffset) - floatval($xoopsConfig['server_TZ']))*3600);
     return $usertimestamp;
 }
 
@@ -256,8 +257,11 @@ function xoops_makepass($length = 5) {
 */
 function OpenWaitBox()
 {
+	echo "<p align='center'><strong><big>" ._FETCHING."</big></strong><br style='clear:both' /><img src='".XOOPS_URL."/images/await.gif' alt='' style='padding:10px;' /><br style='clear:both' />" ._PLEASEWAIT."</p>";
+	return;
+
     echo "<div id='waitDiv' style='position:absolute;left:40%;top:50%;visibility:hidden;text-align: center;'>
-    <table cellpadding='6' border='2' class='bg2'>
+    <table cellpadding='6' border='0' class='bg2'>
       <tr>
         <td align='center'><b><big>" ._FETCHING."</big></b><br /><img src='".XOOPS_URL."/images/await.gif' alt='' /><br />" ._PLEASEWAIT."</td>
       </tr>
@@ -371,12 +375,12 @@ function xoops_getbanner()
             $bannerobject = '<div><a href="'.XOOPS_URL.'/banners.php?op=click&amp;bid='.$bid.'" target="_blank">';
             if (stristr($imageurl, '.swf')) {
                 $bannerobject = $bannerobject
-                .'<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,40,0" width="468" height="60">'
-                .'<param name=movie value="'.$imageurl.'">'
-                .'<param name=quality value=high>'
-                .'<embed src="'.$imageurl.'" quality=high pluginspage="http://www.macromedia.com/shockwave/download/index.cgi?P1_Prod_Version=ShockwaveFlash"; type="application/x-shockwave-flash" width="468" height="60">'
-                .'</embed>'
-                .'</object>';
+                    .'<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,40,0" width="468" height="60">'
+                    .'<param name="movie" value="'.$imageurl.'"></param>'
+                    .'<param name="quality" value="high"></param>'
+                    .'<embed src="'.$imageurl.'" quality="high" pluginspage="http://www.macromedia.com/shockwave/download/index.cgi?P1_Prod_Version=ShockwaveFlash"; type="application/x-shockwave-flash" width="468" height="60">'
+                    .'</embed>'
+                    .'</object>';
             } else {
                 $bannerobject = $bannerobject.'<img src="'.$imageurl.'" alt="" />';
             }
@@ -420,7 +424,7 @@ function redirect_header($url, $time = 3, $message = '', $addredirect = true)
     $message = trim($message) != '' ? $message : _TAKINGBACK;
     $xTheme->tplEngine->assign('message', $message);
     $xTheme->tplEngine->assign('lang_ifnotreload', sprintf(_IFNOTRELOAD, $url));
-    $xTheme->tplEngine->assign('xoops_module_header', '<meta http-equiv="Refresh" content="2; url='.$url.'" />');
+    $xTheme->tplEngine->assign('xoops_module_header', '<meta http-equiv="Refresh" content="'.$time.'; url='.$url.'" />');
     $xoopsOption['template_main'] = 'system_redirect.html';
     include XOOPS_ROOT_PATH."/footer.php";
     exit();
@@ -553,10 +557,12 @@ function &getMailer()
     if ( file_exists(XOOPS_ROOT_PATH."/language/".$xoopsConfig['language']."/xoopsmailerlocal.php") ) {
         include_once XOOPS_ROOT_PATH."/language/".$xoopsConfig['language']."/xoopsmailerlocal.php";
         if ( class_exists("XoopsMailerLocal") ) {
-            return new XoopsMailerLocal();
+            $mailer = new XoopsMailerLocal();
+            return $mailer;
         }
     }
-    return new XoopsMailer();
+    $mailer = new XoopsMailer();
+    return $mailer;
 }
 
 function &xoops_gethandler($name, $optional = false )
@@ -578,7 +584,8 @@ function &xoops_gethandler($name, $optional = false )
     if ( isset( $handlers[$name] ) ) {
     	return $handlers[$name];
     }
-    return false;
+    $ret = false;
+    return $ret;
 }
 
 function &xoops_getmodulehandler($name = null, $module_dir = null, $optional = false)
@@ -611,7 +618,8 @@ function &xoops_getmodulehandler($name = null, $module_dir = null, $optional = f
     if ( isset( $handlers[$module_dir][$name] ) ) {
     	return $handlers[$module_dir][$name];
     }
-    return false;
+    $ret = false;
+    return $ret;
 }
 
 function xoops_getrank($rank_id =0, $posts = 0)
@@ -644,9 +652,9 @@ function xoops_getrank($rank_id =0, $posts = 0)
 function xoops_substr($str, $start, $length, $trimmarker = '...')
 {
    	if(is_callable(array("XoopsLocal", "substr"))) {
-	   	return XoopsLocal::substr($str, $start, $length); 
+	   	return XoopsLocal::substr($str, $start, $length, $trimmarker); 
 	   	// Or
-	   	// return xoops_local("substr", $str, $start, $length);
+	   	// return xoops_local("substr", $str, $start, $length, $trimmarker);
    	}
     if ( !XOOPS_USE_MULTIBYTES ) {
         return ( strlen($str) - $start <= $length ) ? substr( $str, $start, $length ) : substr( $str, $start, $length - strlen($trimmarker) ) . $trimmarker;
@@ -736,7 +744,7 @@ function xoops_groupperm_deletebymoditem($module_id, $perm_name, $item_id = null
     return $gperm_handler->deleteByModule($module_id, $perm_name, $item_id);
 }
 
-function &xoops_utf8_encode(&$text)
+function &xoops_utf8_encode($text)
 {
    	if(is_callable(array("XoopsLocal", "utf8_encode"))) {
 	   	return XoopsLocal::utf8_encode($text); 
@@ -750,7 +758,7 @@ function &xoops_utf8_encode(&$text)
     return utf8_encode($text);
 }
 
-function &xoops_convert_encoding(&$text, $to='utf-8', $from='')
+function &xoops_convert_encoding($text, $to='utf-8', $from='')
 {
    	if(is_callable(array("XoopsLocal", "convert_encoding"))) {
 	   	return XoopsLocal::convert_encoding($text, $to, $from); 
@@ -759,7 +767,7 @@ function &xoops_convert_encoding(&$text, $to='utf-8', $from='')
     return xoops_utf8_encode($text);
 }
 
-function xoops_getLinkedUnameFromId($userid, $usereal = 1)
+function xoops_getLinkedUnameFromId($userid, $usereal = 0)
 {
     $userid = intval($userid);
     if ($userid > 0) {

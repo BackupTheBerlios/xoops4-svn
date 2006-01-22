@@ -151,6 +151,12 @@ class XoopsProfileField extends XoopsObject {
             case 'theme':
             $element = new XoopsFormSelect($caption, $name, $value);
             $element->addOption("0", _SITEDEFAULT);
+            $theme_list = XoopsLists::getThemesList();
+            foreach($theme_list as $key=>$val){
+	            if(!in_array($key, $GLOBALS['xoopsConfig']['theme_set_allowed'])) continue;
+            	$element->addOption($key, $val);
+            }
+            /*
             $handle = opendir(XOOPS_THEME_PATH.'/');
             $dirlist = array();
             while (false !== ($file = readdir($handle))) {
@@ -165,6 +171,7 @@ class XoopsProfileField extends XoopsObject {
                 asort($dirlist);
                 $element->addOptionArray($dirlist);
             }
+            */
             break;
         }
         if ($this->getVar('field_description') != "") {
@@ -192,13 +199,13 @@ class XoopsProfileField extends XoopsObject {
             case 'theme':
             case "language":
             case "list":
-            return $value;
+            //return $value;
             break;
 
             case "select":
             case "radio":
             $options = $this->getVar('field_options');
-            return isset($options[$value]) ? htmlspecialchars($options[$value]) : "";
+            $value = isset($options[$value]) ? htmlspecialchars($options[$value]) : "";
             break;
 
             case "select_multi":
@@ -212,12 +219,12 @@ class XoopsProfileField extends XoopsObject {
                     }
                 }
             }
-            return $ret;
+            $value = $ret;
             break;
 
             case "group":
             //change to retrieve groups and return name of group
-            return $value;
+            //return $value;
             break;
 
             case "group_multi":
@@ -231,16 +238,19 @@ class XoopsProfileField extends XoopsObject {
             
             case "date":
             if ($value > 0) {
-                return formatTimestamp($value, 's');
+                $value = formatTimestamp($value, 's');
+            }else{
+	            $value = "";
             }
-            return "";
             break;
             
             case "datetime":
             if ($value > 0) {
-                return formatTimestamp($value, 'm');
+                $value = formatTimestamp($value, 'm');
+            }else{
+	            $value = "";
             }
-            return "";
+            //return "";
             break;
 
             case "autotext":
@@ -248,9 +258,21 @@ class XoopsProfileField extends XoopsObject {
 			$value = str_replace("{X_UID}", $user->getVar("uid"), $value );
 			$value = str_replace("{X_URL}", XOOPS_URL, $value );
 			$value = str_replace("{X_UNAME}", $user->getVar("uname"), $value );
-            return $value;
+            //return $value;
             break;
         }
+        
+        switch ($this->getVar('field_valuetype')) {
+	        case XOBJ_DTYPE_URL:
+	        if(!empty($value)){
+	        	$value = "<a href=\"".$value."\" target=\"_blank\">".$value."</a>";
+        	}
+	        break;
+	        default:
+	        break;
+        }
+        return $value;
+        
     }
     
     /**
@@ -313,16 +335,42 @@ class XoopsProfileFieldHandler extends XoopsPersistableObjectHandler {
     *
     * @return array
     */
-    function loadFields($force_update = false) {
+    function loadFields($force_update = false, $asObject = true) {
         static $fields = array();
-        if (!empty($force_update) || count($fields) == 0) {
+        
+        $type = !empty($asObject);
+        if (!empty($force_update) || !isset($fields[$type])) {
             if (!empty($force_update) || !file_exists(XOOPS_CACHE_PATH."/profilefields.tmp")) {
                 $this->updateCache();
             }
             $s = implode("", @file(XOOPS_CACHE_PATH."/profilefields.tmp"));
-            $fields = unserialize($s);
+            //$fields = unserialize($s);
+            /**/
+            $_fields_data = unserialize($s);
+	        $pseudo_obj =& $this->create();
+	        $keys = array_keys($pseudo_obj->vars);
+	        $fields_data = array();
+            foreach($_fields_data as $key => $field_data){
+	            for($i=0;$i<count($keys);$i++){
+		            $fields_data[$key][$keys[$i]] = $field_data[$i];
+	            }
+            }
+            
+            if(empty($asObject)):
+            $fields_out =& $fields_data;
+            else:
+            foreach($fields_data as $key => $field_data){
+	            $field =& $this->create(false);
+	            $field->assignvars($field_data);
+	            $fields_out[$key] = $field;
+	            unset($field);
+            }
+            endif;
+            $fields[$type] = $fields_out;
+            unset($fields_out);
+            /**/
         }
-        return $fields;
+        return $fields[$type];
     }
     
     /**
@@ -362,7 +410,7 @@ class XoopsProfileFieldHandler extends XoopsPersistableObjectHandler {
                 
             case "textbox":
             	if($obj->getVar('field_valuetype')!=XOBJ_DTYPE_INT){
-                	$obj->setVar('field_valuetype', XOBJ_DTYPE_TXTBOX);
+                	//$obj->setVar('field_valuetype', XOBJ_DTYPE_TXTBOX);
             	}
                 break;
                 
@@ -503,10 +551,19 @@ class XoopsProfileFieldHandler extends XoopsPersistableObjectHandler {
         $criteria = new Criteria('fieldid', 0, "!=");
         $criteria->setSort('field_weight');
         $field_objs =& $this->getObjects(null);
+        $fields = array();
+        $pseudo_obj =& $this->create();
         foreach (array_keys($field_objs) as $i) {
-            $fields[$field_objs[$i]->getVar('field_name')] = $field_objs[$i];
+            //$fields[$field_objs[$i]->getVar('field_name')] = $field_objs[$i];
+            /**/
+            $field = array();
+            foreach(array_keys($pseudo_obj->vars) as $key){
+	            $field[] = @$field_objs[$i]->getVar($key, "n");
+            }
+            $fields[$field_objs[$i]->getVar('field_name')] = $field;
+            unset($filed);
         }
-        $s = serialize($fields);
+        $s = serialize($fields); // shall we do some character escaping?
         $fp = fopen(XOOPS_CACHE_PATH."/profilefields.tmp", "w");
         if (!fputs($fp, $s)) {
             fclose($fp);

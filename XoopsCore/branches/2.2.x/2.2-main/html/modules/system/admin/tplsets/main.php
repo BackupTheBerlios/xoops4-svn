@@ -197,7 +197,7 @@ if ( !is_object($xoopsUser) || !is_object($xoopsModule) || !$xoopsUser->isAdmin(
             foreach ($notinst_files as $nfile) {
                 if ($nfile != 'index.html') {
                     echo  '<tr><td style="background-color:#FFFF99; padding: 5px;">'.$nfile.'</td><td style="background-color:#FFFF99; padding: 5px;">&nbsp;</td><td style="background-color:#FFFF99; padding: 5px;">';
-                    $physical_file = XOOPS_ROOT_PATH.'/templates/'.$tplset.'/'.$moddir.'/'.$nfile;
+                    $physical_file = XOOPS_ROOT_PATH.'/themes/'.$tplset.'/templates/'.$moddir.'/'.$nfile;
                     if (file_exists($physical_file)) {
                         echo '[<a href="admin.php?fct=tplsets&amp;moddir='.$moddir.'&amp;tplset='.$tplset.'&amp;op=importtpl&amp;file='.urlencode($nfile).'">'._MD_IMPORT.'</a>]';
                     } else {
@@ -227,7 +227,7 @@ if ( !is_object($xoopsUser) || !is_object($xoopsModule) || !$xoopsUser->isAdmin(
             }
             echo  '<tr class="'.$class.'"><td class="head"><span style="font-weight:bold;">'.$btemplates[$j]->getVar('tpl_file').'</span><br /><br /><span style="font-weight:normal;">'.$btemplates[$j]->getVar('tpl_desc').'</span></td><td>'.formatTimestamp($last_modified, 'l').'</td>';
             $filename = $btemplates[$j]->getVar('tpl_file');
-            $physical_file = XOOPS_ROOT_PATH.'/templates/'.$tplset.'/'.$moddir.'/blocks/'.$filename;
+            $physical_file = XOOPS_ROOT_PATH.'/themes/'.$tplset.'/templates/'.$moddir.'/blocks/'.$filename;
             if ($tplset != 'default') {
                 if (file_exists($physical_file)) {
                     $mtime = filemtime($physical_file);
@@ -257,7 +257,7 @@ if ( !is_object($xoopsUser) || !is_object($xoopsModule) || !$xoopsUser->isAdmin(
             foreach ($bnotinst_files as $nfile) {
                 if ($nfile != 'index.html') {
                     echo  '<tr style="background-color:#FFFF99;"><td style="background-color:#FFFF99; padding: 5px;">'.$nfile.'</td><td style="background-color:#FFFF99; padding: 5px;">&nbsp;</td><td style="background-color:#FFFF99; padding: 5px;">';
-                    $physical_file = XOOPS_ROOT_PATH.'/templates/'.$tplset.'/'.$moddir.'/blocks/'.$nfile;
+                    $physical_file = XOOPS_ROOT_PATH.'/themes/'.$tplset.'/templates/'.$moddir.'/blocks/'.$nfile;
                     if (file_exists($physical_file)) {
                         echo '[<a href="admin.php?fct=tplsets&amp;moddir='.$moddir.'&amp;tplset='.$tplset.'&amp;op=importtpl&amp;file='.urlencode($nfile).'">'._MD_IMPORT.'</a>]';
                     } else {
@@ -409,9 +409,9 @@ if ( !is_object($xoopsUser) || !is_object($xoopsModule) || !$xoopsUser->isAdmin(
             if (count($tplsets) > 0 && is_object($tplsets[0])) {
                 $msgs[] = 'Deleting template set data...';
                 if (!$tplset_handler->delete($tplsets[0])) {
-                    $msgs[] = '&nbsp;&nbsp;<span style="color:#ff0000;">ERROR: Template set '.$tplset.' could not be deleted.</span>';
+                    $msgs[] = '&nbsp;&nbsp;<span style="color:#ff0000;">ERROR: Template set '.htmlspecialchars($tplset, ENT_QUOTES).' could not be deleted.</span>';
                 } else {
-                    $msgs[] = '&nbsp;&nbsp;Template set data removed from the database.';
+                    $msgs[] = '&nbsp;&nbsp;Template set data <b>'.htmlspecialchars($tplset, ENT_QUOTES).'</b> removed from the database.';
                 }
             }
         } else {
@@ -457,7 +457,7 @@ if ( !is_object($xoopsUser) || !is_object($xoopsModule) || !$xoopsUser->isAdmin(
             $tplsetobj->setVar('tplset_name', $newtheme);
             $tplsetobj->setVar('tplset_created', time());
             if (!$tplset_handler->insert($tplsetobj)) {
-                $msgs[] = '<span style="color:#ff0000;">ERROR: Could not create template set <b>'.$newtheme.'</b>.</span><br />';
+                $msgs[] = '<span style="color:#ff0000;">ERROR: Could not create template set <b>'.htmlspecialchars($newtheme, ENT_QUOTES).'</b>.</span><br />';
             } else {
                 $tplsetid = $tplsetobj->getVar('tplset_id');
                 $templates =& $tpltpl_handler->getObjects(new Criteria('tpl_tplset', $tplset), true);
@@ -503,7 +503,7 @@ if ( !is_object($xoopsUser) || !is_object($xoopsModule) || !$xoopsUser->isAdmin(
         <head>
         <meta http-equiv="content-type" content="text/html; charset='._CHARSET.'" />
         <meta http-equiv="content-language" content="'._LANGCODE.'" />
-        <title>'.$xoopsConfig['sitename'].' Administration</title>
+        <title>'.htmlspecialchars($xoopsConfig['sitename']).' Administration</title>
         <link rel="stylesheet" type="text/css" media="all" href="'.XOOPS_URL.'/xoops.css" />
             <link rel="stylesheet" type="text/css" media="all" href="'.XOOPS_URL.'/modules/system/style.css" />
         </head><body>';
@@ -560,7 +560,7 @@ if ( !is_object($xoopsUser) || !is_object($xoopsModule) || !$xoopsUser->isAdmin(
         $id = intval($_GET['id']);
         $tpl =& $tpltpl_handler->get($id);
         xoops_cp_header();
-        echo '<a href="admin.php?fct=tplsets">'. _MD_TPLMAIN .'</a>&nbsp;<span style="font-weight:bold;">&raquo;&raquo;</span>&nbsp;<a href="./admin.php?fct=tplsets&amp;op=listtpl&amp;moddir='.$tpl->getVar('tpl_module').'&amp;tplset='.$tpl->getVar('tpl_tplset').'">'.$tpl->getVar('tpl_tplset').'</a>&nbsp;<span style="font-weight:bold;">&raquo;&raquo;</span>&nbsp;'._MD_UPLOAD.'<br /><br />';
+        echo '<a href="admin.php?fct=tplsets">'. _MD_TPLMAIN .'</a>&nbsp;<span style="font-weight:bold;">&raquo;&raquo;</span>&nbsp;<a href="./admin.php?fct=tplsets&amp;op=listtpl&amp;moddir='.$tpl->getVar('tpl_module').'&amp;tplset='.urlencode($tpl->getVar('tpl_tplset')).'">'.$tpl->getVar('tpl_tplset').'</a>&nbsp;<span style="font-weight:bold;">&raquo;&raquo;</span>&nbsp;'._MD_UPLOAD.'<br /><br />';
         if (is_object($tpl)) {
             include_once XOOPS_ROOT_PATH.'/class/xoopsformloader.php';
             $form = new XoopsThemeForm(_MD_UPLOAD, 'tplupload_form', 'admin.php', 'post', true);
@@ -821,7 +821,7 @@ if ( !is_object($xoopsUser) || !is_object($xoopsModule) || !$xoopsUser->isAdmin(
             flush();
             unset($newtpl);
         }
-        unset($files);
+        unset($tplfiles);
         $tplfiles =& $tpltpl_handler->find('default', 'block', null, $moddir, null, true);
         $fcount = count($tplfiles);
         if ($fcount > 0) {
@@ -845,7 +845,7 @@ if ( !is_object($xoopsUser) || !is_object($xoopsModule) || !$xoopsUser->isAdmin(
             flush();
             unset($newtpl);
         }
-        echo '<br />Module template files for template set <b>'.$tplset.'</b> generated and installed.<br /></code><br /><a href="admin.php?fct=tplsets">'._MD_AM_BTOTADMIN.'</a>';
+        echo '<br />Module template files for template set <b>'.htmlspecialchars($tplset, ENT_QUOTES).'</b> generated and installed.<br /></code><br /><a href="admin.php?fct=tplsets">'._MD_AM_BTOTADMIN.'</a>';
         xoops_cp_footer();
         break;
     case 'uploadtar_go':
@@ -882,19 +882,21 @@ if ( !is_object($xoopsUser) || !is_object($xoopsModule) || !$xoopsUser->isAdmin(
                 }
                 if ($tplset_name == '') {
                     echo '<span style="color:#ff0000;">ERROR: Template file not found</span><br />';
+                } elseif  (preg_match('/['.preg_quote('\/:*?"<>|','/').']/', $tplset_name)) {
+                    echo '<span style="color:#ff0000;">ERROR: Invalid Template Set Name</span><br />';
                 } else {
                     $tplset_handler =& xoops_gethandler('tplset');
                     if ($tplset_handler->getCount(new Criteria('tplset_name', $tplset_name)) > 0) {
-                        echo '<span style="color:#ff0000;">ERROR: Template set <b>'.$tplset_name.'</b> already exists.</span><br />';
+                        echo '<span style="color:#ff0000;">ERROR: Template set <b>'.htmlspecialchars($tplset_name, ENT_QUOTES).'</b> already exists.</span><br />';
                     } else {
                         $tplset =& $tplset_handler->create();
                         $tplset->setVar('tplset_name', $tplset_name);
                         $tplset->setVar('tplset_created', time());
                         if (!$tplset_handler->insert($tplset)) {
-                            echo '<span style="color:#ff0000;">ERROR: Could not create template set <b>'.$tplset_name.'</b>.</span><br />';
+                            echo '<span style="color:#ff0000;">ERROR: Could not create template set <b>'.htmlspecialchars($tplset_name, ENT_QUOTES).'</b>.</span><br />';
                         } else {
                             $tplsetid = $tplset->getVar('tplset_id');
-                            echo 'Template set <b>'.$tplset_name.'</b> created. (ID: <b>'.$tplsetid.'</b>)</span><br />';
+                            echo 'Template set <b>'.htmlspecialchars($tplset_name, ENT_QUOTES).'</b> created. (ID: <b>'.$tplsetid.'</b>)</span><br />';
                             $tpltpl_handler = xoops_gethandler('tplfile');
                             $themeimages = array();
                             foreach ($tar->files as $id => $info) {
@@ -934,9 +936,9 @@ if ( !is_object($xoopsUser) || !is_object($xoopsModule) || !$xoopsUser->isAdmin(
                                     echo '&nbsp;&nbsp;<span style="color:#ff0000;">ERROR: Could not create image set.</span><br />';
                                 } else {
                                     $newimgsetid = $imgset->getVar('imgset_id');
-                                    echo '&nbsp;&nbsp;Image set <b>'.$tplset_name.'</b> created. (ID: <b>'.$newimgsetid.'</b>)<br />';
+                                    echo '&nbsp;&nbsp;Image set <b>'.htmlspecialchars($tplset_name, ENT_QUOTES).'</b> created. (ID: <b>'.$newimgsetid.'</b>)<br />';
                                     if (!$imageset_handler->linktplset($newimgsetid, $tplset_name)) {
-                                        echo '&nbsp;&nbsp;<span style="color:#ff0000;">ERROR: Failed linking image set to template set <b>'.$tplset_name.'</b></span><br />';
+                                        echo '&nbsp;&nbsp;<span style="color:#ff0000;">ERROR: Failed linking image set to template set <b>'.htmlspecialchars($tplset_name, ENT_QUOTES).'</b></span><br />';
                                     }
                                     $image_handler =& xoops_gethandler('imagesetimg');
                                     for ($i = 0; $i < $icount; $i++) {
@@ -1000,7 +1002,7 @@ if ( !is_object($xoopsUser) || !is_object($xoopsModule) || !$xoopsUser->isAdmin(
             $tform = array('tpl_tplset' => $tplset, 'tpl_id' => $id, 'tpl_file' => $tplfile->getVar('tpl_file'), 'tpl_desc' => $tplfile->getVar('tpl_desc'), 'tpl_lastmodified' => $tplfile->getVar('tpl_lastmodified'), 'tpl_source' => htmlspecialchars($html, ENT_QUOTES), 'tpl_module' => $moddir);
             include_once XOOPS_ROOT_PATH.'/modules/system/admin/tplsets/tplform.php';
             xoops_cp_header();
-            echo '<a href="admin.php?fct=tplsets">'. _MD_TPLMAIN .'</a>&nbsp;<span style="font-weight:bold;">&raquo;&raquo;</span>&nbsp;<a href="./admin.php?fct=tplsets&amp;op=listtpl&amp;moddir='.$moddir.'&amp;tplset='.$tplset.'">'.$tplset.'</a>&nbsp;<span style="font-weight:bold;">&raquo;&raquo;</span>&nbsp;'._MD_EDITTEMPLATE.'<br /><br />';
+            echo '<a href="admin.php?fct=tplsets">'. _MD_TPLMAIN .'</a>&nbsp;<span style="font-weight:bold;">&raquo;&raquo;</span>&nbsp;<a href="./admin.php?fct=tplsets&amp;op=listtpl&amp;moddir='.$moddir.'&amp;tplset='.urlencode($tplset).'">'.htmlspecialchars($tplset, ENT_QUOTES).'</a>&nbsp;<span style="font-weight:bold;">&raquo;&raquo;</span>&nbsp;'._MD_EDITTEMPLATE.'<br /><br />';
             $form->display();
             xoops_cp_footer();
             echo '<script type="text/javascript">
@@ -1083,7 +1085,7 @@ if ( !is_object($xoopsUser) || !is_object($xoopsModule) || !$xoopsUser->isAdmin(
         foreach ($msg as $m) {
             echo $m.'<br />';
         }
-        echo '</code><br /><a href="admin.php?fct=tplsets&amp;op=listtpl&amp;tplset='.$tplset.'&amp;moddir='.$moddir.'">'._MD_AM_BTOTADMIN.'</a>';
+        echo '</code><br /><a href="admin.php?fct=tplsets&amp;op=listtpl&amp;tplset='.urlencode($tplset).'&amp;moddir='.$moddir.'">'._MD_AM_BTOTADMIN.'</a>';
         xoops_cp_footer();
         break;
     case 'importtpl':
@@ -1111,10 +1113,10 @@ if ( !is_object($xoopsUser) || !is_object($xoopsModule) || !$xoopsUser->isAdmin(
         if (is_object($tplfile)) {
             switch ($tplfile->getVar('tpl_type')) {
                 case 'module':
-                    $filepath = XOOPS_ROOT_PATH.'/templates/'.$tplset.'/'.$tplfile->getVar('tpl_module').'/'.$tplfile->getVar('tpl_file');
+                    $filepath = XOOPS_ROOT_PATH.'/themes/'.$tplset.'/templates/'.$tplfile->getVar('tpl_module').'/'.$tplfile->getVar('tpl_file');
                     break;
                 case 'block':
-                    $filepath = XOOPS_ROOT_PATH.'/templates/'.$tplset.'/'.$tplfile->getVar('tpl_module').'/blocks/'.$tplfile->getVar('tpl_file');
+                    $filepath = XOOPS_ROOT_PATH.'/themes/'.$tplset.'/templates/'.$tplfile->getVar('tpl_module').'/blocks/'.$tplfile->getVar('tpl_file');
                     break;
                 default:
                     break;
@@ -1137,7 +1139,7 @@ if ( !is_object($xoopsUser) || !is_object($xoopsModule) || !$xoopsUser->isAdmin(
         if (false != $error) {
             xoops_cp_header();
             xoops_error('Could not import file '.$filepath);
-            echo '<br /><a href="admin.php?fct=tplsets&amp;op=listtpl&amp;tplset='.$tplset.'&amp;moddir='.$moddir.'">'._MD_AM_BTOTADMIN.'</a>';
+            echo '<br /><a href="admin.php?fct=tplsets&amp;op=listtpl&amp;tplset='.urlencode($tplset).'&amp;moddir='.$moddir.'">'._MD_AM_BTOTADMIN.'</a>';
             xoops_cp_footer();
             exit();
         }

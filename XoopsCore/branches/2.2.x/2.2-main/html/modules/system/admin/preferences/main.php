@@ -36,7 +36,7 @@ if ( !is_object($xoopsUser) || !is_object($xoopsModule) || !$xoopsUser->isAdmin(
 
     if ($op == 'list') {
         $gperm_handler =& xoops_gethandler('groupperm');
-        $admin_mids =& $gperm_handler->getItemIds('module_admin', $xoopsUser->getGroups());
+        $admin_mids = $gperm_handler->getItemIds('module_admin', $xoopsUser->getGroups());
         if ($gperm_handler->checkRight('system_admin', XOOPS_SYSTEM_PREF, $xoopsUser->getGroups())) {
             array_push($admin_mids, 1);
         }
@@ -50,7 +50,7 @@ if ( !is_object($xoopsUser) || !is_object($xoopsModule) || !$xoopsUser->isAdmin(
         }
 
         $module_handler =& xoops_gethandler('module');
-        $modules =& $module_handler->getList(new Criteria('mid', "(".implode(',', array_keys($modcats)).")", 'IN'));
+        $modules = $module_handler->getList(new Criteria('mid', "(".implode(',', array_keys($modcats)).")", 'IN'));
 
         foreach (array_keys($modules) as $modid) {
             $modcats[$modid]['module'] = $modules[$modid];
@@ -131,7 +131,7 @@ if ( !is_object($xoopsUser) || !is_object($xoopsModule) || !$xoopsUser->isAdmin(
                 break;
                 case 'select':
                 $ele = new XoopsFormSelect($title, $config[$i]->getVar('conf_name'), $config[$i]->getConfValueForOutput());
-                $options =& $config_handler->getConfigOptions(new Criteria('conf_id', $config[$i]->getVar('conf_id')));
+                $options = $config_handler->getConfigOptions(new Criteria('conf_id', $config[$i]->getVar('conf_id')));
                 $opcount = count($options);
                 for ($j = 0; $j < $opcount; $j++) {
                     $optval = defined($options[$j]->getVar('confop_value')) ? constant($options[$j]->getVar('confop_value')) : $options[$j]->getVar('confop_value');
@@ -237,7 +237,7 @@ if ( !is_object($xoopsUser) || !is_object($xoopsModule) || !$xoopsUser->isAdmin(
                 $module_handler =& xoops_gethandler('module');
                 $criteria = new CriteriaCompo(new Criteria('hasmain', 1));
                 $criteria->add(new Criteria('isactive', 1));
-                $moduleslist =& $module_handler->getList($criteria, true);
+                $moduleslist = $module_handler->getList($criteria, true);
                 $moduleslist['--'] = _MD_AM_NONE;
                 $ele->addOptionArray($moduleslist);
                 break;
@@ -368,8 +368,22 @@ if ( !is_object($xoopsUser) || !is_object($xoopsModule) || !$xoopsUser->isAdmin(
                         $startmod_updated = true;
                     }
 
+                    if (empty($censor_words_updated) && $config->getVar('conf_catid') == XOOPS_CONF_CENSOR && $config->getVar('conf_name') == 'censor_words') {
+        				$ts =& MyTextSanitizer::getInstance();
+						if (!isset($ts->censorConf)) {
+							$ts->censorConf =& $config_handler->getConfigsByCat(XOOPS_CONF_CENSOR);
+						}
+	                    $censor_enable_original = $ts->censorConf['censor_enable'];
+	                    $ts->censorConf['censor_enable'] = 0;
+	                    $censor_words_updated = true;
+	                    $censor_enable_set = true;
+                    }
                     $config->setConfValueForInput($new_value);
                     $config_handler->insertConfig($config);
+                    if(!empty($censor_enable_set)){
+	                    $ts->censorConf['censor_enable'] == $censor_enable_original;
+	                    $censor_enable_set = false;
+                    }
                 }
                 unset($new_value);
             }

@@ -143,7 +143,7 @@ class XoopsOnlineHandler
             $limit = $criteria->getLimit();
             $start = $criteria->getStart();
         }
-        $result =& $this->db->query($sql, $limit, $start);
+        $result = $this->db->query($sql, $limit, $start);
         if (!$result) {
             return false;
         }
@@ -165,7 +165,7 @@ class XoopsOnlineHandler
         if (is_object($criteria) && is_subclass_of($criteria, 'criteriaelement')) {
             $sql .= ' '.$criteria->renderWhere();
         }
-        if (!$result =& $this->db->query($sql)) {
+        if (!$result = $this->db->query($sql)) {
             return false;
         }
         list($ret) = $this->db->fetchRow($result);

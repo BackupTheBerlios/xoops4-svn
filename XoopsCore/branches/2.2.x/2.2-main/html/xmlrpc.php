@@ -30,7 +30,7 @@ error_reporting(0);
 include_once XOOPS_ROOT_PATH.'/class/xml/rpc/xmlrpctag.php';
 include_once XOOPS_ROOT_PATH.'/class/xml/rpc/xmlrpcparser.php';
 $response = new XoopsXmlRpcResponse();
-$parser = new XoopsXmlRpcParser($GLOBALS['HTTP_RAW_POST_DATA']);
+$parser = new XoopsXmlRpcParser(rawurldecode($GLOBALS['HTTP_RAW_POST_DATA']));
 if (!$parser->parse()) {
 	$response->add(new XoopsXmlRpcFault(102));
 } else {

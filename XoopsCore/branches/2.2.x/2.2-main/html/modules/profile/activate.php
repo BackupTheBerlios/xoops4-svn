@@ -69,7 +69,6 @@ if (isset($_REQUEST['op']) && $_REQUEST['op'] == "actv") {
                     $xoopsMailer->setFromEmail($xoopsConfig['adminmail']);
                     $xoopsMailer->setFromName($xoopsConfig['sitename']);
                     $xoopsMailer->setSubject(sprintf(_PROFILE_MA_YOURACCOUNT,$xoopsConfig['sitename']));
-                    include XOOPS_ROOT_PATH.'/header.php';
                     if ( !$xoopsMailer->send() ) {
                         printf(_PROFILE_MA_ACTVMAILNG, $thisuser->getVar('uname'));
                     } else {

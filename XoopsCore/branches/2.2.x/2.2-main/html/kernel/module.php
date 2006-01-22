@@ -142,7 +142,7 @@ class XoopsModule extends XoopsObject
      * @param   mix  	$value
      * @return  bool
      **/
-    function &setInfo($name, $value)
+    function setInfo($name, $value)
     {
         if(empty($name)) {
 	        $this->modinfo = $value;
@@ -1183,7 +1183,7 @@ class XoopsModule extends XoopsObject
             unset($existing_fields_arr);
         }
         else {
-            echo "No Profile fields found";
+            //echo "No Profile fields found";
         }
     }
 
@@ -1333,9 +1333,10 @@ class XoopsModuleHandler extends XoopsPersistableObjectHandler
         if (!empty($_cachedModule_dirname[$dirname])) {
             return $_cachedModule_dirname[$dirname];
         } else {
+	        $module = false;
             $sql = "SELECT * FROM ".$this->db->prefix('modules')." WHERE dirname = '".trim($dirname)."'";
             if (!$result = $this->db->query($sql)) {
-                return false;
+                return $module;
             }
             $numrows = $this->db->getRowsNum($result);
             if ($numrows == 1) {
@@ -1346,7 +1347,7 @@ class XoopsModuleHandler extends XoopsPersistableObjectHandler
                 $_cachedModule_mid[$module->getVar('mid')] =& $module;
                 return $module;
             }
-            return false;
+            return $module;
         }
     }
 
@@ -1444,9 +1445,9 @@ class XoopsModuleHandler extends XoopsPersistableObjectHandler
         $modules = $this->getObjects($criteria, true);
         foreach (array_keys($modules) as $i) {
             if (!$dirname_as_key) {
-                $ret[$i] =& $modules[$i]->getVar('name');
+                $ret[$i] = $modules[$i]->getVar('name');
             } else {
-                $ret[$modules[$i]->getVar('dirname')] =& $modules[$i]->getVar('name');
+                $ret[$modules[$i]->getVar('dirname')] = $modules[$i]->getVar('name');
             }
         }
         return $ret;
@@ -1457,7 +1458,7 @@ class XoopsModuleHandler extends XoopsPersistableObjectHandler
     *
     * @return object
     */
-    function loadModule() {
+    function &loadModule() {
         $url_arr = explode('/',strstr($_SERVER['REQUEST_URI'],'/modules/'));
         if (isset($url_arr[2])) {
             $xoopsModule =& $this->getByDirname($url_arr[2]);

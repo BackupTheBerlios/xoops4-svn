@@ -88,7 +88,7 @@ function CheckBrowser($get_isie=true)
 	else return $comp;
 }*/
 
-function CheckBrowser($get_isie=true)
+function checkBrowser($get_isie=true)
 {
 	global $_SERVER;
 

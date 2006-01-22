@@ -196,7 +196,7 @@ class XoopsConfigHandler
      * 
      * @return	array   Array of {@link XoopsConfigItem} objects
      */
-    function getConfigs($criteria = null, $id_as_key = false, $with_options = false)
+    function &getConfigs($criteria = null, $id_as_key = false, $with_options = false)
     {
         $confs = $this->_cHandler->getObjects($criteria, $id_as_key);
         if ($with_options == true) {

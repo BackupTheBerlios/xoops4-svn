@@ -58,7 +58,7 @@ if ('system' == $xoopsModule->getVar('dirname')) {
 	if (isset($comment_config['extraParams']) && is_array($comment_config['extraParams'])) {
 		$extra_params = '';
 		foreach ($comment_config['extraParams'] as $extra_param) {
-			$extra_params .= isset($_POST[$extra_param]) ? $extra_param.'='.$_POST[$extra_param].'&amp;' : $extra_param.'=&amp;';
+			$extra_params .= isset($_POST[$extra_param]) ? $extra_param.'='.htmlspecialchars($_POST[$extra_param]).'&amp;' : $extra_param.'=&amp;';
 		}
 		$redirect_page .= $extra_params;
 	}
@@ -99,6 +99,8 @@ if (!empty($_POST)) {
 	exit();
 }
 
+include_once XOOPS_ROOT_PATH."/modules/system/constants.php";
+
 switch ( $op ) {
 
 case "delete":
@@ -122,7 +124,7 @@ case "preview":
 		}
 	}
 	$p_comment =& $myts->previewTarea($com_text, $dohtml, $dosmiley, $doxcode, $doimage, $dobr);
-	$com_icon = isset($com_icon) ? $com_icon : '';
+    $com_icon = (!empty($com_icon) && is_file(XOOPS_ROOT_PATH . "/images/subject/" . $com_icon) ) ? $com_icon : '';
 	$noname = isset($noname) ? intval($noname) : 0;
 	$com_text = $myts->htmlSpecialChars($myts->stripSlashesGPC($com_text));
 	if ($xoopsModule->getVar('dirname') != 'system') {
@@ -266,12 +268,12 @@ case "post":
 	$comment->setVar('doxcode', $doxcode);
 	$comment->setVar('doimage', $doimage);
 	$comment->setVar('dobr', $dobr);
-	$icon = isset($com_icon) ? $com_icon : '';
+    $icon = (!empty($com_icon) && is_file(XOOPS_ROOT_PATH . "/images/subject/" . $com_icon) ) ? $com_icon : '';
 	$comment->setVar('com_icon', $icon);
 	$comment->setVar('com_modified', time());
 	$comment->setVar('com_modid', $com_modid);
-	if (isset($extra_params)) {
-		$comment->setVar('com_exparams', $extra_params);
+    if (!empty($extra_params)) {
+        $comment->setVar('com_exparams', str_replace('&amp;', '&', $extra_params));
 	}
 	if (false != $comment_handler->insert($comment)) {
 		$newcid = $comment->getVar('com_id');

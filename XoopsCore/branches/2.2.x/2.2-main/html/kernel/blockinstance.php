@@ -108,13 +108,13 @@ class XoopsBlockInstance extends XoopsObject
                 // execute the function
                 $block = $show_func($options);
                 if ( !$block ) {
-                    return false;
+                    return $block;
                 }
             } else {
-                return false;
+                return $block;
             }
         } else {
-            return false;
+            return $block;
         }
 
         return $block;
@@ -166,7 +166,7 @@ class XoopsBlockInstanceHandler extends XoopsPersistableObjectHandler {
     function getLinkedObjects($groupid, $module_id=0, $pageid=0, $visible=null, $orderby='i.weight,i.instanceid', $isactive=1) {
         $ret = array();
         $groupperm_handler =& xoops_gethandler('groupperm');
-        $instanceids =& $groupperm_handler->getItemIds('block_read', $groupid);
+        $instanceids = $groupperm_handler->getItemIds('block_read', $groupid);
         if (!empty($instanceids)) {
             $block_handler =& xoops_gethandler('block');
             $sql = 'SELECT DISTINCT i.instanceid, b.*, i.* FROM '.$this->table.' i, '.$block_handler->table.' b, '.$this->db->prefix('block_module_link').' m WHERE m.block_id=i.instanceid';

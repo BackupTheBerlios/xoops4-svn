@@ -634,6 +634,8 @@ case 'modules':
                 <td><input type="checkbox" name="modules[]" value="'.$module->getInfo('dirname').'"' ;
             if(in_array($file, $pre_specified)){
             	$content .= ' "checked" ';
+            }else{
+            	$content .= ' "disabled" ';
             }
             $content .= '/></td>
                 <td align="center" valign="bottom"><img src="'.XOOPS_URL.'/modules/'.$module->getInfo('dirname').'/'.$module->getInfo('image').'" alt="'.htmlspecialchars($module->getInfo('name')).'" border="0" /></td>
