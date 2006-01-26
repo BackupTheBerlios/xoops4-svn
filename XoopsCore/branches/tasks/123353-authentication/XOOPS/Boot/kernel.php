@@ -14,6 +14,21 @@
 * @version		$Id$
 */
 
+
+define( 'EXXOS', 'xoops' );
+
+
+define( 'XO_TYPE_INT',		0x10 );
+define( 'XO_TYPE_FLOAT',	0x11 );
+define( 'XO_TYPE_BOOL',		0x12 );
+
+define( 'XO_TYPE_STRING',	0x20 );
+define( 'XO_TYPE_FILE',		0x21 );
+define( 'XO_TYPE_PATH',		0x22 );
+define( 'XO_TYPE_MARKUP',	0x23 );
+
+define( 'XO_TYPE_ARRAY',	0x80 );
+
 /**
 * Xoops2 kernel class
 *
@@ -24,7 +39,7 @@
 * @package		xoops_kernel
 * @subpackage	xoops_kernel_Xoops2
 */
-class xoops_kernel_Xoops2 {
+class xoops_kernel_Xoops2 extends XOS {
 	var $xoBundleIdentifier		= 'xoops_kernel_Xoops2';
 	var $xoRunMode				= XO_MODE_PROD;
 	var $xoShortVersionString	= 'XOOPS 2.3.0-alpha1 "Cheerleaders"';
@@ -73,18 +88,14 @@ class xoops_kernel_Xoops2 {
 	 * @var string
 	 */
 	var $startupItemsPath		= 'XOOPS/StartupItems';
-	/**
-	 * References to the currently running services
-	 *
-	 * @var array
-	 */
-	var $services				= null;
+
 	var $captures				= array(
 		'error'		=> 'xoops_kernel_ErrorHandler',
 		'logger'	=> 'xoops_kernel_Logger',
 		'http'		=> 'xoops_http_HttpHandler',
 		'session'	=> 'xoops_http_SessionService',
 		'auth'		=> 'xoops_auth_AuthenticationService',
+		'theme'		=> 'xoops_pyro_Theme',
 		'legacydb'	=> array( 'xoops_db_Database', array( 'driverName' => 'xoops.legacy' ) ),
 	);
 	/** 
@@ -148,7 +159,7 @@ class xoops_kernel_Xoops2 {
 
 	function xoops_kernel_Xoops2( $hostId, $hostVars ) {
 	 	$GLOBALS['xoops']	=& $this;
-	 	$GLOBALS['exxos']->pathHandler =& $this;
+	 	$this->pathHandler =& $this;
 
 	 	$this->hostId = $hostId;
 	 	XOS::apply( $this, $hostVars );
@@ -157,7 +168,7 @@ class xoops_kernel_Xoops2 {
  		error_reporting( ( $this->xoRunMode == XO_MODE_DEV ) ? E_ALL : 0 );
 
  		$this->loadRegistry();
-	 	$this->services =& $GLOBALS['exxos']->services;
+	 	//$this->services =& $GLOBALS['exxos']->services;
 
 	 	$captures = @include $this->path( 'var/Application Support/xoops_kernel_Xoops2/services.php' );
 	 	if ( is_array($captures) ) {
@@ -281,7 +292,7 @@ class xoops_kernel_Xoops2 {
 		if ( !is_array($reg) || ( $this->xoRunMode & XO_MODE_DEV_MASK ) ) {
 			$reg = include $this->path( "$this->xoBundleRoot/scripts/rebuild_registry.php" );
 		}
-		$GLOBALS['exxos']->registry = $reg;
+		$this->registry = $reg;
 	}
 	
 	/**
@@ -305,6 +316,23 @@ class xoops_kernel_Xoops2 {
 			$this->services[$name] =& XOS::create( $bundleId, $options );
 		}
 		return $this->services[$name];
+	}
+	
+	function &loadModule( $bundleId = '', $options = array() ) {
+		if ( !empty($bundleId) && isset( $this->services[$bundleId] ) ) {
+			return $this->services[$bundleId];
+		}
+		if ( !isset( $this->factories[ 'xoops_kernel_Module' ] ) ) {
+			$this->factories['xoops_kernel_Module'] =& XOS::create( 'xoops_kernel_ModuleFactory' );
+		}
+		$module =& $this->factories['xoops_kernel_Module']->createInstanceOf( $bundleId, $options );
+		if ( $module ) {
+			$this->services[ $module->xoBundleIdentifier ] =& $module;
+		}
+		if ( empty($bundleId) ) {
+			$this->currentModule =& $module;
+		}
+		return $module;		
 	}
 
 	/**
@@ -364,7 +392,7 @@ class xoops_kernel_Xoops2 {
 			}
 		} else {
 			$root = XOS::classVar( $parts[0], 'xoBundleRoot' );
-			return $this->path( $root . '/' . $parts[1] );
+			return $this->path( $root . '/' . $parts[1], $virtual );
 		}
 	}
 	/**

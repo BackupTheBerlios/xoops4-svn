@@ -46,7 +46,7 @@ class XOS {
 	 * Import a specific component definition
 	 */
 	function import( $bundleId ) {
-		$me =& $GLOBALS['exxos'];
+		$me =& $GLOBALS[EXXOS];
 
 		if ( !isset( $me->registry[$bundleId] ) ) {
 			return false;
@@ -70,7 +70,7 @@ class XOS {
 	 * Get a class variable value
 	 */
 	function classVar( $id, $prop ) {
-		$me =& $GLOBALS['exxos'];
+		$me =& $GLOBALS[EXXOS];
 		
 		if ( !isset( $me->registry[$id] ) ) {
 			return null;
@@ -92,7 +92,7 @@ class XOS {
 	 * existing instance if it has.
 	 */
 	function &create( $id, $options = null, $args = null ) {
-		$me =& $GLOBALS['exxos'];
+		$me =& $GLOBALS[EXXOS];
 		$inst = false;
 		if ( is_array( $id ) ) {
 			@list( $id, $options, $initArgs ) = $id;
@@ -102,8 +102,6 @@ class XOS {
 		}
 		XOS::import($id);
 		if ( isset( $me->registry[$id] ) ) {
-			$options['xoBundleIdentifier'] = $id;
-			$options['xoBundleRoot'] = $me->registry[$id]['xoBundleRoot'];
 			if ( !isset($me->factories[$id]) && isset($me->registry[$id]['xoFactory']) ) {
 				$me->factories[$id] =& XOS::create( $me->registry[$id]['xoFactory'] );
 				unset($me->registry[$id]['xoFactory']);
@@ -117,10 +115,14 @@ class XOS {
 			} else {
 				$inst =& XOS::createInstanceOf( $id, $options, $args );
 			}
-			if ( is_object( $inst ) && @$inst->xoSingleton ) {
-				$me->services[ $id ] =& $inst;
-				if (!@empty( $options[ 'xoServiceName' ] ) ) {
-					$me->services[ $options[ 'xoServiceName' ] ] =& $inst;
+			if ( is_object( $inst ) ) {
+				$inst->xoBundleIdentifier = $id;
+				$inst->xoBundleRoot = $me->registry[$id]['xoBundleRoot'];
+				if ( @$inst->xoSingleton ) {
+					$me->services[ $id ] =& $inst;
+					if (!@empty( $options[ 'xoServiceName' ] ) ) {
+						$me->services[ $options[ 'xoServiceName' ] ] =& $inst;
+					}
 				}
 			}
 		}
@@ -143,7 +145,7 @@ class XOS {
 		if ( is_object( $inst ) ) {
 			// Set specified properties values
 			XOS::apply( $inst, $options );
-			XOS::apply( $inst, $GLOBALS['exxos']->registry[$class] );
+			XOS::apply( $inst, $GLOBALS[EXXOS]->registry[$class] );
 			// Initialize the component instance
 			if ( method_exists( $inst, 'xoInit' ) ) {
 				if ( !$inst->xoInit( $options ) ) {
@@ -176,12 +178,5 @@ class XOS {
 	}
 	
 }
-
-if ( !@is_object( $GLOBALS['exxos'] ) ) {
-	$GLOBALS['exxos'] =& new XOS();
-}
-
-
-
 
 ?>
