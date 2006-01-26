@@ -45,19 +45,34 @@ function xoScanComponentsFolder( $registry, $path, $recurse = false ) {
 	return $registry;
 }
 
-function xoRegisterComponent( $registry, $bundleInfo, $bundleRoot ) {
+function xoRegisterComponent( $registry, $bundleInfo, $bundleRoot, $prefix = '' ) {
 	global $xoops;
 
+	$isModule = ( substr( $bundleInfo['xoBundleIdentifier'], 0, 4 ) == 'mod_' );
+	
 	$services = array();
 	if ( isset( $bundleInfo['xoServices'] ) ) {
 		foreach ( $bundleInfo['xoServices'] as $localId => $localInfo ) {
 			if ( @$subRoot = $localInfo['xoBundleRoot'] ) {
 				if ( $localInfo = @include $xoops->path( $bundleRoot . $subRoot . '/xo-info.php' ) ) {
-					$localInfo = xoRegisterComponent( array(), $localInfo, $bundleRoot . $subRoot );
+					if ( !$isModule ) {
+						$localInfo = xoRegisterComponent( array(), $localInfo, $bundleRoot . $subRoot );
+					} else {
+						$localInfo = xoRegisterComponent( array(), $localInfo, $bundleRoot . $subRoot, $bundleInfo['xoBundleIdentifier'] . '#' );
+					}
+					foreach ( $localInfo as $k => $v ) {
+						if ( substr( $k, 0, 2 ) != 'xo' ) {
+							unset( $localInfo[$k] );
+						}
+					}
 					$services = array_merge( $services, $localInfo );
 				}
 			} else {
 				$localInfo['xoBundleRoot'] = $bundleRoot;
+				if ( $isModule ) {
+					$localInfo['xoBundleIdentifier'] = $localId;
+					$localId = $bundleInfo['xoBundleIdentifier'] . '#' . $localId;
+				}
 				if ( is_array( $localInfo ) ) {
 					$services[$localId] = $localInfo;
 				}
@@ -68,6 +83,11 @@ function xoRegisterComponent( $registry, $bundleInfo, $bundleRoot ) {
 	$bundleId = $bundleInfo['xoBundleIdentifier'];
 	unset( $bundleInfo['xoBundleIdentifier'] );
 	$bundleInfo['xoBundleRoot'] = $bundleRoot;
+	foreach ( $bundleInfo as $k => $v ) {
+		if ( substr( $k, 0, 2 ) != 'xo' ) {
+			unset( $bundleInfo[$k] );
+		}
+	}
 
 	$services[$bundleId] = $bundleInfo;
 	return array_merge( $registry, $services );
@@ -75,6 +95,7 @@ function xoRegisterComponent( $registry, $bundleInfo, $bundleRoot ) {
 
 $registry = array();
 $registry = xoScanComponentsFolder( $registry, '/XOOPS/Frameworks', true );
+$registry = xoScanComponentsFolder( $registry, '/www/modules', true );
 
 if ( $fp = fopen( $this->path( '/var/Application Support/xoops_kernel_Xoops2/registry.php' ), 'wt' ) ) {
 	fwrite( $fp, "<?php\nreturn " . var_export( $registry, true ) . ";\n?>" );
