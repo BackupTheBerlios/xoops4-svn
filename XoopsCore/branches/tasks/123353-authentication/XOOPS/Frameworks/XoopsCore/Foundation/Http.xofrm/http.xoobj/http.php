@@ -192,6 +192,7 @@ class xoops_http_HttpHandler {
 				echo str_replace( array_keys( $vars ), array_values( $vars ), $this->fakeRedirectTemplate );
 			}
 		}
+		return array( $status, $message, $location );
 	}
 	/**
 	 * Send the specified response code header to the response
