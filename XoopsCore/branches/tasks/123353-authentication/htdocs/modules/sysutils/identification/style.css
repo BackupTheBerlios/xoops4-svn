@@ -1,0 +1,64 @@
+
+#xo-content .login_form  {
+	position:		relative;
+	max-width:		480px;
+	margin:			1em auto;
+	border:			1px solid #000000;
+	background:		url( images/login_win-bg.png );
+}
+#xo-content .login_form .safety_indicator {
+	position:		absolute;
+	top:			4px;
+	right:			4px;
+}
+
+
+#xo-content .login_form  h2 {
+	margin:			.5em;
+	padding:		130px 0px 0px;
+	background:		url( images/login_win-logo.png ) no-repeat center top;
+	text-align:		center;
+}
+
+#xo-content .login_form  .credentials {
+	margin:			.5em 1em;
+	padding:		1em;
+	background:		url( images/login_win-credentials-bg.png );
+	line-height:	1.5em;
+}
+
+#xo-content .login_form  .credentials label {
+	display:		-moz-inline-box;
+	display:		inline-block;
+	width:			10em;
+	margin:			1px;
+
+}
+
+#xo-content .login_form  .credentials input {
+	width:			13em;
+	margin:			1px;
+
+	border:			1px solid #000000;
+	padding:		1px;
+}
+
+#xo-content .login_form  .credentials input:focus {
+	border:			1px solid #2266cc;
+}
+
+#xo-content .login_form  .actions {
+	padding:		1.5em .5em .5em;
+	text-align:		center;
+}
+
+.helper_links {
+	margin:			.5em 1em;
+}
+.helper_links a {
+	display:		block;
+}
+.helper_links a.password_recovery {
+	text-align:		right;
+	margin-top:		-1.2em;
+}
