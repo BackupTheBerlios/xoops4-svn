@@ -31,14 +31,15 @@ class xoops_pyro_ThemeFactory {
 	 * 
 	 * @var string
 	 */
-	var $defaultTheme = 'default-web';
+	var $defaultTheme = 'default';
 
 	/**
 	 * Instanciate the specified theme
 	 */
 	function &createInstance( $options = array(), $initArgs = array() ) {
 		if ( @empty( $options['folderName'] ) ) {
-			$options['folderName'] = $this->defaultTheme;
+			//$options['folderName'] = $this->defaultTheme;
+			$options['folderName'] = $GLOBALS['xoopsConfig']['theme_set'];
 		} elseif ( !empty( $this->allowedThemes ) && !in_array( $options['folderName'], $this->allowedThemes ) ) {
 			$options['folderName'] = $this->defaultTheme;
 		}
@@ -241,8 +242,10 @@ class xoops_pyro_Theme {
 			$tpl = $zone . 'Template';
 			$tpl = $this->$tpl;
 			if ( !empty( $tpl ) ) {
-				if ( $tpl{0} == '.' ) {
+				if ( substr( $tpl, 0, 1 ) == '.' ) {
 					$tpl = $xoops->path( $this->resourcePath( substr( $tpl, 1 ) ) );
+				} elseif ( !strpos( $tpl, ':' ) ) {
+					$tpl = 'xotpl:' . $tpl;
 				}
 				$this->template->display( $tpl );
 			} elseif ( $zone != 'content' ) {
@@ -267,7 +270,19 @@ class xoops_pyro_Theme {
 	
 	function resourcePath( $path, $fromDocRoot = true ) {
 		global $xoops;
-		if ( $path{0} == '/' ) {
+		
+		$parts = explode( '#', $path, 2 );
+		if ( count( $parts ) > 1 ) {
+			list( $bundleId, $resPath ) = $parts;
+			// This is component resource: modules are in 'modules', and components in 'components'
+			$themedRoot = ( substr( $parts[0], 0, 4 ) == 'mod_' ) ? 'modules' : 'components';
+			if ( file_exists( "$this->path/$themedRoot/$bundleId/$resPath" ) ) {
+				return "themes/$this->folderName/$themedRoot/$bundleId/$resPath";
+			} else {
+				return XOS::classVar( $bundleId, 'xoBundleRoot' ) . '/' . $resPath;
+			}
+		}		
+		if ( substr( $path, 0, 1 ) == '/' ) {
 			$path = substr( $path, 1 );
 			$fromDocRoot = false;
 		}
