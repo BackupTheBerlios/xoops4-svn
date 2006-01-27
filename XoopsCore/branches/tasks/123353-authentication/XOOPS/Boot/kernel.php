@@ -113,6 +113,12 @@ class xoops_kernel_Xoops2 extends XOS {
 	 */
 	var $hasShutdown			= false;
 	/**
+	 * Hostname to use to construct absolute URIs
+	 *
+	 * @var string
+	 */
+	var $hostName				= '';
+	/**
 	 * Semi-relative URI to this XOOPS files
 	 *
 	 * @var string
@@ -179,8 +185,10 @@ class xoops_kernel_Xoops2 extends XOS {
 		
 		$this->baseLocation = $this->isSecure ? $this->secureLocation : $this->hostLocation;
 		if ( false !== ( $pos = strpos( $this->baseLocation, '/' ) ) ) {
+			$this->hostName = substr( $this->baseLocation, 0, $pos );
 			$this->baseLocation = substr( $this->baseLocation, $pos );
 		} else {
+			$this->hostName = $this->baseLocation;
 			$this->baseLocation = '';
 		}
 	}
@@ -198,23 +206,19 @@ class xoops_kernel_Xoops2 extends XOS {
 	 * @return bool
 	 */
 	function boot() {
-		if ( !$this->hasBooted ) {
-			register_shutdown_function( array( &$this, 'shutdown' ) );
-			if ( !empty($this->bootFile) ) {
-				require_once $this->path( "/XOOPS/Boot/$this->bootFile" );
-			}
-			// @TODO-2.3: This shouldn't be there but is kept temporarily until the
-			// old common.php has been cleaned up as it should
-			include_once XOOPS_ROOT_PATH."/include/common.php";
-
-			if ( isset( $_SESSION[$this->xoBundleIdentifier]['currentUser'] ) ) {
-				$this->acceptUser( $_SESSION[$this->xoBundleIdentifier]['currentUser'] );
-			}
-			if ( $this->launchStartupItems() ) {
-				return true;
-			} 
-			$this->hasBooted = true;
+		if ( $this->hasBooted ) {
+			return $this->launchCurrentModule();
 		}
+		register_shutdown_function( array( &$this, 'shutdown' ) );
+		if ( !empty($this->bootFile) ) {
+			require_once $this->path( "/XOOPS/Boot/$this->bootFile" );
+		}
+		$this->launchCurrentModule();
+		
+		if ( $this->launchStartupItems() ) {
+			return true;
+		} 
+		$this->hasBooted = true;
 		return true;
 	}
 	/**
@@ -269,16 +273,19 @@ class xoops_kernel_Xoops2 extends XOS {
 		return true;
 	}
 
-	function launchModule() {
-		return true;
-		if ( !$this->loadService( 'module', 'xoops_kernel_Module' ) ) {
-			return false;
+	function launchCurrentModule() {
+		$module =& $this->loadModule();
+		if ( !$module ) {
+			$this->services['http']->sendResponse( 500, null, -1 );
+		} else {
+			//if ( !$module->checkAccess() ) {
+				//$this->services['http']->sendResponse( 403, null, -1 );
+			//} else {
+				$this->currentModule =& $module;
+				return true;
+			//}
 		}
-		if ( !$this->services['module']->checkAccess() ) {
-			//$this->services['http']->setResponse( 403, null, null, true );
-			return false;
-		}
-		return $this->services['module']->xoBundleIdentifier;
+		return false;
 	}
 
 
@@ -317,7 +324,12 @@ class xoops_kernel_Xoops2 extends XOS {
 		}
 		return $this->services[$name];
 	}
-	
+	/**
+	 * Creates an instance of the specified module bundle
+	 * 
+	 * @param string $bundleId	Bundle ID of the module to instanciate
+	 * @param array  $options	Parameters to send to the service during instanciation
+	 */
 	function &loadModule( $bundleId = '', $options = array() ) {
 		if ( !empty($bundleId) && isset( $this->services[$bundleId] ) ) {
 			return $this->services[$bundleId];
@@ -328,9 +340,6 @@ class xoops_kernel_Xoops2 extends XOS {
 		$module =& $this->factories['xoops_kernel_Module']->createInstanceOf( $bundleId, $options );
 		if ( $module ) {
 			$this->services[ $module->xoBundleIdentifier ] =& $module;
-		}
-		if ( empty($bundleId) ) {
-			$this->currentModule =& $module;
 		}
 		return $module;		
 	}
@@ -343,14 +352,16 @@ class xoops_kernel_Xoops2 extends XOS {
 	 * @return boolean
 	 */
 	function acceptUser( $login = '', $permanent = false ) {
-		if ( empty( $login ) && isset( $_SESSION[$this->xoBundleIdentifier]['currentUser'] ) ) {
-			$login = $_SESSION[$this->xoBundleIdentifier]['currentUser'];
-			$permanent = true;
-		}
 		if ( !$login ) {
 			return false;
 		}
-		// @TODO-2.3: Clean this up later... This handler stuff is so, so lame... :-(
+		// @TODO-2.3: Clean this up later...
+		$GLOBALS['xoopsDB'] = $this->loadService( 'legacydb' );
+
+		require_once XOOPS_ROOT_PATH . '/include/functions.php';
+		require_once XOOPS_ROOT_PATH . '/kernel/object.php';
+		require_once XOOPS_ROOT_PATH . '/class/criteria.php';
+		
 		$handler =& xoops_gethandler('member');
 		list($user) = $handler->getUsers( new Criteria( 'uname', $login ) );
 		if ( is_object( $user ) ) {
