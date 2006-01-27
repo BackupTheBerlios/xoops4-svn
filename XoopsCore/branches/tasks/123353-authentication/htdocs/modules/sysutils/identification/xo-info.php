@@ -29,7 +29,7 @@ return array(
 			'parameters' => array(
 				'login' => array( '', XO_TYPE_STRING ),
 				'password' => array( '', XO_TYPE_STRING ),
-				'xoops_redirect' => array( '/www/', XO_TYPE_STRING ),
+				'xoops_redirect' => array( '', XO_TYPE_STRING ),
 			),
 		),
 		'logout' => array(
