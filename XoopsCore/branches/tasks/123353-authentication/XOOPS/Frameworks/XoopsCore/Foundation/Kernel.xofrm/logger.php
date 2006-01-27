@@ -48,7 +48,7 @@ class xoops_kernel_Logger {
 	var $timers = array();
 
 	function xoInit( $options = array() ) {
-		ob_start();
+		ob_start( array( &$this, 'renderEvents' ) );
 	 	return true;
 	}
 	/**
@@ -65,17 +65,6 @@ class xoops_kernel_Logger {
 			if ( !isset( $v['stop'] ) ) {
 				$this->timers[$k]['stop'] = $now;
 			}
-		}
-	  	$output = '';
-
-	 	while ( false !== ( $str = ob_get_contents() ) ) {		// Clean all open output buffers and reconstruct output :-)
-	 		$output = $str . $output;
-	 		ob_end_clean();
-		}
-		if ( $this->activated ) {
-			$this->renderEvents( $output );
-		} else {
-			echo $output;
 		}
 	}
 	/**
@@ -130,6 +119,9 @@ class xoops_kernel_Logger {
 	 * @param string $output The content generated during the current request
 	 */
 	function renderEvents( $output ) {
+		if ( !$this->activated ) {
+			return $output;
+		}
 		$log = "\n<div class=\"xo-logger-output\">\n";
 		foreach ( $this->events as $category => $events ) {
 			$log .= "<div class=\"xo-events $category\">\n";
@@ -146,9 +138,9 @@ class xoops_kernel_Logger {
 		$pattern = '<!--{xo-logger-output}-->';
 		$pos = strpos( $output, $pattern );
 		if ( $pos !== false ) {
-			echo substr( $output, 0, $pos ) . $log . substr( $output, $pos + strlen( $pattern ) );
+			return substr( $output, 0, $pos ) . $log . substr( $output, $pos + strlen( $pattern ) );
 		} else {
-			echo $output . $log;
+			return $output . $log;
 		}
 	}	
 
