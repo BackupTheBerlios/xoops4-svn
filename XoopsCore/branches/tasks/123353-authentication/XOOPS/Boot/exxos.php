@@ -116,8 +116,6 @@ class XOS {
 				$inst =& XOS::createInstanceOf( $id, $options, $args );
 			}
 			if ( is_object( $inst ) ) {
-				$inst->xoBundleIdentifier = $id;
-				$inst->xoBundleRoot = $me->registry[$id]['xoBundleRoot'];
 				if ( @$inst->xoSingleton ) {
 					$me->services[ $id ] =& $inst;
 					if (!@empty( $options[ 'xoServiceName' ] ) ) {
@@ -146,6 +144,7 @@ class XOS {
 			// Set specified properties values
 			XOS::apply( $inst, $options );
 			XOS::apply( $inst, $GLOBALS[EXXOS]->registry[$class] );
+			$inst->xoBundleIdentifier = $class;
 			// Initialize the component instance
 			if ( method_exists( $inst, 'xoInit' ) ) {
 				if ( !$inst->xoInit( $options ) ) {

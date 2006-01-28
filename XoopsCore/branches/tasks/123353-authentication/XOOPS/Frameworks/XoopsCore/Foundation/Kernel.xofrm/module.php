@@ -55,6 +55,7 @@ class xoops_kernel_ModuleFactory {
 		} else {
 			$inst =& XOS::createInstanceOf( 'xoops_kernel_Module', $options );
 		}
+		$inst->xoBundleIdentifier = $moduleInfo['xoBundleIdentifier'];
 		$inst->xoBundleRoot = XOS::classVar( $inst->xoBundleIdentifier, 'xoBundleRoot' );
 		// If we are instanciating the "current" module, find the current location
 		if ( $inst && empty( $bundleId ) ) {
@@ -62,7 +63,7 @@ class xoops_kernel_ModuleFactory {
 			$scriptFile = substr( strstr( $_SERVER['SCRIPT_NAME'], $moduleRoot ), strlen( $moduleRoot ) );
 			foreach ( $inst->moduleLocations as $k => $loc ) {
 				if ( $scriptFile == $loc['scriptFile'] ) {
-					$inst->currentLocation =& $inst->moduleLocations[$k];
+					$inst->currentLocation = $k;
 				}				
 			}
 		}
@@ -96,7 +97,8 @@ class xoops_kernel_Module {
 
 	
 	function requestParameters( $source = 'R' ) {
-		return isset( $this->currentLocation['parameters'] ) ? $this->requestValues( $this->currentLocation['parameters'], $source ) : array();
+		$loc =& $this->moduleLocations[ $this->currentLocation ];
+		return isset( $loc['parameters'] ) ? $this->requestValues( $loc['parameters'], $source ) : array();
 	}
 	
 	function requestValues( $defs, $source = 'R' ) {
