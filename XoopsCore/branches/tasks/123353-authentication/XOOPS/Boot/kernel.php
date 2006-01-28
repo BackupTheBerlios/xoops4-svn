@@ -386,7 +386,7 @@ class xoops_kernel_Xoops2 extends XOS {
 		}
 		$parts = explode( '#', $url );
 		if ( count( $parts ) == 1 ) {
-			if ( $parts[0]{0} == '/' ) {
+			if ( substr( $parts[0], 0, 1 ) == '/' ) {
 				$parts[0] = substr( $parts[0], 1 );
 			}
 			$parts = explode( '/', $parts[0], 2 );
