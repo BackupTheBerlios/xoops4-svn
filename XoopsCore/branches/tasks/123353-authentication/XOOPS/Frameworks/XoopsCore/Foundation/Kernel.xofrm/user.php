@@ -10,25 +10,19 @@ define( 'XO_LEVEL_ADMIN', 256 );
 
 class xoops_kernel_User {
 	
+	var $userId = 0;
+
 	var $level = XO_LEVEL_ANONYMOUS;
-	var $groups = array( XO_GROUP_ANONYMOUS );
+	var $groups = array( XOOPS_GROUP_ANONYMOUS );
 	
-	var $name = 'anonymous';
+	var $login = 'anonymous';
 	var $password = '';
 	
+	var $email = '';
 	
-	
+	var $fullName = '';
+
 }
-
-
-
-
-
-
-
-
-
-
 
 
 
