@@ -5,7 +5,7 @@
 	global $xoops;
 
 	$app =& $xoops->currentModule;
-	
+	//var_export($app);
 	// Read the request params defined in xo-info.php (use default if the var isnt found)
 	// sanitize them, and create corresponding global vars
 	extract( $app->requestParameters(), EXTR_OVERWRITE );
@@ -24,7 +24,7 @@
 				$xoops->acceptUser( $login, true );
 			    // Perform some maintenance of notification records
 			    $notification_handler =& xoops_gethandler('notification');
-			    $notification_handler->doLoginMaintenance($user->getVar('uid'));
+			    $notification_handler->doLoginMaintenance( $GLOBALS['xoopsUser']->getVar('uid') );
 				return $xoops->services['http']->sendResponse( 303, sprintf( XO_('Thank you for logging in, %s'), $login ), $xoops_redirect );
 			} else {
 				return $xoops->services['http']->sendResponse( 403, XO_('Incorrect login'), $_SERVER['REQUEST_URI'] );

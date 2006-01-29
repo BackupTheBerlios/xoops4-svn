@@ -60,6 +60,7 @@
 }
 .helper_links a {
 	display:		block;
+	width:			50%;
 }
 .helper_links a.password_recovery {
 	text-align:		right;

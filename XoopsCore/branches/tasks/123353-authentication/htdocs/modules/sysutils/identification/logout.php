@@ -13,8 +13,8 @@
 
 	// clear entry from online users table
 	global $xoopsUser;
-	$online_handler =& xoops_gethandler('online');
-	$online_handler->destroy($xoopsUser->getVar('uid'));
+	$online_handler =& xoops_gethandler( 'online' );
+	$online_handler->destroy( $xoopsUser->getVar('uid') );
 
 	return $xoops->services['http']->sendResponse( 200, XO_('You are now logged out. Thanks for your visit'), $xoops->url( '/www/' ) );
 	
