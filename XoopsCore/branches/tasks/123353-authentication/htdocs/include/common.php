@@ -163,10 +163,10 @@ if (!defined("XOOPS_MAINFILE_INCLUDED")) {
 	//session_id($_POST[$xoopsConfig['sslpost_name']]);
 
 	global $xoopsUser;
-	if ( @is_object( $xoopsUser ) ) {
+	if ( $xoopsUser && is_object( $xoopsUser ) ) {
 		$GLOBALS['xoopsUserId'] = $xoopsUser->getVar( 'uid', 'n' );
 		$GLOBALS['xoopsUserIsAdmin'] = $xoopsUser->isAdmin();
-		$GLOBALS['xoopsUserGroups'] = $xoopsUset->getGroups();
+		$GLOBALS['xoopsUserGroups'] = $xoopsUser->getGroups();
 	}
 	
     if (!empty($_REQUEST['xoops_theme_select']) && in_array($_REQUEST['xoops_theme_select'], $xoopsConfig['theme_set_allowed'])) {
