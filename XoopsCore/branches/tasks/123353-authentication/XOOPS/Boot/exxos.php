@@ -64,6 +64,7 @@ class XOS {
 			}
 			return $me->imported[$bundleId] = false;
 		}
+		return true;
 	}
 
 	/**
