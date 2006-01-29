@@ -1,5 +1,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="([$xoops_langcode])" lang="([$xoops_langcode])">
+<html
+	xmlns="http://www.w3.org/1999/xhtml"
+	xml:lang="([$xoops_langcode])" lang="([$xoops_langcode])"
+>
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=([$xoops_charset])" />
 	<meta http-equiv="content-language" content="([$xoops_langcode])" />
@@ -37,7 +40,7 @@
 </script>
 	
 </head>
-<body>
+<body class="([$xoops->currentModule->xoBundleIdentifier])">
 
 ([if $xoBlocks.canvas_left and $xoBlocks.canvas_right])
 	([assign var=canvas_class value="xo-with_both"])
@@ -56,6 +59,17 @@
 			([if $xoops_banner != '&nbsp;'])
 			<div id="xo-banner-ad">([$xoops_banner])</div>
 			([/if])
+		</div>
+		<div id="xo-header-userinfo">
+		([if not $xoops->currentUser->userId])
+			<a href="([xoAppUrl mod_xoops_Identification#login])">Log in</a>
+			<a href="([xoAppUrl /www/register.php])">Register</a>
+		([else])
+			<div class="user-name">
+				([if $xoops->currentUser->fullName])([$xoops->currentUser->fullName])([else])([$xoops->currentUser->login])([/if])
+			</div>
+			<a href="([xoAppUrl mod_xoops_Identification#logout])">Log out</a>
+		([/if])
 		</div>
 	</div>
 ([if $xoops->services.http->redirectMessage])
@@ -88,8 +102,9 @@
 			Powered by ([$xoops->xoShortVersionString])
 		</a>
 	</div>
-
 </div>
   
+<!--{xo-logger-output}-->
+
 </body>
 </html>
