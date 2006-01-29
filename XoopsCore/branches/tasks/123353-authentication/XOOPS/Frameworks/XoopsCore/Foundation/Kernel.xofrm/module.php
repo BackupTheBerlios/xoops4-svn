@@ -36,17 +36,18 @@ class xoops_kernel_ModuleFactory {
 		global $xoops;
 
 		XOS::import( 'xoops_kernel_Module' );
-		$root = '';
 		// @TODO: This is lame and limited, whatever, should be arranged later
 		if ( !empty( $bundleId ) ) {
 			// Module ID specified: get its location from the registry
 			if ( !XOS::import( $bundleId ) ) {
+				trigger_error( "Cannot instanciate unknown module " . $bundleId, E_USER_WARNING );
 				return false;
 			}
-		} else {
 			$root = $xoops->path( XOS::classVar( $bundleId, 'xoBundleRoot' ) ) . '/';
+		} else {
+			$root = '';
 		}
-		$moduleInfo = @include 'xo-info.php';
+		$moduleInfo = @include $root . 'xo-info.php';
 		unset( $moduleInfo['xoServices'] );
 		$options = array_merge( $moduleInfo, $options );
 		if ( isset( $moduleInfo['xoClassPath'] ) ) {
