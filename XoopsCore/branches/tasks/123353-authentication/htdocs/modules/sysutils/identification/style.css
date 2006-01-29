@@ -1,6 +1,6 @@
 
 #xo-content #login_window  {
-	position:		relative;
+/*	position:		relative; */
 	max-width:		480px;
 	margin:			1em auto;
 	border:			1px solid #000000;
@@ -34,12 +34,12 @@
 #xo-content .login_form  .credentials label {
 	display:		-moz-inline-box;
 	display:		inline-block;
-	width:			10em;
+	width:			33%;
 	margin:			1px;
 }
 
 #xo-content .login_form  .credentials input {
-	width:			13em;
+	width:			50%;
 	margin:			1px;
 
 	border:			1px solid #000000;
