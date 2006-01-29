@@ -365,13 +365,26 @@ class xoops_kernel_Xoops2 extends XOS {
 		$handler =& xoops_gethandler('member');
 		list($user) = $handler->getUsers( new Criteria( 'uname', $login ) );
 		if ( is_object( $user ) ) {
-			$user->getGroups();
-			$this->currentUser = $user;
+			$GLOBALS['xoopsUser'] = $user;
+			XOS::import( 'xoops_kernel_User' );
+			$lvl_lookup = array( 0 => XO_LEVEL_INACTIVE, 1 => XO_LEVEL_REGISTERED, 5 => XO_LEVEL_ADMIN );
+			$this->currentUser = XOS::create( 'xoops_kernel_User', array(
+				'userId' => $user->getVar( 'uid', 'n' ),
+				'login' => $user->getVar( 'uname', 'n' ),
+				'email' => $user->getVar( 'email', 'n' ),
+				'groups' => $user->getGroups(),
+				'fullName' => $user->getVar( 'name', 'n' ),
+				'level' => $lvl_lookup[ $user->getVar( 'level', 'n' ) ],
+			) );
+			
 			if ( $permanent && $this->services['session'] ) {
 				$this->services['session']->start();
 				$_SESSION[$this->xoBundleIdentifier]['currentUser'] = $login;
 			}
 			return true;
+		} else {
+			$GLOBALS['xoopsUser'] = '';
+			$this->currentUser = XOS::create( 'xoops_kernel_User' );
 		}
 		return false;
 	}
