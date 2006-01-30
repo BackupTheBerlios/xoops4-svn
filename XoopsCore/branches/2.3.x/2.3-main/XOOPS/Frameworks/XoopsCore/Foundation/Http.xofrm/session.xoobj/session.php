@@ -45,6 +45,11 @@ class xoops_http_SessionService {
 	 * @var string
 	 */
 	var $cacheLimiter = '';
+	/**
+	* If sessions are created for unauthenticated visitors
+	* @var boolean
+	*/
+	var $createGuestSessions = false;
 	
 	/**
 	* Initialize the session service
@@ -53,7 +58,9 @@ class xoops_http_SessionService {
 		if ( $this->saveHandler && !$this->attachHandler( $this->saveHandler ) ) {
 			return false;
 		}
-		$this->start();
+		if ( isset( $_COOKIE[ session_name() ] ) || $this->createGuestSessions ) {
+			$this->start();
+		}
 	 	return true;
 	}
 	/**
@@ -106,6 +113,7 @@ class xoops_http_SessionService {
 	*/
 	function destroy() {
 		$_SESSION = array();
+		unset( $_COOKIE[ session_name() ] );
 		session_destroy();
 	}
 	/**

@@ -33,7 +33,8 @@ if (!defined("XOOPS_MAINFILE_INCLUDED")) {
 	
 	// Initialize the old XOOPS global vars
 	// This ensures this file can be included from within a function with no prob
-	$GLOBALS['xoopsUser'] = $GLOBALS['xoopsUserId'] = $GLOBALS['xoopsUserGroups'] = $GLOBALS['xoopsUserIsAdmin'] = false;
+	// $xoopsUser is initialized by the kernel right now
+	$GLOBALS['xoopsUserId'] = $GLOBALS['xoopsUserGroups'] = $GLOBALS['xoopsUserIsAdmin'] = false;
 	$GLOBALS['xoopsDB'] = $GLOBALS['xoopsConfig'] = $GLOBALS['xoopsModule'] = $GLOBALS['xoopsModuleConfig'] = null;
 
 	global $xoops, $xoopsOption;
@@ -154,7 +155,6 @@ if (!defined("XOOPS_MAINFILE_INCLUDED")) {
     $GLOBALS['xoopsRequestUri'] = $_SERVER[ 'REQUEST_URI' ];       // Deprecated (use the corrected $_SERVER variable now)
     /**#@-*/
 
-    $GLOBALS['xoopsUser'] = '';
     $member_handler =& xoops_gethandler('member');
 
 	// NB: SSL login has been temporarily disabled until the birth of the user-login module
@@ -162,15 +162,12 @@ if (!defined("XOOPS_MAINFILE_INCLUDED")) {
     //if ($xoopsConfig['use_ssl'] && isset($_POST[$xoopsConfig['sslpost_name']]) && $_POST[$xoopsConfig['sslpost_name']] != '') {
 	//session_id($_POST[$xoopsConfig['sslpost_name']]);
 
-	// NB: User mgmt is not stabilized, so keep using $xoopsUser for the moment
-	if ( !@empty( $_SESSION ) ) {
-		$xoops->acceptUser();
-		if ( $xoops->currentUser ) {
-			$GLOBALS['xoopsUser'] = $xoops->currentUser;
-			//$xoopsUserIsAdmin = $xoopsUser->isAdmin();
-		}
-	}
 	global $xoopsUser;
+	if ( $xoopsUser && is_object( $xoopsUser ) ) {
+		$GLOBALS['xoopsUserId'] = $xoopsUser->getVar( 'uid', 'n' );
+		$GLOBALS['xoopsUserIsAdmin'] = $xoopsUser->isAdmin();
+		$GLOBALS['xoopsUserGroups'] = $xoopsUser->getGroups();
+	}
 	
     if (!empty($_REQUEST['xoops_theme_select']) && in_array($_REQUEST['xoops_theme_select'], $xoopsConfig['theme_set_allowed'])) {
         $xoopsConfig['theme_set'] = $_REQUEST['xoops_theme_select'];

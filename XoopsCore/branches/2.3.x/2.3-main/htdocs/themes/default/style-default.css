@@ -11,13 +11,15 @@ html, body {
 	font:					10pt sans-serif;
 }
 
+
 #xo-canvas {
-	position:		relative;
 	margin:			15px;
 	background:		#EEEEEE;
 }
 
+/* ------------------- Canvas banner ------------------- */
 #xo-canvas-header {
+	position:		relative;
 	border-bottom:	1px solid #CCCCCC;
 	background:		#FFFFFF;
 	padding:		3px 3px 3px;
@@ -45,12 +47,31 @@ html, body {
 	margin:			0px auto;
 }
 
+#xo-header-userinfo {
+	position:		absolute;
+	top:			6px;
+	right:			10px;
+	color:			#ffffff;
+	font-size:		90%;
+	font-weight:	bold;
+	text-align:		center;
+}
+#xo-header-userinfo a {
+	display:		block;
+	color:			#eeeeee;
+}
+#xo-header-userinfo .user-name {
+	background:		url(img/logged_in-22.png) no-repeat right center;
+	padding-top:	2px;
+	padding-right:	24px;
+}
+
 #xo-redirect-message {
 	position:		absolute;
 	z-index:		20;
 	left:			25%;
 	width:			50%;
-	top:			62px;
+	top:			80px;
 	padding:		.2em 1em;
 	background:		#000000;
 	color:			#EEEEEE;
@@ -58,8 +79,8 @@ html, body {
 	font-weight:	bold;
 }
 
+/* ------------------- Main canvas zone (columns and page) ------------------- */
 #xo-canvas-main {
-	clear:			both;
 	border-top:		1px solid #FFFFFF;
 	padding:		6px;
 }
@@ -72,13 +93,12 @@ html, body {
 	float:			left;
 	border:			1px solid #666666;
 }
-
+#xo-canvas-column .xo-block {
+	display:		block;
+}
 #xo-canvas-rightcolumn {
 	float:			right;
-	padding-bottom:	96px;
-	background:		url(img/canvas-rightcolumn_bg.png) no-repeat center bottom;
 }
-
 #xo-page {
 	background:		#ffffff;
 	padding:		0px;
@@ -87,12 +107,16 @@ html, body {
 }
 
 #xo-canvas.xo-with_left #xo-page, #xo-canvas.xo-with_both #xo-page {
-	margin-left:	176px;
+	margin-left:	170px;
+}
+#xo-canvas.xo-with_right #xo-page, #xo-canvas.xo-with_both #xo-page {
+	margin-right:	170px;
 }
 
-#xo-canvas.xo-with_right #xo-page, #xo-canvas.xo-with_both #xo-page {
-	margin-right:	176px;
+#xo-content {
+	position:		relative;
 }
+
 
 #xo-canvas-footer {
 	padding:		1px;

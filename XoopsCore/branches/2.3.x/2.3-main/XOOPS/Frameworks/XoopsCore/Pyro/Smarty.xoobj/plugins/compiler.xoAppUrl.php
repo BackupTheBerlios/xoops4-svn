@@ -18,8 +18,20 @@ function smarty_compiler_xoAppUrl( $argStr, &$smarty ) {
 	global $xoops;
 	
 	$argStr = trim( $argStr );
+
+	@list( $modId, $location ) = explode( '#', $argStr, 2 );
+	if ( isset( $location ) ) {
+		if ( $module = $xoops->loadModule( $modId ) ) {
+			$uri = $module->xoBundleRoot;
+			if ( isset( $location ) && isset( $module->moduleLocations[$location] ) ) {
+				$uri .= $module->moduleLocations[$location]['scriptFile'];
+			}
+		}
+	} else {
+		$uri = $argStr;
+	}
 	
-	return "\necho '" . addslashes( $xoops->path( $argStr, true ) ) . "';";
+	return "\necho '" . addslashes( $xoops->path( $uri, true ) ) . "';";
 
 }
 

@@ -14,6 +14,21 @@
 * @version		$Id$
 */
 
+
+define( 'EXXOS', 'xoops' );
+
+
+define( 'XO_TYPE_INT',		0x10 );
+define( 'XO_TYPE_FLOAT',	0x11 );
+define( 'XO_TYPE_BOOL',		0x12 );
+
+define( 'XO_TYPE_STRING',	0x20 );
+define( 'XO_TYPE_FILE',		0x21 );
+define( 'XO_TYPE_PATH',		0x22 );
+define( 'XO_TYPE_MARKUP',	0x23 );
+
+define( 'XO_TYPE_ARRAY',	0x80 );
+
 /**
 * Xoops2 kernel class
 *
@@ -24,7 +39,7 @@
 * @package		xoops_kernel
 * @subpackage	xoops_kernel_Xoops2
 */
-class xoops_kernel_Xoops2 {
+class xoops_kernel_Xoops2 extends XOS {
 	var $xoBundleIdentifier		= 'xoops_kernel_Xoops2';
 	var $xoRunMode				= XO_MODE_PROD;
 	var $xoShortVersionString	= 'XOOPS 2.3.0-alpha1 "Cheerleaders"';
@@ -73,18 +88,14 @@ class xoops_kernel_Xoops2 {
 	 * @var string
 	 */
 	var $startupItemsPath		= 'XOOPS/StartupItems';
-	/**
-	 * References to the currently running services
-	 *
-	 * @var array
-	 */
-	var $services				= null;
+
 	var $captures				= array(
 		'error'		=> 'xoops_kernel_ErrorHandler',
 		'logger'	=> 'xoops_kernel_Logger',
 		'http'		=> 'xoops_http_HttpHandler',
 		'session'	=> 'xoops_http_SessionService',
 		'auth'		=> 'xoops_auth_AuthenticationService',
+		'theme'		=> 'xoops_pyro_Theme',
 		'legacydb'	=> array( 'xoops_db_Database', array( 'driverName' => 'xoops.legacy' ) ),
 	);
 	/** 
@@ -101,6 +112,12 @@ class xoops_kernel_Xoops2 {
 	 * @access private
 	 */
 	var $hasShutdown			= false;
+	/**
+	 * Hostname to use to construct absolute URIs
+	 *
+	 * @var string
+	 */
+	var $hostName				= '';
 	/**
 	 * Semi-relative URI to this XOOPS files
 	 *
@@ -148,7 +165,7 @@ class xoops_kernel_Xoops2 {
 
 	function xoops_kernel_Xoops2( $hostId, $hostVars ) {
 	 	$GLOBALS['xoops']	=& $this;
-	 	$GLOBALS['exxos']->pathHandler =& $this;
+	 	$this->pathHandler =& $this;
 
 	 	$this->hostId = $hostId;
 	 	XOS::apply( $this, $hostVars );
@@ -157,7 +174,7 @@ class xoops_kernel_Xoops2 {
  		error_reporting( ( $this->xoRunMode == XO_MODE_DEV ) ? E_ALL : 0 );
 
  		$this->loadRegistry();
-	 	$this->services =& $GLOBALS['exxos']->services;
+	 	//$this->services =& $GLOBALS['exxos']->services;
 
 	 	$captures = @include $this->path( 'var/Application Support/xoops_kernel_Xoops2/services.php' );
 	 	if ( is_array($captures) ) {
@@ -168,8 +185,10 @@ class xoops_kernel_Xoops2 {
 		
 		$this->baseLocation = $this->isSecure ? $this->secureLocation : $this->hostLocation;
 		if ( false !== ( $pos = strpos( $this->baseLocation, '/' ) ) ) {
+			$this->hostName = substr( $this->baseLocation, 0, $pos );
 			$this->baseLocation = substr( $this->baseLocation, $pos );
 		} else {
+			$this->hostName = $this->baseLocation;
 			$this->baseLocation = '';
 		}
 	}
@@ -187,23 +206,19 @@ class xoops_kernel_Xoops2 {
 	 * @return bool
 	 */
 	function boot() {
-		if ( !$this->hasBooted ) {
-			register_shutdown_function( array( &$this, 'shutdown' ) );
-			if ( !empty($this->bootFile) ) {
-				require_once $this->path( "/XOOPS/Boot/$this->bootFile" );
-			}
-			// @TODO-2.3: This shouldn't be there but is kept temporarily until the
-			// old common.php has been cleaned up as it should
-			include_once XOOPS_ROOT_PATH."/include/common.php";
-
-			if ( isset( $_SESSION[$this->xoBundleIdentifier]['currentUser'] ) ) {
-				$this->acceptUser( $_SESSION[$this->xoBundleIdentifier]['currentUser'] );
-			}
-			if ( $this->launchStartupItems() ) {
-				return true;
-			} 
-			$this->hasBooted = true;
+		if ( $this->hasBooted ) {
+			return $this->launchCurrentModule();
 		}
+		register_shutdown_function( array( &$this, 'shutdown' ) );
+		if ( !empty($this->bootFile) ) {
+			require_once $this->path( "/XOOPS/Boot/$this->bootFile" );
+		}
+		$this->launchCurrentModule();
+		
+		if ( $this->launchStartupItems() ) {
+			return true;
+		} 
+		$this->hasBooted = true;
 		return true;
 	}
 	/**
@@ -258,16 +273,19 @@ class xoops_kernel_Xoops2 {
 		return true;
 	}
 
-	function launchModule() {
-		return true;
-		if ( !$this->loadService( 'module', 'xoops_kernel_Module' ) ) {
-			return false;
+	function launchCurrentModule() {
+		$module =& $this->loadModule();
+		if ( !$module ) {
+			$this->services['http']->sendResponse( 500, null, -1 );
+		} else {
+			//if ( !$module->checkAccess() ) {
+				//$this->services['http']->sendResponse( 403, null, -1 );
+			//} else {
+				$this->currentModule =& $module;
+				return true;
+			//}
 		}
-		if ( !$this->services['module']->checkAccess() ) {
-			//$this->services['http']->setResponse( 403, null, null, true );
-			return false;
-		}
-		return $this->services['module']->xoBundleIdentifier;
+		return false;
 	}
 
 
@@ -281,7 +299,7 @@ class xoops_kernel_Xoops2 {
 		if ( !is_array($reg) || ( $this->xoRunMode & XO_MODE_DEV_MASK ) ) {
 			$reg = include $this->path( "$this->xoBundleRoot/scripts/rebuild_registry.php" );
 		}
-		$GLOBALS['exxos']->registry = $reg;
+		$this->registry = $reg;
 	}
 	
 	/**
@@ -306,6 +324,25 @@ class xoops_kernel_Xoops2 {
 		}
 		return $this->services[$name];
 	}
+	/**
+	 * Creates an instance of the specified module bundle
+	 * 
+	 * @param string $bundleId	Bundle ID of the module to instanciate
+	 * @param array  $options	Parameters to send to the service during instanciation
+	 */
+	function &loadModule( $bundleId = '', $options = array() ) {
+		if ( !empty($bundleId) && isset( $this->services[$bundleId] ) ) {
+			return $this->services[$bundleId];
+		}
+		if ( !isset( $this->factories[ 'xoops_kernel_Module' ] ) ) {
+			$this->factories['xoops_kernel_Module'] =& XOS::create( 'xoops_kernel_ModuleFactory' );
+		}
+		$module =& $this->factories['xoops_kernel_Module']->createInstanceOf( $bundleId, $options );
+		if ( $module ) {
+			$this->services[ $module->xoBundleIdentifier ] =& $module;
+		}
+		return $module;		
+	}
 
 	/**
 	 * Accept the specified user as the currently logged in user
@@ -315,24 +352,39 @@ class xoops_kernel_Xoops2 {
 	 * @return boolean
 	 */
 	function acceptUser( $login = '', $permanent = false ) {
-		if ( empty( $login ) && isset( $_SESSION[$this->xoBundleIdentifier]['currentUser'] ) ) {
-			$login = $_SESSION[$this->xoBundleIdentifier]['currentUser'];
-			$permanent = true;
-		}
 		if ( !$login ) {
 			return false;
 		}
-		// @TODO-2.3: Clean this up later... This handler stuff is so, so lame... :-(
+		// @TODO-2.3: Clean this up later...
+		$GLOBALS['xoopsDB'] = $this->loadService( 'legacydb' );
+
+		require_once XOOPS_ROOT_PATH . '/include/functions.php';
+		require_once XOOPS_ROOT_PATH . '/kernel/object.php';
+		require_once XOOPS_ROOT_PATH . '/class/criteria.php';
+		
 		$handler =& xoops_gethandler('member');
 		list($user) = $handler->getUsers( new Criteria( 'uname', $login ) );
 		if ( is_object( $user ) ) {
-			$user->getGroups();
-			$this->currentUser = $user;
+			$GLOBALS['xoopsUser'] = $user;
+			XOS::import( 'xoops_kernel_User' );
+			$lvl_lookup = array( 0 => XO_LEVEL_INACTIVE, 1 => XO_LEVEL_REGISTERED, 5 => XO_LEVEL_ADMIN );
+			$this->currentUser = XOS::create( 'xoops_kernel_User', array(
+				'userId' => $user->getVar( 'uid', 'n' ),
+				'login' => $user->getVar( 'uname', 'n' ),
+				'email' => $user->getVar( 'email', 'n' ),
+				'groups' => $user->getGroups(),
+				'fullName' => $user->getVar( 'name', 'n' ),
+				'level' => $lvl_lookup[ $user->getVar( 'level', 'n' ) ],
+			) );
+			
 			if ( $permanent && $this->services['session'] ) {
 				$this->services['session']->start();
 				$_SESSION[$this->xoBundleIdentifier]['currentUser'] = $login;
 			}
 			return true;
+		} else {
+			$GLOBALS['xoopsUser'] = '';
+			$this->currentUser = XOS::create( 'xoops_kernel_User' );
 		}
 		return false;
 	}
@@ -347,7 +399,7 @@ class xoops_kernel_Xoops2 {
 		}
 		$parts = explode( '#', $url );
 		if ( count( $parts ) == 1 ) {
-			if ( $parts[0]{0} == '/' ) {
+			if ( substr( $parts[0], 0, 1 ) == '/' ) {
 				$parts[0] = substr( $parts[0], 1 );
 			}
 			$parts = explode( '/', $parts[0], 2 );
@@ -364,7 +416,7 @@ class xoops_kernel_Xoops2 {
 			}
 		} else {
 			$root = XOS::classVar( $parts[0], 'xoBundleRoot' );
-			return $this->path( $root . '/' . $parts[1] );
+			return $this->path( $root . '/' . $parts[1], $virtual );
 		}
 	}
 	/**
@@ -372,6 +424,53 @@ class xoops_kernel_Xoops2 {
 	*/
 	function url( $url ) {
 		return $this->path( $url, true );
+	}
+	/**
+	* Performs a virtual sub-request
+	*
+	* This will call the page specified in $url as if it was normally requested, giving the possibility to
+	* customize the content of the $_REQUEST and $_SERVER variables the sub-request will receive.<br />
+	* NOTE: For this to work correctly, the called page must use <b>return</b> to end processing if necessary
+	* - NOT exit() or die() -, also it must use $_REQUEST to get its parameters, not $_POST or $_GET (but that
+	* is how a well-coded page should be done anyway).
+	*
+	* @param	array	$request	Values to be passed to the sub-request as its $_REQUEST var
+	* @param	array	$server		Values to add/change in the $_SERVER var
+	* @return	mixed	The value returned by the requested page (or false if an error occured)
+	*/
+	function virtual( $url, $request = array(), $server = array() ) {
+		// Extract the query parameters specified via the url string and add them to $_REQUEST
+		$parsed = parse_url( $url );
+		if ( isset($parsed['query']) ) {
+			$args=array();
+			parse_str( $parsed['query'], $args );
+			if ( !empty($args) ) {
+				$request = array_merge( $request, $args );
+			}
+			if ( !isset($server['REQUEST_URI']) ) {
+				//$server['REQUEST_URI'] = $parsed['path'];
+			}
+		}
+		list( $moduleName, $moduleLocation ) = explode( '#', $url, 2 );
+		if ( !$subModule = $this->loadModule( $moduleName ) ) {
+			trigger_error( "Cannot perform virtual request to unknown module $moduleName", E_USER_WARNING );
+			return false;
+		}
+		if ( substr( $moduleLocation, 0, 1 ) == '/' ) {
+			$subModule->currentLocation = $subModule->findLocationName( $moduleLocation );
+		} else {
+			$subModule->currentLocation = $moduleLocation;
+		}
+		$path = $this->path( $subModule->xoBundleRoot . $subModule->moduleLocations[ $subModule->currentLocation ]['scriptFile'] );
+
+		$backup = array( $this->isVirtual, $this->currentModule, $_REQUEST, $_SERVER );
+		$cwd = getcwd();
+		list( $this->isVirtual, $this->currentModule, $_REQUEST, $_SERVER ) = array( true, $subModule, $request, array_merge( $_SERVER, $server ) );
+		chdir( dirname( $path ) );
+		$ret = include $path;
+		list( $this->isVirtual, $this->currentModule, $_REQUEST, $_SERVER ) = $backup;
+		chdir( $cwd );
+		return $ret;
 	}
 
 } // class xoops_kernel_Xoops2

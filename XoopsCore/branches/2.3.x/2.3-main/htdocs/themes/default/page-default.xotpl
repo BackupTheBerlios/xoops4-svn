@@ -1,5 +1,5 @@
 
-	<div id="xo-page">
+	<div id="xo-page"([if $xoops->currentModule->currentLocation]) class="([$xoops->currentModule->currentLocation])"([/if])>
 		([if !empty($xoops_ccblocks)])
 		<div class="xo-blockszone" id="xo-page-topblocks">
 		([foreach item=block from=$xoops_ccblocks])

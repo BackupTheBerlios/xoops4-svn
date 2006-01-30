@@ -26,8 +26,19 @@ if ( $this->xoRunMode ) {
 }
 
 if ( isset( $_SERVER['SERVER_NAME'] ) ) {
+	// If we're not using the cli sapi, instanciate the http related services
 	$this->loadService( 'session' );
 	$this->loadService( 'http' );
+	// Wake up user if info is found in the session
+	if ( isset( $_SESSION[$this->xoBundleIdentifier]['currentUser'] ) ) {
+		$this->acceptUser( $_SESSION[$this->xoBundleIdentifier]['currentUser'], true );
+	}
+
 }
+
+
+
+
+
 
 ?>

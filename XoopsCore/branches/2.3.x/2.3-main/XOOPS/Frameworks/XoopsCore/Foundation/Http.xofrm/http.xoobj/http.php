@@ -55,15 +55,6 @@ class xoops_http_HttpHandler {
 	<!--{xo-logger-output}-->
 </body></html>';
 	/**
-	* Default strings to add to the response status header (indexed by status code)
-	* @var array
-	*/
-	var $responseMessages = array(
-		200			=> 'OK',
-		400			=> 'Bad request',
-		404			=> 'Not found',
-	);
-	/**
 	* Location of the default error pages (unimplemented)
 	* @var string
 	*/
@@ -97,24 +88,13 @@ class xoops_http_HttpHandler {
 	 */
 	function absoluteUrl( $url ) {
 		global $xoops;
-		static $host;	
 
 		if ( strpos( $url, '://' ) === false ) {
-			if ( !isset($host) ) {
-				list( $defaultPort, $proto ) =
-					( substr( $_SERVER['SERVER_PROTOCOL'], 4, 1 ) == '/' ) ? array( 80, 'http://' ) : array( 443, 'https://' );
-				if ( !$host = @$_SERVER['HTTP_HOST'] ) {
-					$host = !empty($this->defaultServerName) ? $this->defaultServerName : $_SERVER['SERVER_NAME'];
-				}
-				if ( !empty($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] != $defaultPort ) {
-					$host .= ':' . $_SERVER['SERVER_PORT'];
-				}
-				$host = $proto . $host;
-			}
-	        if ( !strlen($url) ) {
+			$host = 'http' . ( $xoops->isSecure ? 's' : '' ) . '://' . $xoops->hostName;
+			if ( !strlen($url) ) {
 	            $url = $_SERVER['REQUEST_URI'];
         	} elseif ( substr( $url, 0, 1 ) == '/' ) {
-	            return $host . $xoops->url( "/www$url" );
+	            return $host . $url;
         	}
         	// Check for PATH_INFO
         	if (isset($_SERVER['PATH_INFO']) && $_SERVER['PHP_SELF'] != $_SERVER['PATH_INFO']) {
@@ -152,46 +132,44 @@ class xoops_http_HttpHandler {
 		if ( empty($status) ) {
 			$status = 200;			// HTTP_STATUS_OK
 		}
-		if ( empty($message) && isset($this->errorMessages[$status]) ) {
-		 	$message =  $this->errorMessages[$status];
-		}
-		/*
-		if ( empty($location) && isset($this->errorPages[$status]) ) {
+		/* if ( empty($location) && isset($this->errorPages[$status]) ) {
 			$location = $this->errorPages[$status];
-		}
-		*/
+		} */
 		if ( $location == -1 ) {
-		 	if ( !( $location = @$_SERVER['HTTP_REFERER'] ) ) {
-		 		$location = '/www/';
-			}
+			$location = !@empty( $_SERVER['HTTP_REFERER'] ) ? $_SERVER['HTTP_REFERER'] : $xoops->url( '/www/' );
 		}
-		if ( !empty($location) && !$xoops->isVirtual ) {
+		if ( !empty($location) ) {
 		    if ( preg_match( "/[\\0-\\31]|about:|script:/i", $location ) ) {
-        		$location = '/www/';
+        		$location = $xoops->url( '/www/' );
     		}
     		if ( !strpos( $location, '://' ) ) {
-				$location = $this->absoluteUrl( $xoops->url( $location ) );
+				$location = $this->absoluteUrl( $location );
     		}
-			if ( $this->enableRedirections ) {
-				$_SESSION[$this->xoBundleIdentifier]['redirect_info'] = array(
-					'STATUS' => $status,
-					'URL' => $_SERVER['REQUEST_URI'],
-					'REQUEST_METHOD' => $_SERVER['REQUEST_METHOD'],
-					'ERROR_NOTES' => $message,
-				);
-				header( "Location: $location" );
-				$this->sendResponseCode( $status, $message );
-				echo "<body><a href='$location'>Page redirected. Status: $status, $message.</a></body>";
-			} else {
-				$this->sendResponseCode( 200, $message );
-				$vars = array(
-					'{refresh}' => '<meta http-equiv="refresh" content="' . $this->fakeRedirectPageDelay . '; url=' . htmlspecialchars( $location, ENT_QUOTES ) . '" />',
-					'{message}' => $message,
-					'{ifnotreload}' => sprintf( _IFNOTRELOAD, $location )
-				);
-				echo str_replace( array_keys( $vars ), array_values( $vars ), $this->fakeRedirectTemplate );
+		}
+		if ( !$xoops->isVirtual ) {
+			$this->sendResponseCode( $status, $message );
+			if ( !empty( $location ) ) {
+				if ( $this->enableRedirections ) {
+					$_SESSION[$this->xoBundleIdentifier]['redirect_info'] = array(
+						'STATUS' => $status,
+						'URL' => $_SERVER['REQUEST_URI'],
+						'REQUEST_METHOD' => $_SERVER['REQUEST_METHOD'],
+						'ERROR_NOTES' => $message,
+					);
+					header( "Location: $location" );
+					echo "<body><a href='$location'>Page redirected. Status: $status, $message.</a></body>";
+				} else {
+					//$this->sendResponseCode( 200, $message );
+					$vars = array(
+						'{refresh}' => '<meta http-equiv="refresh" content="' . $this->fakeRedirectPageDelay . '; url=' . htmlspecialchars( $location, ENT_QUOTES ) . '" />',
+						'{message}' => $message,
+						'{ifnotreload}' => sprintf( _IFNOTRELOAD, $location )
+					);
+					echo str_replace( array_keys( $vars ), array_values( $vars ), $this->fakeRedirectTemplate );
+				}
 			}
 		}
+		return array( $status, $message, $location );
 	}
 	/**
 	 * Send the specified response code header to the response
@@ -205,7 +183,7 @@ class xoops_http_HttpHandler {
 			if ( $pos = strpos( $message, '<' ) ) {
 				$message = substr( $message, 0, $pos );
 			}
-			header( "Status: $status $message" );
+			//header( "Status: $status $message" );
 			header( "HTTP/1.1 $status $message" );
 		}
 	}
