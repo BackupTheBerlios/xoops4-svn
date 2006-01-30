@@ -5,7 +5,6 @@
 	global $xoops;
 
 	$app =& $xoops->currentModule;
-	//var_export($app);
 	// Read the request params defined in xo-info.php (use default if the var isnt found)
 	// sanitize them, and create corresponding global vars
 	extract( $app->requestParameters(), EXTR_OVERWRITE );

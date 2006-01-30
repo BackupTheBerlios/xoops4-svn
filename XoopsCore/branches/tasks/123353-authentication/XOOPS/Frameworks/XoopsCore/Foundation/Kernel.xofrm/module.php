@@ -62,11 +62,7 @@ class xoops_kernel_ModuleFactory {
 		if ( $inst && empty( $bundleId ) ) {
 			$moduleRoot = substr( $inst->xoBundleRoot, 4 );
 			$scriptFile = substr( strstr( $_SERVER['SCRIPT_NAME'], $moduleRoot ), strlen( $moduleRoot ) );
-			foreach ( $inst->moduleLocations as $k => $loc ) {
-				if ( $scriptFile == $loc['scriptFile'] ) {
-					$inst->currentLocation = $k;
-				}				
-			}
+			$inst->currentLocation = $inst->findLocationName( $scriptFile );
 		}
 		return $inst;
 	}
@@ -96,6 +92,16 @@ class xoops_kernel_Module {
 		return true;
 	}	
 
+	function findLocationName( $relpath ) {
+		foreach ( $this->moduleLocations as $k => $loc ) {
+			if ( $relpath == $loc['scriptFile'] ) {
+				return $k;
+			}				
+		}
+		return '';
+	}
+	
+	
 	
 	function requestParameters( $source = 'R' ) {
 		$loc =& $this->moduleLocations[ $this->currentLocation ];

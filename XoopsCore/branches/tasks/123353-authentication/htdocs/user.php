@@ -36,6 +36,25 @@ if ( isset($_POST['op']) ) {
     $op = trim($_GET['op']);
 }
 
+global $xoops, $xoopsUser;
+
+switch ( $op ) {
+case 'login':
+	$response = $xoops->virtual( 'mod_xoops_Identification#login', array(
+		'login' => @$_REQUEST['uname'],
+		'password' => @$_REQUEST['pass'],
+		'xoops_redirect' => @$_REQUEST['xoops_redirect'],
+	) );
+	return $xoops->services['http']->sendResponse( is_array( $response ) ? $response : 200 );
+case 'logout':
+	if ( $xoopsUser ) {
+		return $xoops->services['http']->sendResponse( $xoops->virtual( 'mod_xoops_Identification#logout' ) );
+	} else {
+		return $xoops->services['http']->sendResponse( 303, '', $xoops->url( 'mod_xoops_Identification#login' ) );
+	}
+}
+
+
 if ($op == 'main') {
     if ( !$xoopsUser ) {
         $xoopsOption['template_main'] = 'system_userform.html';
@@ -59,28 +78,6 @@ if ($op == 'main') {
     } elseif ( $xoopsUser ) {
         header('Location: '.XOOPS_URL.'/userinfo.php?uid='.$xoopsUser->getVar('uid'));
     }
-    exit();
-}
-
-if ($op == 'login') {
-    include_once XOOPS_ROOT_PATH.'/include/checklogin.php';
-    exit();
-}
-
-if ($op == 'logout') {
-    $message = '';
-    $_SESSION = array();
-    session_destroy();
-    if ($xoopsConfig['use_mysession'] && $xoopsConfig['session_name'] != '') {
-        setcookie($xoopsConfig['session_name'], '', time()- 3600, '/',  '', 0);
-    }
-    // clear entry from online users table
-    if (is_object($xoopsUser)) {
-        $online_handler =& xoops_gethandler('online');
-        $online_handler->destroy($xoopsUser->getVar('uid'));
-    }
-    $message = _US_LOGGEDOUT.'<br />'._US_THANKYOUFORVISIT;
-    redirect_header('index.php', 1, $message);
     exit();
 }
 

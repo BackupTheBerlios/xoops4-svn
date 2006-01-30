@@ -3,7 +3,6 @@
 	require_once '../../../mainfile.php';
 
 	global $xoops;
-	$app =& $xoops->loadModule();
 
 	if ( !$xoops->currentUser ) {
 		return $xoops->services['http']->sendResponse( 303, '', $xoops->url( 'mod_xoops_Identification#login' ) );

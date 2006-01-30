@@ -425,6 +425,53 @@ class xoops_kernel_Xoops2 extends XOS {
 	function url( $url ) {
 		return $this->path( $url, true );
 	}
+	/**
+	* Performs a virtual sub-request
+	*
+	* This will call the page specified in $url as if it was normally requested, giving the possibility to
+	* customize the content of the $_REQUEST and $_SERVER variables the sub-request will receive.<br />
+	* NOTE: For this to work correctly, the called page must use <b>return</b> to end processing if necessary
+	* - NOT exit() or die() -, also it must use $_REQUEST to get its parameters, not $_POST or $_GET (but that
+	* is how a well-coded page should be done anyway).
+	*
+	* @param	array	$request	Values to be passed to the sub-request as its $_REQUEST var
+	* @param	array	$server		Values to add/change in the $_SERVER var
+	* @return	mixed	The value returned by the requested page (or false if an error occured)
+	*/
+	function virtual( $url, $request = array(), $server = array() ) {
+		// Extract the query parameters specified via the url string and add them to $_REQUEST
+		$parsed = parse_url( $url );
+		if ( isset($parsed['query']) ) {
+			$args=array();
+			parse_str( $parsed['query'], $args );
+			if ( !empty($args) ) {
+				$request = array_merge( $request, $args );
+			}
+			if ( !isset($server['REQUEST_URI']) ) {
+				//$server['REQUEST_URI'] = $parsed['path'];
+			}
+		}
+		list( $moduleName, $moduleLocation ) = explode( '#', $url, 2 );
+		if ( !$subModule = $this->loadModule( $moduleName ) ) {
+			trigger_error( "Cannot perform virtual request to unknown module $moduleName", E_USER_WARNING );
+			return false;
+		}
+		if ( substr( $moduleLocation, 0, 1 ) == '/' ) {
+			$subModule->currentLocation = $subModule->findLocationName( $moduleLocation );
+		} else {
+			$subModule->currentLocation = $moduleLocation;
+		}
+		$path = $this->path( $subModule->xoBundleRoot . $subModule->moduleLocations[ $subModule->currentLocation ]['scriptFile'] );
+
+		$backup = array( $this->isVirtual, $this->currentModule, $_REQUEST, $_SERVER );
+		$cwd = getcwd();
+		list( $this->isVirtual, $this->currentModule, $_REQUEST, $_SERVER ) = array( true, $subModule, $request, array_merge( $_SERVER, $server ) );
+		chdir( dirname( $path ) );
+		$ret = include $path;
+		list( $this->isVirtual, $this->currentModule, $_REQUEST, $_SERVER ) = $backup;
+		chdir( $cwd );
+		return $ret;
+	}
 
 } // class xoops_kernel_Xoops2
 
