@@ -1,0 +1,110 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html
+	xmlns="http://www.w3.org/1999/xhtml"
+	xml:lang="([$xoops_langcode])" lang="([$xoops_langcode])"
+>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=([$xoops_charset])" />
+	<meta http-equiv="content-language" content="([$xoops_langcode])" />
+
+	([include file='xotpl:xoops_pyro_Theme#templates/metas.xotpl'])
+
+	<link rel="SHORTCUT ICON" href="([xoImgUrl favicon.ico])" />
+
+	<link rel="stylesheet" type="text/css" media="screen" href="([xoImgUrl style-default.css])" />
+
+<!--[if lte IE 6]>
+	<link rel="stylesheet" type="text/css" media="screen" href="([xoImgUrl msie.css])" />
+<![endif]-->
+
+	<title>([$xoops_sitename]) - ([$xoops_pagetitle])</title>
+
+	([$xoops_module_header])
+
+	
+<script type="text/javascript">//<![CDATA[
+	function xoHideRedirectMessage() {
+		var msg = document.getElementById( "xo-redirect-message" );
+		var dec = .05;
+		if (!msg) return;
+		if ( msg.style.opacity === '' ) {
+			if (document.defaultView) {
+				msg.style.opacity = document.defaultView.getComputedStyle(msg, "").getPropertyValue("opacity") - dec;
+			} else msg.style.opacity = 1-dec;
+		} else msg.style.opacity -= dec;
+		if ( msg.style.opacity ) {
+			window.setTimeout( "xoHideRedirectMessage()", 75 );
+		}
+	}
+//]]>
+</script>
+	
+</head>
+<body class="([$xoops->currentModule->xoBundleIdentifier])">
+
+([if $xoBlocks.canvas_left and $xoBlocks.canvas_right])
+	([assign var=canvas_class value="xo-with_both"])
+([elseif $xoBlocks.canvas_left])
+	([assign var=canvas_class value="xo-with_left"])
+([elseif $xoBlocks.canvas_right])
+	([assign var=canvas_class value="xo-with_right"])
+([/if])
+
+<div id="xo-canvas"([if $canvas_class]) class="([$canvas_class])"([/if])>
+	<div id="xo-canvas-header">
+		<div id="xo-banner">
+			<div id="xo-banner-logo">
+				<a href="([xoAppUrl /www/])"><img src="([xoImgUrl img/xoops-logo.png])" alt="XOOPS" /></a>
+			</div>
+			([if $xoops_banner != '&nbsp;'])
+			<div id="xo-banner-ad">([$xoops_banner])</div>
+			([/if])
+		</div>
+		<div id="xo-header-userinfo">
+		([if not $xoops->currentUser->userId])
+			<a href="([xoAppUrl mod_xoops_Identification#login])">Log in</a>
+			<a href="([xoAppUrl /www/register.php])">Register</a>
+		([else])
+			<div class="user-name">
+				([if $xoops->currentUser->fullName])([$xoops->currentUser->fullName])([else])([$xoops->currentUser->login])([/if])
+			</div>
+			<a href="([xoAppUrl mod_xoops_Identification#logout])">Log out</a>
+		([/if])
+		</div>
+	</div>
+([if $xoops->services.http->redirectMessage])
+	<div id="xo-redirect-message">
+		([$xoops->services.http->redirectMessage])
+	</div>
+	<script type="text/javascript">if (xoHideRedirectMessage) window.setTimeout( 'xoHideRedirectMessage()', 4200 );</script>
+([/if])
+	<div id="xo-canvas-main">
+		([if !empty($xoBlocks.canvas_left)])
+		<div class="xo-canvas-column xo-blockszone" id="xo-canvas-leftcolumn">
+		([foreach from=$xoBlocks.canvas_left key=n item=block])
+			([include file="xotpl:block.xotpl"])
+		([/foreach])
+		</div>
+		([/if])
+	
+		([if !empty($xoBlocks.canvas_right)])
+		<div class="xo-canvas-column xo-blockszone" id="xo-canvas-rightcolumn">
+		([foreach from=$xoBlocks.canvas_right key=n item=block])
+			([include file="xotpl:block.xotpl"])
+		([/foreach])
+		</div>
+		([/if])
+		([$xoTheme->renderZone('page')])
+		<br clear="all" />
+	</div>
+	<div id="xo-canvas-footer">
+		<a href="http://www.xoops.org/" target="_blank">
+			Powered by ([$xoops->xoShortVersionString])
+		</a>
+	</div>
+</div>
+  
+<!--{xo-logger-output}-->
+
+</body>
+</html>

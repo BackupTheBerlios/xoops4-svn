@@ -1,0 +1,28 @@
+
+	<div id="xo-page"([if $xoops->currentModule->currentLocation]) class="([$xoops->currentModule->currentLocation])"([/if])>
+		([if !empty($xoops_ccblocks)])
+		<div class="xo-blockszone" id="xo-page-topblocks">
+		([foreach item=block from=$xoops_ccblocks])
+			([include file="xotpl:block.xotpl"])
+		([/foreach])
+		</div>
+		([/if])
+		([if !empty($xoops_clblocks)])
+		<div class="xo-blockszone" id="xo-page-topleftblocks">
+		([foreach item=block from=$xoops_clblocks])
+			([include file="xotpl:block.xotpl"])
+		([/foreach])
+		</div>
+		([/if])
+		([if !empty($xoops_crblocks)])
+		<div class="xo-blockszone" id="xo-page-toprightblocks">
+		([foreach item=block from=$xoops_crblocks])
+			([include file="xotpl:block.xotpl"])
+		([/foreach])
+		</div>
+		([/if])
+		
+		<div id="xo-content">
+			([$xoTheme->renderZone('content')])
+		</div>
+	</div>
