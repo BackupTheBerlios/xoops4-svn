@@ -226,18 +226,56 @@ class xoops_pyro_Theme {
 		$this->template->assign( $vars );
 		$this->renderZone( 'canvas' );
 		$this->renderCount++;
-		
 	}
 	
 	/**
 	 * Render the specified page part
 	 * 
 	 * @param string $zone
-	 */	
+	 */
 	function renderZone( $zone ) {
-		global $xoops;
+		switch ( $zone ) {
+		case 'canvas':
+			$this->renderCanvas();
+			break;
+		case 'page':
+			$this->renderPage();
+			echo $this->pageContent;
+			break;
+		case 'content':
+			$this->renderContent();
+		}
+	}
+	
+	function renderCanvas() {
+		$this->renderPage();
+		$this->template->display( $this->getZoneTemplate( 'canvas' ) );
+	}
 
+	function renderPage() {
+		ob_start();
+		if ( $tpl = $this->getZoneTemplate( 'page' ) ) {
+			$this->template->display( $tpl );
+		} else {
+			$this->renderContent();
+		}
+		$this->pageContent = ob_get_contents();
+		ob_end_clean();
+	}
+
+	function renderContent() {
+		if ( $tpl = $this->getZoneTemplate( 'content' ) ) {
+			$this->template->display( $tpl );
+		}
+		if ( !empty($this->content) ) {
+			echo $this->content;
+		}
+	}
+	
+	function getZoneTemplate( $zone ) {
+		global $xoops;
 		$zones = array( 'canvas' => 0, 'page' => 1, 'content' => 2 );
+		$tpl = '';
 		if ( isset( $zones[$zone] ) ) {
 			$tpl = $zone . 'Template';
 			$tpl = $this->$tpl;
@@ -247,15 +285,12 @@ class xoops_pyro_Theme {
 				} elseif ( !strpos( $tpl, ':' ) ) {
 					$tpl = 'xotpl:' . $tpl;
 				}
-				$this->template->display( $tpl );
-			} elseif ( $zone != 'content' ) {
-				$this->renderZone( $zones[$zone] + 1 );
 			}
-			if ( !empty($this->content) && $zone == 'content' && $this->themeAPI != '2.0' ) {
-				echo $this->content;
-			}
-		}	
+		}
+		return $tpl;
 	}
+	
+	
 
 	function renderAttributes( $coll ) {
 		$str = '';
