@@ -54,16 +54,11 @@ function xoRegisterComponent( $registry, $bundleInfo, $bundleRoot, $prefix = '' 
 	if ( isset( $bundleInfo['xoServices'] ) ) {
 		foreach ( $bundleInfo['xoServices'] as $localId => $localInfo ) {
 			if ( @$subRoot = $localInfo['xoBundleRoot'] ) {
-				if ( $localInfo = @include $xoops->path( $bundleRoot . $subRoot . '/xo-info.php' ) ) {
+				if ( $localInfo = include $xoops->path( $bundleRoot . $subRoot . '/xo-info.php' ) ) {
 					if ( !$isModule ) {
 						$localInfo = xoRegisterComponent( array(), $localInfo, $bundleRoot . $subRoot );
 					} else {
 						$localInfo = xoRegisterComponent( array(), $localInfo, $bundleRoot . $subRoot, $bundleInfo['xoBundleIdentifier'] . '#' );
-					}
-					foreach ( $localInfo as $k => $v ) {
-						if ( substr( $k, 0, 2 ) != 'xo' ) {
-							unset( $localInfo[$k] );
-						}
 					}
 					$services = array_merge( $services, $localInfo );
 				}
