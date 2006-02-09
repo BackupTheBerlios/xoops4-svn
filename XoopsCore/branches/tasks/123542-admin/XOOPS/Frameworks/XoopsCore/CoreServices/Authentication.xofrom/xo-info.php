@@ -9,6 +9,7 @@
 * @license		http://www.fsf.org/copyleft/gpl.html GNU public license
 * @author		Skalpa Keo <skalpa@xoops.org>
 * @since		2.3.0
+* @category		CoreServices
 * @package		xoops_auth
 * @version		$Id$
 */

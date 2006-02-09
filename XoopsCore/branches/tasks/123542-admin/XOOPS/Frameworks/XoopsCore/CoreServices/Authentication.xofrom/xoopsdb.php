@@ -10,7 +10,7 @@
  * @author		Skalpa Keo <skalpa@xoops.org>
  * @since		2.3.0
  * @package		xoops_auth
- * @package		xoops_auth_DatabaseDriver
+ * @subpackage	xoops_auth_DatabaseDriver
  * @version		$Id$
  */
 
@@ -25,6 +25,8 @@ XOS::import( 'xoops_auth_AuthenticationService' );
  * xoops_auth_DatabaseDriver authentication driver
  * 
  * This driver checks if the specified user exists in the database
+ * @package		xoops_auth
+ * @subpackage	xoops_auth_DatabaseDriver
  */
 class xoops_auth_DatabaseDriver extends xoops_auth_AuthenticationDriver {
 

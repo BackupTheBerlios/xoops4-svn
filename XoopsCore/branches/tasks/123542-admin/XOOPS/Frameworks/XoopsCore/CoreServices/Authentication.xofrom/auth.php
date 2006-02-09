@@ -10,7 +10,7 @@
  * @author		Skalpa Keo <skalpa@xoops.org>
  * @since		2.3.0
  * @package		xoops_auth
- * @package		xoops_auth_AuthenticationService
+ * @subpackage	xoops_auth_AuthenticationService
  * @version		$Id$
  */
 
