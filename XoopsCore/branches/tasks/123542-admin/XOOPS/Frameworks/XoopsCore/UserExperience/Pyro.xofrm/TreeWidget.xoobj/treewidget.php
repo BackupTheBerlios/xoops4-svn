@@ -11,7 +11,7 @@
  * @subpackage   xoops_pyro_TreeWidget
  */
 
-XOS::import( 'xoops_pyro_Widget' );
+XOS::import( 'xoops_opal_Widget' );
 
 /**
  * Widget rendering hierarchical data as a tree
@@ -51,7 +51,7 @@ XOS::import( 'xoops_pyro_Widget' );
  * @subpackage	xoops_pyro_TreeWidget
  * @since        2.3.0
  */
-class xoops_pyro_TreeWidget extends xoops_pyro_Widget {
+class xoops_pyro_TreeWidget extends xoops_opal_Widget {
 	
 	var $stylesheet = 'www/default.css';
 	var $javascript = 'www/treewidget.js';
