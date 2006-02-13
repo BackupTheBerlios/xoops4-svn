@@ -19,21 +19,27 @@
 if ( !defined( 'XOOPS_PATH' ) ) exit();
 
 
+if ( isset( $_SERVER['SERVER_NAME'] ) ) {
+	// If we're not using the cli sapi, instanciate the http service
+	$this->loadService( 'http' );
+}
+
 if ( $this->xoRunMode ) {
 	// If the server is not in production mode, instanciate the logger and error handling services	
 	$this->loadService( 'logger' );
 	$this->loadService( 'error' );
 }
 
-if ( isset( $_SERVER['SERVER_NAME'] ) ) {
-	// If we're not using the cli sapi, instanciate the http related services
+if ( isset( $this->services['http'] ) ) {
 	$this->loadService( 'session' );
-	$this->loadService( 'http' );
+	
+	if ( isset( $_SESSION ) ) {
+		$this->services['http']->reloadSessionState();
+	}
 	// Wake up user if info is found in the session
 	if ( isset( $_SESSION[$this->xoBundleIdentifier]['currentUser'] ) ) {
 		$this->acceptUser( $_SESSION[$this->xoBundleIdentifier]['currentUser'], true );
 	}
-
 }
 
 

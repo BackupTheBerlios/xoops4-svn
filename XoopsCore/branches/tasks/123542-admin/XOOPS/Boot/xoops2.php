@@ -66,6 +66,8 @@ if ( !defined( 'XO_MODE_DEV' ) ) {
 		$vars['hostLocation']	= $vars['hostLocation'][$aliasNum];
 		$vars['secureLocation'] = $vars['secureLocation'][$aliasNum];
 		$vars['isSecure'] = $reqSecure;
+		$vars['hostsList'] = array_keys( $hostsInfo );
+		unset( $vars['hostsList'][''] );
 		// Instanciate the kernel
 		new xoops_kernel_Xoops2( $hostId, $vars );
 		return true;

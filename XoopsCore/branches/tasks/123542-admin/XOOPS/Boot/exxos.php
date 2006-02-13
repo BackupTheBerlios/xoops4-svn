@@ -114,7 +114,11 @@ class XOS {
 					$inst =& $me->factories[$id]->createInstance( $options );
 				}
 			} else {
-				$inst =& XOS::createInstanceOf( $id, $options, $args );
+				if ( isset( $me->registry[$id]['xoBundleIdentifier'] ) ) {
+					$inst =& XOS::createInstanceOf( $me->registry[$id]['xoBundleIdentifier'], $options, $args );
+				} else {
+					$inst =& XOS::createInstanceOf( $id, $options, $args );
+				}
 			}
 			if ( is_object( $inst ) ) {
 				if ( @$inst->xoSingleton ) {

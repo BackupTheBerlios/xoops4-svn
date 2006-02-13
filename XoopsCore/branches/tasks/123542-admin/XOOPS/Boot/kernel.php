@@ -44,7 +44,7 @@ class xoops_kernel_Xoops2 extends XOS {
 	var $xoRunMode				= XO_MODE_PROD;
 	var $xoShortVersionString	= 'XOOPS 2.3.0-alpha1 "Cheerleaders"';
 
-	var $xoBundleRoot = 'XOOPS/Frameworks/XoopsCore/Foundation/Kernel.xofrm';
+	var $xoBundleRoot = 'XOOPS/Frameworks/XoopsCore/XoopsOS/Kernel.xofrm';
 	
 	/**
 	 * Current host identifier
@@ -95,7 +95,7 @@ class xoops_kernel_Xoops2 extends XOS {
 		'http'		=> 'xoops_http_HttpHandler',
 		'session'	=> 'xoops_http_SessionService',
 		'auth'		=> 'xoops_auth_AuthenticationService',
-		'theme'		=> 'xoops_pyro_Theme',
+		'theme'		=> 'xoops_opal_Theme',
 		'legacydb'	=> array( 'xoops_db_Database', array( 'driverName' => 'xoops.legacy' ) ),
 	);
 	/** 
@@ -170,6 +170,9 @@ class xoops_kernel_Xoops2 extends XOS {
 	 	$this->hostId = $hostId;
 	 	XOS::apply( $this, $hostVars );
 	 	
+		if ( @$GLOBALS['xoPreventDevMode'] ) {
+			$this->xoRunMode = 0;
+		}
 	 	// Enable error reporting by default in development mode, enable it otherwise
  		error_reporting( ( $this->xoRunMode == XO_MODE_DEV ) ? E_ALL : 0 );
 
@@ -278,6 +281,9 @@ class xoops_kernel_Xoops2 extends XOS {
 		if ( !$module ) {
 			$this->services['http']->sendResponse( 500, null, -1 );
 		} else {
+			if ( method_exists( $module, 'xoRunModule' ) && !call_user_func( array( &$module, 'xoRunModule' ) ) ) {
+				return false;
+			}
 			//if ( !$module->checkAccess() ) {
 				//$this->services['http']->sendResponse( 403, null, -1 );
 			//} else {
@@ -376,7 +382,9 @@ class xoops_kernel_Xoops2 extends XOS {
 				'fullName' => $user->getVar( 'name', 'n' ),
 				'level' => $lvl_lookup[ $user->getVar( 'level', 'n' ) ],
 			) );
-			
+			if ( isset( $this->services['http'] ) ) {
+				$this->services['http']->addVariation( 'xo-user', $this->currentUser->userId );
+			}
 			if ( $permanent && $this->services['session'] ) {
 				$this->services['session']->start();
 				$_SESSION[$this->xoBundleIdentifier]['currentUser'] = $login;
@@ -416,8 +424,25 @@ class xoops_kernel_Xoops2 extends XOS {
 			}
 		} else {
 			$root = XOS::classVar( $parts[0], 'xoBundleRoot' );
-			return $this->path( $root . '/' . $parts[1], $virtual );
+			@list( $location, $query ) = explode( '?', $parts[1] );
+			if ( empty($location) || strpos( $location, '/' ) !== false ) {
+				return $this->path( $root . '/' . $location, $virtual );
+			}
+			if ( $module = $this->loadModule( $parts[0] ) ) {
+				$uri = $module->xoBundleRoot;
+				if ( isset( $module->moduleLocations[$location] ) ) {
+					$uri .= $module->moduleLocations[$location]['scriptFile'];
+				} else {
+					trigger_error( "Unknown location {$parts[0]}#$location", E_USER_WARNING );
+					return false;
+				}
+				if ( isset($query ) ) {
+					$uri .= ( strpos( $uri, '?' ) ? '&' : '?' ) . $query;
+				}
+				return $this->path( $uri, $virtual );
+			}
 		}
+		return false;
 	}
 	/**
 	* Convert a XOOPS path to an URL
