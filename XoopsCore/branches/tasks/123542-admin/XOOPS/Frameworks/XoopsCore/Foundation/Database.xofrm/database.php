@@ -10,11 +10,64 @@
  * @author		Skalpa Keo <skalpa@xoops.org>
  * @since		2.3.0
  * @package		xoops_db
+ * @subpackage	xoops_db_Database
  * @version		$Id$
  */
 
-
-
+/**
+ * xoops_db_Database objects factory
+ * 
+ * The xoops_db_DatabaseFactory is the factory class responsible for database connections instanciation.
+ * It is invocated when you request the creation of a <var>xoops_db_Database</var> instance, and will
+ * return an instance of a specicif driver according to the <var>dsn</var> parameter you'll have provided.
+ * 
+ * In general, a DSN consists of the driver name, followed by a colon, followed by the driver-specific 
+ * connection syntax. Further information is available from the driver-specific documentation.
+ * 
+ * The dsn parameter supports three different methods of specifying the arguments required to create a 
+ * database connection: 
+ * - <b>Driver invocation</b>: <var>dsn</var> contains the full DSN.
+ * - <b>Aliasing</b>: <var>dsn</var> dsn consists of a datastore name that maps to an entry defined in the {@link xoops_db_DatabaseFactory::$availableStores} collection.
+ *
+ * A special version of the <var>xoops.mysql</var> driver implementing the pre-2.3 database interface
+ * called <var>xoops.legacy</var> is provided with XOOPS. Applications developers can use it to switch
+ * progressively to the new interface (the old one will become entirely deprecrated in the future, to ensure
+ * XOOPS can entirely run on other RDBMS systems).
+ * 
+ * <b>Create a database connection using driver invocation</b>
+ * <code>
+ * // Connect to a xoops_db_Database_mysql database
+ * $mysqldb =& XOS::create( 'xoops_db_Database', array(
+ *     'dsn' => 'mysql:dbname=test;host=localhost;user=dbuser;password=dbpwd',
+ * ) );
+ * </code>
+ * 
+ * <b>Create a database instance using an alias</b>
+ * 
+ * The following example assumes that you have defined a datastore named <i>backupdb</i> in your system
+ * (whether by using the corresponding configuration module panel, or by entering it in the
+ * <var>xoops_db_DatabaseFactory</var> managed preferences file).
+ * 
+ * <code>
+ * // Connect to a database using an alias
+ * $db =& XOS::create( 'xoops_db_Database', array( 'dsn' => 'backupdb' ) );
+ * if ( !$db ) {
+ *     echo 'Failed to connect to the backupdb database';
+ * }
+ * </code>
+ * 
+ * <b>Create a database connection to the system database</b>
+ * <code>
+ * // Use the default invocation system
+ * $db =& XOS::create( 'xoops_db_Database', array( 'dsn' => 'system' ) );
+ * 
+ * // Specifically request an instance supporting the old db interface
+ * $olddb =& $xoops->loadService( 'xoopsdb' );
+ * </code>
+ *
+ * @package		xoops_db
+ * @subpackage	xoops_db_Database
+ */
 class xoops_db_DatabaseFactory {
 	/**
 	 * Available databases, indexed by name
@@ -90,6 +143,10 @@ class xoops_db_DatabaseFactory {
 
 /**
  * Base class for database drivers
+ * 
+ * All xoops_db database drivers inherit from this class.
+ * @package		xoops_db
+ * @subpackage	xoops_db_Database
  */
 class xoops_db_Database {
 	/**

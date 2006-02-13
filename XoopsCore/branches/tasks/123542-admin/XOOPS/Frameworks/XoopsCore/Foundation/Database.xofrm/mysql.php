@@ -10,7 +10,7 @@
  * @author		Skalpa Keo <skalpa@xoops.org>
  * @since		2.3.0
  * @package		xoops_db
- * @subpackage	xoops_db_Database
+ * @subpackage	xoops_db_Database_mysql
  * @version		$Id$
  */
 
@@ -54,7 +54,9 @@ if ( !defined( 'PDO_PARAM_INT' ) ) {
 
 
 /**
- * Legacy xoops_db_Database driver main class
+ * PDO emulation driver for MySQL and PHP4
+ * @package		xoops_db
+ * @subpackage	xoops_db_Database_mysql
  */
 class xoops_db_Database_mysql extends xoops_db_Database {
 	/**
@@ -74,6 +76,10 @@ class xoops_db_Database_mysql extends xoops_db_Database {
 		PDO_MYSQL_ATTR_USE_BUFFERED_QUERY => false,
 	);
 	
+	
+	var $fetchMode = PDO_FETCH_ASSOC;
+
+	/**#@+ @tasktype 10 Connection initialization*/
 	/**
 	 * connect to the database
 	 * 
@@ -96,7 +102,9 @@ class xoops_db_Database_mysql extends xoops_db_Database {
 		}
 		return true;
 	}
-	// --------- PDO implementation ---------
+	/**#@-*/
+
+	/**#@+ @tasktype 20 Handling transactions*/
 	/**
 	 * Initiates a transaction
 	 *
@@ -104,6 +112,12 @@ class xoops_db_Database_mysql extends xoops_db_Database {
 	 * @return boolean
 	 */	
 	function beginTransation() {
+		return true;
+	}
+	/**
+	 * Rolls back a transaction
+	 */
+	function rollBack() {
 		return true;
 	}
 	/**
@@ -115,6 +129,9 @@ class xoops_db_Database_mysql extends xoops_db_Database {
 	function commit() {
 		return true;
 	}
+	/**#@-*/
+
+	/**#@+ @tasktype 30 Getting error information*/
 	/**
 	 * Fetch extended error information associated with the last operation on the database handle 
 	 * 
@@ -135,6 +152,9 @@ class xoops_db_Database_mysql extends xoops_db_Database {
 	function errorCode() {
 		return 'HY000';
 	}
+	/**#@-*/
+
+	/**#@+ @tasktype 30 Performing queries*/
 	/**
 	 * Execute an SQL statement and return the number of affected rows
 	 * 
@@ -152,12 +172,6 @@ class xoops_db_Database_mysql extends xoops_db_Database {
 			trigger_error( 'Database updates are not allowed during processing of a GET request', E_USER_WARNING );
 			return false;
 		}
-	}
-	/**
-	 * Returns the ID of the last inserted row
-	 */
-	function lastInsertId( $name = '' ) {
-		return mysql_insert_id( $this->conn );
 	}
 	/**
 	 * Prepares a statement for execution and returns a statement object
@@ -207,6 +221,13 @@ class xoops_db_Database_mysql extends xoops_db_Database {
 		}
 		return false;
 	}
+	/**#@-*/
+	/**
+	 * Returns the ID of the last inserted row
+	 */
+	function lastInsertId( $name = '' ) {
+		return mysql_insert_id( $this->conn );
+	}
 	/**
 	 * Quotes a string for use in a query.
 	 * 
@@ -216,17 +237,13 @@ class xoops_db_Database_mysql extends xoops_db_Database {
 	function quote( $string ) {
 		return "'" . mysql_real_escape_string( $string, $this->conn ) . "'";
 	}
-	/**
-	 * Rolls back a transaction
-	 */
-	function rollBack() {
-		return true;
-	}
-
-	
 }
 
-
+/**
+ * Statement object for the xoops_db_Database_mysql driver
+ * @package		xoops_db
+ * @subpackage	xoops_db_Database_mysql
+ */
 class xoops_db_Statement_mysql {
 
 	var $query = '';
@@ -261,10 +278,15 @@ class xoops_db_Statement_mysql {
 	var $fetchTarget = false;
 	
 	function xoInit( $options = array() ) {
-		if ( strpos( $this->query, '?' ) !== false ) {
-			$this->preparedQuery = preg_replace( '/(\\?)/', '{__p$1}', $this->query );
-		} else {
+		if ( strpos( $this->query, '?' ) === false ) {
 			$this->preparedQuery = preg_replace( '/:([a-zA-Z_]*)/', '{$1}', $this->query );
+		} else {
+			$this->preparedQuery = $this->query;
+			$n = 1;
+			while ( ( $pos = strpos( $this->preparedQuery, '?' ) ) !== false ) {
+				$this->preparedQuery = substr( $this->preparedQuery, 0, $pos ) . "{__p$n}" . substr( $this->preparedQuery, $pos+1 );
+				$n++;
+			}
 		}
 		return true;
 	}
@@ -297,7 +319,16 @@ class xoops_db_Statement_mysql {
 	 * @param mixed $value
 	 * @param int $type
 	 */
-	function bindValue( $param, $value, $type ) {
+	function bindValue( $param, $value, $type = null ) {
+		if ( !isset( $type ) ) {
+			if ( is_int( $value ) ) {
+				$type = PDO_PARAM_INT;
+			} elseif ( is_bool( $value ) ) {
+				$type = PDO_PARAM_BOOL;
+			} else {
+				$type = PDO_PARAM_STR;
+			}
+		}
 		$param = intval($param) ? "__p$param" : substr($param,1);
 		$this->paramBindings[$param] = array( $value, $type );
 	}
@@ -329,6 +360,7 @@ class xoops_db_Statement_mysql {
 			$replace[] = $this->castValue( $v[0], $v[1] );
 		}
 		$sql = str_replace( $search, $replace, $this->preparedQuery );
+		$this->db->logEvent( "SQL: $sql" );
 		$this->result = mysql_unbuffered_query( $sql, $this->db->conn );
 		return (bool)$this->result;
 	}
@@ -390,6 +422,16 @@ class xoops_db_Statement_mysql {
 		}
 	}
 
+	function fetchAll( $fetchMode = null, $column = 0 ) {
+		$fetchMode = isset( $fetchMode ) ?	$fetchMode : $this->fetchMode;
+		$rows = array();
+		while ( $row = $this->fetch( $fetchMode ) ) {
+			$rows[] = $row;
+		}
+		return $rows;
+	}
+	
+	
 	/**
 	 * Cast a variable according to a PDO_PARAM_* type
 	 *

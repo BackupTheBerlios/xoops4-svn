@@ -11,19 +11,18 @@
  * @author		Skalpa Keo <skalpa@xoops.org>
  * @since		2.3.0
  * @package		xoops_db
- * @subpackage	xoops_db_Database
+ * @subpackage	xoops_db_Database_legacy
  * @version		$Id$
  */
 
-/**
- * This file cannot be requested directly
- */
 if ( !defined( 'XOOPS_PATH' ) ) exit();
 
 XOS::import( 'xoops_db_Database_mysql' );
 
 /**
  * Legacy xoops_db_Database driver main class
+ * @package		xoops_db
+ * @subpackage	xoops_db_Database_legacy
  */
 class xoops_db_Database_legacy extends xoops_db_Database_mysql {
 	/**
