@@ -1,56 +1,56 @@
 <?php
 /**
-* xoops_pyro_TreeWidget component class file
-*
-* @copyright	The Xoops project http://www.xoops.org/
-* @license      http://www.fsf.org/copyleft/gpl.html GNU public license
-* @package      xoops_pyro
-* @subpackage   xoops_pyro_TreeWidget
-* @author       Skalpa Keo <skalpa@xoops.org>
-* @since        2.3.0
-* @version		$Id$
-*/
+ * xoops_pyro_TreeWidget component class file
+ *
+ * @copyright	The Xoops project http://www.xoops.org/
+ * @license      http://www.fsf.org/copyleft/gpl.html GNU public license
+ * @author       Skalpa Keo <skalpa@xoops.org>
+ * @since        2.3.0
+ * @version		$Id$
+ * @package      xoops_pyro
+ * @subpackage   xoops_pyro_TreeWidget
+ */
 
 XOS::import( 'xoops_pyro_Widget' );
 
 /**
-* xoops_pyro_TreeWidget
-*
-* The tree widget renders hierarchical data.
-* The default HTML output will show an expandable/collapsable tree made of UL/LI elements.
-* Its dynamic behavior makes strong use of CSS, and only requires minimal scripting (mainly to
-* assign appropriate CSS classes to elements during initialization).
-* 
-* The data is provided to the tree as an array:
-* <code>
-* $data = array(
-* 	'item1' => array(
-* 		'name' => 'Item 1',
-* 	),
-* 	'item2' => array(
-* 		'name' => 'Item 2 with sub',
-* 		'link' => 'item2.html',
-* 		'children' => array(
-* 			'i2sub1' => array(
-* 				'name' => 'SubItem 1',
-* 				'link' => 'subitem1.html',
-* 			),
-* 			'i2sub2' => array(
-* 				'name' => 'SubItem 2',
-* 				'link' => 'subitem2.html',
-* 			),
-* 		),
-* 	),
-* );
-* $widget->treeData = $data;
-* echo $widget->render();
-* </code>
-* 
-* @author 		Skalpa Keo
-* @package		xoops_pyro
-* @subpackage	xoops_pyro_TreeWidget
-* @since        2.3.0
-*/
+ * Widget rendering hierarchical data as a tree
+ *
+ * The tree widget renders hierarchical data.
+ * The default HTML output will show an expandable/collapsable tree made of UL/LI elements.
+ * Its dynamic behavior makes strong use of CSS, and only requires minimal scripting (mainly to
+ * assign appropriate CSS classes to elements during initialization).
+ * 
+ * The data is provided to the tree as an array:
+ * <code>
+ * $data = array(
+ * 	'item1' => array(
+ * 		'name' => 'Item 1',
+ * 	),
+ * 	'item2' => array(
+ * 		'name' => 'Item 2 with sub',
+ * 		'link' => 'item2.html',
+ * 		'children' => array(
+ * 			'i2sub1' => array(
+ * 				'name' => 'SubItem 1',
+ * 				'link' => 'subitem1.html',
+ * 			),
+ * 			'i2sub2' => array(
+ * 				'name' => 'SubItem 2',
+ * 				'link' => 'subitem2.html',
+ * 			),
+ * 		),
+ * 	),
+ * );
+ * $widget->treeData = $data;
+ * echo $widget->render();
+ * </code>
+ * 
+ * @author 		Skalpa Keo
+ * @package		xoops_pyro
+ * @subpackage	xoops_pyro_TreeWidget
+ * @since        2.3.0
+ */
 class xoops_pyro_TreeWidget extends xoops_pyro_Widget {
 	
 	var $stylesheet = 'www/default.css';
@@ -73,7 +73,7 @@ class xoops_pyro_TreeWidget extends xoops_pyro_Widget {
 	}
 	
 	function render() {
-		$str = $this->renderOpeningTag( 'ul' );
+		$str = $this->renderTag( 'ul' );
 		foreach ( $this->treeData as $node ) {
 			$str .= $this->renderNode( $node );
 		}

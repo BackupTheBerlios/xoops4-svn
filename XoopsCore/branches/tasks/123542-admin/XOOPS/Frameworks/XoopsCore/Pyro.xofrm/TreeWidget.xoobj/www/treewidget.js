@@ -65,9 +65,9 @@ function xoops_pyro_TreeWidget( elementId, openClass, closedClass ) {
 			return true;
 		} else {
 			if ( this.className.indexOf( me.openClass ) != -1 ) {
-				xoReplaceClass( this, me.openClass, me.closedClass );
+				xoops.replaceElementClass( this, me.openClass, me.closedClass );
 			} else {
-				xoReplaceClass( this, me.closedClass, me.openClass );
+				xoops.replaceElementClass( this, me.closedClass, me.openClass );
 			}
 			evt.cancelBubble = true;
 			if ( evt.stopPropagation )	evt.stopPropagation();
