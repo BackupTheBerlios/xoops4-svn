@@ -1,19 +1,21 @@
 <?php
 /**
-* xoops_http response codes definition file
-*
-* See the enclosed file LICENSE for licensing information.
-* If you did not receive this file, get it at http://www.fsf.org/copyleft/gpl.html
-*
-* @copyright	The XOOPS project http://www.xoops.org/
-* @license		http://www.fsf.org/copyleft/gpl.html GNU public license
-* @author		Skalpa Keo <skalpa@xoops.org>
-* @since		2.3.0
-* @package		xoops_http
-* @version		$Id$
-*/
+ * xoops_http response codes definition file
+ *
+ * See the enclosed file LICENSE for licensing information.
+ * If you did not receive this file, get it at http://www.fsf.org/copyleft/gpl.html
+ *
+ * @copyright	The XOOPS project http://www.xoops.org/
+ * @license		http://www.fsf.org/copyleft/gpl.html GNU public license
+ * @author		Skalpa Keo <skalpa@xoops.org>
+ * @since		2.3.0
+ * @package		xoops_http
+ * @subpackage	xoops_http_HttpHandler
+ * @version		$Id$
+ */
 
-define( 'HTTP_STATUS_OK',			200 );		// The client's request was successful, and the server's response contains the requested data.
+/**The client's request was successful, and the server's response contains the requested data.*/
+define( 'HTTP_STATUS_OK',			200 );
 define( 'HTTP_STATUS_CREATED',		201 );		// This status code is used whenever a new URL is created. With this result code, the Location header is given by the server to specify where the new data was placed.
 define( 'HTTP_STATUS_ACCEPTED',		202 );		// The request was accepted but not immediately acted upon. More information about the transaction may be given in the entity-body of the server's response. There is no guarantee that the server will actually honor the request, even though it may seem like a legitimate request at the time of acceptance.
 define( 'HTTP_STATUS_NONAUTH',		203 );		// The information in the entity header is from a local or third-party copy, not from the original server.
@@ -41,7 +43,6 @@ define( 'HTTP_STATUS_GONE',			410 );		// This code indicates that the requested 
 define( 'HTTP_STATUS_SERVERERROR',		500 );		// A part of the server (for example, a CGI program) has crashed or encountered a configuration error.
 define( 'HTTP_STATUS_NOTIMPLEMENTED',	501 );		// The client requested an action that cannot be performed by the server.
 define( 'HTTP_STATUS_SERVICEUNAVAIL',	503 );		// The service is temporarily unavailable, but should be restored in the future. If the server knows when it will be available again, a Retry-After header may also be supplied.
-
 
 
 

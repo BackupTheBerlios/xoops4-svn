@@ -11,12 +11,14 @@
  * @author		Skalpa Keo <skalpa@xoops.org>
  * @since		2.3.0
  * @package		xoops_http
- * @package		xoops_http_Session
+ * @subpackage	xoops_http_Session
  * @version		$Id$
  */
 
 /**
- * Handler for a session
+ * Session handler saving data in the database
+ * @package		xoops_http
+ * @subpackage	xoops_http_Session
  */
 class xoops_http_DatabaseSessionHandler {
 

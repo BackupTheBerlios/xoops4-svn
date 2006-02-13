@@ -19,21 +19,30 @@
  */
 if ( !defined( 'XOOPS_PATH' ) ) exit();
 
+XOS::import( 'xoops_http' );
+
 /**
- * xoops_http_SessionService main class
+ * Basic session service
  * 
  * The default session service provides basic session management functionality.
  * It uses the settings defined in the PHP configuration files, and thus is not really
- * user-configurable (you must use xoops_http_CustomSessionService for that).
+ * user-configurable (you must use {@link xoops_http_CustomSessionService} for that).
  * 
  * Only cache limiting has been enhanced: this component allows to configure this setting
  * on a user basis (if the 'cacheLimiter' variable is stored in the session, it will be used)
+ * @package		xoops_http
+ * @subpackage	xoops_http_Session
  */
 class xoops_http_SessionService {
 	/**
-	* Save handler to use for reading/writing session data
-	* @var mixed
-	*/
+	 * If sessions are created for unauthenticated users
+	 * @var boolean
+	 */
+	var $createGuestSessions = false;
+	/**
+	 * Save handler to use for reading/writing session data
+	 * @var object [xoops_http/xoops_http_Session/xoops_http_SessionHandler]
+	 */
 	var $saveHandler = 'xoops_http_DatabaseSessionHandler';
 	/**
 	 * Identifier of the current session
@@ -41,16 +50,29 @@ class xoops_http_SessionService {
 	 */
 	var $sessionId = 0;
 	/**
+	 * Name of the cookie used to store the session identifier
+	 * @var string
+	 */
+	var $sessionName = '';
+
+	/**#@+
+	 * @vargroup 20 Client caching
+	 */
+	/**
 	 * Default cache limiting policy (if different from the one defined in php.ini
 	 * @var string
 	 */
-	var $cacheLimiter = '';
+	var $cacheLimiter = 'private_no_expire';
 	/**
-	* If sessions are created for unauthenticated visitors
-	* @var boolean
-	*/
-	var $createGuestSessions = false;
+	 * Default cache lifetime for content (in minutes)
+	 * @var integer
+	 */
+	var $cacheLifetime = 60;
+	/**#@-*/
 	
+	/**#@+
+	 * @tasktype 10 Initialization
+	 */
 	/**
 	* Initialize the session service
 	*/
@@ -58,7 +80,11 @@ class xoops_http_SessionService {
 		if ( $this->saveHandler && !$this->attachHandler( $this->saveHandler ) ) {
 			return false;
 		}
-		if ( isset( $_COOKIE[ session_name() ] ) || $this->createGuestSessions ) {
+		if ( !$this->sessionName ) {
+			$this->sessionName = session_name();
+		}
+		// Create the session
+		if ( isset( $_COOKIE[$this->sessionName] ) || $this->createGuestSessions ) {
 			$this->start();
 		}
 	 	return true;
@@ -67,7 +93,7 @@ class xoops_http_SessionService {
 	 * Initialize the specified object as a save handler
 	 *
 	 * @param mixed $handler Object to attach (or bundleIdentifier of the handler to instanciate)
-	 * @return boolean true on success, false otherwise
+	 * @return bool True on success, false otherwise
 	 */
 	function attachHandler( $handler ) {
 		if ( !is_object( $handler ) ) {
@@ -84,11 +110,16 @@ class xoops_http_SessionService {
 		$this->saveHandler =& $handler;
 		return true;
 	}
+	/**#@-*/
 	
+	/**#@+
+	 * @tasktype 20 Creating and destroying the session
+	 */
 	/**
-	* Create a new session
-	*/
+	 * Creates a new session
+	 */
 	function start() {
+		global $xoops;
 		if ( isset($_SESSION) ) {
 		  	return true;
 		}
@@ -105,20 +136,29 @@ class xoops_http_SessionService {
 		//if ( @$var = $this->getObjectVar( $this, 'cacheLimiter' ) ) {
 		//	$this->cacheLimiter = $var;
 		//}
-		$this->resetCacheLimiting( $this->cacheLimiter, 60 * session_cache_expire() );
+		$xoops->services['http']->setCachingPolicy( $this->cacheLimiter, $this->cacheLifetime );
 		return $this->sessionId;
 	}
 	/**
-	* Destroy the current session
+	* Destroys the current session
 	*/
 	function destroy() {
 		$_SESSION = array();
 		unset( $_COOKIE[ session_name() ] );
 		session_destroy();
 	}
+	/**#@-*/
+	
+	/**#@+
+	 * @tasktype 30 Getting and setting session variables
+	 */
 	/**
-	* Set a named session variable
-	*/
+	 * Adds, modifies or removes an object session variable
+	 * @param mixed $owner Instance or bundle identifier of the object whose variable you wish to set
+	 * @param string $key The key whose value you wish to modify or remove
+	 * @param mixed $value The value to set for the specified key and object. Pass NULL to remove the specified key from the session
+	 * @return mixed The just set value
+	 */
 	function setObjectVar( $owner, $key, $value ) {
 		if ( !isset($_SESSION) ) {
 			return null;
@@ -126,58 +166,34 @@ class xoops_http_SessionService {
 		if ( is_object($owner) ) {
 			$owner = $owner->xoBundleIdentifier;
 		}
+		if ( !isset($value) ) {
+			unset($_SESSION[$owner][$key]);
+			return $value;
+		}			
 		return $_SESSION[$owner][$key] = $value;
 	}
 	/**
-	* Get the value of a named session variable
-	*/
+	 * Obtains the session variable value for the specified key and object
+	 * @param mixed $owner Instance or bundle identifier of the object whose variable you wish to get
+	 * @param string $key The key whose value you wish to obtain
+	 * @return mixed The session variable value
+	 */
 	function getObjectVar( $owner, $key ) {
 		if ( is_object($owner) ) {
 			$owner = $owner->xoBundleIdentifier;
 		}
 		return @$_SESSION[$owner][$key];
 	}
-	/**
-	 * Resend the cache limiting headers
-	 */
-	function resetCacheLimiting( $policy, $cacheLifetime = 0, $lastModified = null ) {
-		if ( !isset( $lastModified ) ) {
-			$lastModified = time();
-		}
-		switch ( $policy ) {
-		case 'none':
-			break;
-		case 'no-cache':
-		case 'nocache':
-			header( 'Expires: ' . $this->date( time() - 3600 ) );
-			header( 'Cache-Control: no-store,no-cache,must-revalidate,post-check=0,pre-check=0' );
-			break;
-		case 'private':
-			header( 'Expires: ' . $this->date( time() - 3600 ) );
-		case 'private_no_expire':
-			header( "Cache-Control: private,max-age=$cacheLifetime,pre-check=$cacheLifetime" );
-			break;
-		case 'public':
-		default:
-			header( 'Expires: ' . $this->date( time() + $cacheLifetime ) );
-			header( "Cache-Control: public,max-age=$cacheLifetime" );
-			header( "Last-Modified: " . $this->date( $lastModified ) );
-			break;
-		}
-	}
-	/**
-	 * Return an RFC compliant (RFC822 or RFC850) date string from a timestamp
-	 *
-	 * @param interger $time
-	 * @return string
-	 */	
-	function date( $time = null ) {
-        return gmdate(
-        	( ini_get('y2k_compliance') ? 'D, d M Y' : 'l, d-M-y' ) .' H:i:s',
-        	isset($time) ? $time : time()
-        ) . ' GMT';
-    }
+	/**#@-*/
+}
 
+/**
+ * Abstract base class for session persistance handlers
+ * @package		xoops_http
+ * @subpackage	xoops_http_Session
+ */
+class xoops_http_SessionHandler {
+	
 }
 
 

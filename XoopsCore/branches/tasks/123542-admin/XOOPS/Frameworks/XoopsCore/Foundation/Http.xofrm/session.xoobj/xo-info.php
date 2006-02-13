@@ -1,18 +1,18 @@
 <?php
 /**
-* xoops_http session component bundle information file
-*
-* See the enclosed file LICENSE for licensing information.
-* If you did not receive this file, get it at http://www.fsf.org/copyleft/gpl.html
-*
-* @copyright	The XOOPS project http://www.xoops.org/
-* @license		http://www.fsf.org/copyleft/gpl.html GNU public license
-* @author		Skalpa Keo <skalpa@xoops.org>
-* @since		2.3.0
-* @package		xoops_http
-* @package		xoops_http_Session
-* @version		$Id$
-*/
+ * xoops_http session component bundle information file
+ *
+ * See the enclosed file LICENSE for licensing information.
+ * If you did not receive this file, get it at http://www.fsf.org/copyleft/gpl.html
+ *
+ * @copyright	The XOOPS project http://www.xoops.org/
+ * @license		http://www.fsf.org/copyleft/gpl.html GNU public license
+ * @author		Skalpa Keo <skalpa@xoops.org>
+ * @since		2.3.0
+ * @package		xoops_http
+ * @subpackage	xoops_http_Session
+ * @version		$Id$
+ */
 
 return array(
 	'xoBundleDisplayName' => 'XOOPS Session management component',

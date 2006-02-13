@@ -29,8 +29,7 @@ define( 'XO_SID_USE_URI', 2 );
 define( 'XO_SID_USE_ANY', 3 );
 
 /**
- * xoops_http_CustomSessionService main class
- * @since		2.3
+ * Fully configurable session service
  * @package		xoops_http
  * @subpackage	xoops_http_Session
  */
