@@ -90,6 +90,7 @@ function xoRegisterComponent( $registry, $bundleInfo, $bundleRoot, $prefix = '' 
 
 $registry = array();
 $registry = xoScanComponentsFolder( $registry, '/XOOPS/Frameworks', true );
+$registry = xoScanComponentsFolder( $registry, '/XOOPS/ConfigPanels', true );
 $registry = xoScanComponentsFolder( $registry, '/www/modules', true );
 
 if ( $fp = fopen( $this->path( '/var/Application Support/xoops_kernel_Xoops2/registry.php' ), 'wt' ) ) {
