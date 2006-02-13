@@ -8,8 +8,8 @@
  * @copyright   The Xoops project http://www.xoops.org/
  * @license     http://www.fsf.org/copyleft/gpl.html GNU public license
  * @since       2.3.0
- * @package		xoops_template
- * @subpackage	xoops_template_Smarty
+ * @package		xoops_opal
+ * @subpackage	xoops_opal_Smarty
  * @version		$Id$
  * @author		Skalpa Keo <skalpa@xoops.org>
  */
@@ -22,17 +22,20 @@ XOS::import( 'Smarty' );
  * @package		xoops_template
  * @subpackage	xoops_template_Smarty
  */
-class xoops_template_Smarty extends Smarty {
+class xoops_opal_Smarty extends Smarty {
 	
 	var $left_delimiter =	'([';
 	var $right_delimiter =	'])';
 
 	var $template_dir		= XOOPS_THEME_PATH;
 	var $compile_dir		= 'var/Application Support/xoops_template_Smarty';
-	var $cache_dir			= 'var/Caches/xoops_template_Smarty';
+	var $cache_dir			= 'var/Caches/xoops_opal_Smarty';
 
 	var $use_sub_dirs		= false;
 	
+
+	var $compiler_class		= 'xoops_opal_SmartyCompiler';
+	var $compiler_file		= '/compiler.php';
 	
 	var $currentFile		= '';
 
@@ -44,12 +47,14 @@ class xoops_template_Smarty extends Smarty {
 	var $currentTheme		= false;
 	
 
-	function xoops_template_Smarty( $options = null ) {
+	function xoops_opal_Smarty( $options = null ) {
 		global $xoops;
 		
 		$this->compile_dir	= $xoops->path( $this->compile_dir );
 		$this->cache_dir	= $xoops->path( $this->cache_dir );
 
+		$this->compiler_file = str_replace( '\\', '/', dirname( __FILE__ ) ) . $this->compiler_file;
+		
 		if ( $xoops->xoRunMode & XO_MODE_DEV_MASK ) {
 			$this->compile_check = true;
 			$this->force_compile = true;

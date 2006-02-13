@@ -14,54 +14,52 @@
 * @version		$Id$
 */
 
-function smarty_compiler_xoWidget( $argStr, &$smarty ) {
+function smarty_compiler_xoWidget( $argStr, &$compiler ) {
 	global $xoops;
 	
-	$args = $smarty->_parse_attrs( trim( $argStr ) );
-	array_map( array( &$smarty, '_expand_quoted_text' ), $args );
+	$args = $compiler->_parse_attrs( trim( $argStr ) );
+	array_map( array( &$compiler, '_expand_quoted_text' ), $args );
+	
+	if ( isset( $args['tplVar'] ) ) {
+		$code = '';
+		foreach ( $args as $prop => $value ) {
+			if ( $prop != 'tplVar' ) {
+				$code .= $args['tplVar'] . "->$prop = $value;\n";
+			}
+		}
+		return $code . "echo " . $args['tplVar'] . "->render();";
+	}
+	
 	
 	if ( !isset( $args['bundleId'] ) ) {
 		trigger_error( "Cannot insert widget: no bundleId specified", E_USER_WARNING );
 		return '';
 	}
-	$bundleId = $args['bundleId'];
-	unset( $args['bundleId'] );
-
-	$realBundleId = substr( $bundleId, 1, strlen( $bundleId ) - 2 );
-	
-	$code = "\n";
-	// Get this widget stylesheet and javascript properties
-	if ( $css = XOS::classVar( $realBundleId, 'stylesheet' ) ) {
-		$css = $realBundleId . '#' . $css;
-		$attrs = array(
-			'type' => 'text/css',
-			'href' => $xoops->url( $smarty->template_engine->currentTheme->resourcePath( $css ) ),
-		);
-		$code .= '$this->currentTheme->setMeta( "stylesheet", "' . $css . '", ' . var_export( $attrs, true ) . ");\n";
-	}
-	if ( $js = XOS::classVar( $realBundleId, 'javascript' ) ) {
-		$js = $realBundleId . '#' . $js;
-		$attrs = array(
-			'type' => 'text/javascript',
-			'src' => $xoops->url( $smarty->template_engine->currentTheme->resourcePath( $js ) ),
-		);
-		$code .= '$this->currentTheme->setMeta( "script", "' . $js . '", ' . var_export( $attrs, true ) . ");\n";
-	}
-
-
-	$code .= '$widget = XOS::create( ' . $bundleId;
-	if ( !empty( $args ) ) {
-		$code .= ", array(\n";
-		foreach ( $args as $prop => $value ) {
-			$code .= "\t'$prop' => " . $value . ",\n";
+	// Transform __property__key settings to an arrays
+	$arrays = array();
+	foreach ( $args as $k => $v ) {
+		if ( substr( $k, 0, 2 ) == '__' ) {
+			$prop = explode( '__', substr( $k, 2 ), 2 );
+			if ( isset( $prop[1] ) ) {
+				$arrays[ $prop[0] ][ $prop[1] ] = $v;
+			} else {
+				$arrays[ $prop[0] ][] = $v;
+			}
+			unset( $args[$k] );
 		}
-		$code .= ')';
 	}
-	$code .= " );\n";
-	$code .= "echo ( \$widget ? \$widget->render() : \"Failed to instanciate $bundleId widget.\" );\n";
+	if ( !empty( $arrays ) ) {
+		foreach ( $arrays as $aname => $array ) {
+			$args[$aname] = 'array(';
+			foreach ( $array as $k => $v ) {
+				$args[$aname] .= var_export($k,true) . ' => ' . $v . ', ';
+			}
+			$args[$aname] .= ')';
+		}
+	}
 	
-	return $code;
-
+	return $compiler->insertWidget( $args );
+	
 }
 
 ?>

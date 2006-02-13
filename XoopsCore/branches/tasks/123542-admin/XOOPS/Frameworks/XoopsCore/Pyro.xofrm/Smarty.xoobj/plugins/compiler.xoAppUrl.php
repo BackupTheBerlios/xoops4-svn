@@ -18,7 +18,7 @@ function smarty_compiler_xoAppUrl( $argStr, &$smarty ) {
 	global $xoops;
 	
 	$argStr = trim( $argStr );
-
+/*
 	@list( $modId, $location ) = explode( '#', $argStr, 2 );
 	if ( isset( $location ) ) {
 		if ( $module = $xoops->loadModule( $modId ) ) {
@@ -30,7 +30,8 @@ function smarty_compiler_xoAppUrl( $argStr, &$smarty ) {
 	} else {
 		$uri = $argStr;
 	}
-	
+*/
+	$uri = $argStr;
 	return "\necho '" . addslashes( $xoops->path( $uri, true ) ) . "';";
 
 }
