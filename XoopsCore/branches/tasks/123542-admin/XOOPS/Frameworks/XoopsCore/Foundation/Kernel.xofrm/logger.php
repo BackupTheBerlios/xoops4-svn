@@ -10,7 +10,7 @@
  * @author		Skalpa Keo <skalpa@xoops.org>
  * @since		2.3.0
  * @package		xoops_kernel
- * @package		xoops_kernel_Logger
+ * @subpackage	xoops_kernel_Logger
  * @version		$Id$
  */
 
@@ -29,6 +29,8 @@ if ( !defined( 'XOOPS_PATH' ) ) exit();
  * <p>This logger only gets activated by default when the kernel runs in DEBUG or DEV mode on.
  * If it is the case, it'll start buffering output to be able toinsert its output inside the page once
  * the request has been processed.</p>
+ * @package		xoops_kernel
+ * @subpackage	xoops_kernel_Logger
  */
 class xoops_kernel_Logger {
 	/**

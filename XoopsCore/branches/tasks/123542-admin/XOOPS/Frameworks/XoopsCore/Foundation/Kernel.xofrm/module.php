@@ -10,7 +10,7 @@
  * @author		Skalpa Keo <skalpa@xoops.org>
  * @since		2.3.0
  * @package		xoops_kernel
- * @package		xoops_kernel_Module
+ * @subpackage	xoops_kernel_Module
  * @version		$Id$
  */
 
@@ -21,13 +21,10 @@ if ( !defined( 'XOOPS_PATH' ) ) exit();
 
 
 /**
-* xoops_kernel_ModuleFactory
-*
-* @author 		Skalpa Keo
-* @package		xoops_kernel
-* @subpackage	xoops_kernel_ModuleFactory
-* @since        2.3.0
-*/
+ * Local factory in charge of modules instanciation
+ * @package		xoops_kernel
+ * @subpackage	xoops_kernel_Module
+ */
 class xoops_kernel_ModuleFactory {
 	/**
 	 * Instanciate the specified module
@@ -71,7 +68,10 @@ class xoops_kernel_ModuleFactory {
 
 
 /**
- * xoops_kernel_Module base class
+ * Base class for XOOPS modules (applications)
+ * @category	XoopsOS
+ * @package		xoops_kernel
+ * @subpackage	xoops_kernel_Module
  */
 class xoops_kernel_Module {
 	
@@ -105,13 +105,13 @@ class xoops_kernel_Module {
 	
 	function requestParameters( $source = 'R' ) {
 		$loc =& $this->moduleLocations[ $this->currentLocation ];
-		return isset( $loc['parameters'] ) ? $this->requestValues( $loc['parameters'], $source ) : array();
+		return isset( $loc['parameters'] ) ? xoops_kernel_Module::requestValues( $loc['parameters'], $source ) : array();
 	}
 	
 	function requestValues( $defs, $source = 'R' ) {
 		$vars = array();
 		foreach ( $defs as $varName => $varDef ) {
-			$vars[ $varName ] = $this->requestValue( $varName, $varDef[0], $varDef[1], $source );
+			$vars[ $varName ] = xoops_kernel_Module::requestValue( $varName, $varDef[0], $varDef[1], $source );
 		}
 		return $vars;
 	}
@@ -137,15 +137,19 @@ class xoops_kernel_Module {
 					$value = array($value);
 				}
 				foreach ( $value as $k => $v ) {
-					$value[$k] = $this->sanitizeValue( $v, $type xor XO_TYPE_ARRAY );
+					$value[$k] = xoops_kernel_Module::sanitizeValue( $v, $type xor XO_TYPE_ARRAY );
 				}
 			} else {
-				$value = $this->sanitizeValue( $value, $type );
+				$value = xoops_kernel_Module::sanitizeValue( $value, $type );
 			}
 		}
 		return $value;
 	}
 
+
+	
+	
+	
 	function sanitizeValue( $value, $type = XO_TYPE_INT ) {
 		if ( ( $type & XO_TYPE_STRING ) && $this->isGpc ) {
 			$value = stripslashes( $value );

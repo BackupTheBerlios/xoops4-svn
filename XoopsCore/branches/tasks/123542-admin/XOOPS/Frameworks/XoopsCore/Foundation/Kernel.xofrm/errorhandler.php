@@ -10,7 +10,7 @@
  * @author		Skalpa Keo <skalpa@xoops.org>
  * @since		2.3.0
  * @package		xoops_kernel
- * @package		xoops_kernel_ErrorHandler
+ * @subpackage	xoops_kernel_ErrorHandler
  * @version		$Id$
  */
 
@@ -26,6 +26,8 @@ if ( !defined( 'XOOPS_PATH' ) ) exit();
  * information about them to the logger service.
  * Physical paths that would be part of the error messages are converted to prevent
  * path disclosure on production servers.
+ * @package		xoops_kernel
+ * @subpackage	xoops_kernel_ErrorHandler
  */
 class xoops_kernel_ErrorHandler {
 	/**
