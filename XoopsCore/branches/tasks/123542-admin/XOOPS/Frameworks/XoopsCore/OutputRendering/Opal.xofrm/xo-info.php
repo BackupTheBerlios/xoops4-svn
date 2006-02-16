@@ -23,6 +23,9 @@ return array(
 		'xoops_opal_Theme'	=> array (
 			'xoBundleRoot' => '/Theme.xoobj'
 		),
+		'xoops_opal_PdfMaker'	=> array (
+			'xoBundleRoot' => '/PdfMaker.xoobj'
+		),
 		'xoops_opal_Widget' => array(
 			'xoClassPath' => '/widget.php',
 		),
