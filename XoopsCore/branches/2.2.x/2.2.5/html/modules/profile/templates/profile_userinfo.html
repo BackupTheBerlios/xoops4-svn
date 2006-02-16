@@ -1,0 +1,76 @@
+<{if $user_ownpage == true}>
+
+    <form name="usernav" action="user.php" method="post">
+
+    <br /><br />
+
+    <table width="70%" align="center" border="0">
+      <tr align="center">
+        <td><input type="button" value="<{$lang_editprofile}>" onclick="location='edituser.php'" />
+        <input type="button" value="<{$lang_changepassword}>" onclick="location='changepass.php'" />
+        <input type="button" value="<{$lang_avatar}>" onclick="location='edituser.php?op=avatarform'" />
+
+        <{if $user_candelete == true}>
+        <input type="button" value="<{$lang_deleteaccount}>" onclick="location='edituser.php?op=delete'" />
+        <{/if}>
+
+        <input type="button" value="<{$lang_logout}>" onclick="location='<{$xoops_url}>/user.php?op=logout'" /></td>
+      </tr>
+    </table>
+    </form>
+
+<br /><br />
+<{elseif $xoops_isadmin != false}>
+
+    <br /><br />
+
+    <table width="70%" align="center" border="0">
+      <tr align="center">
+        <td><input type="button" value="<{$lang_editprofile}>" onclick="location='<{$xoops_url}>/modules/profile/admin/user.php?op=edit&amp;id=<{$user_uid}>'" />
+        <input type="button" value="<{$lang_deleteaccount}>" onclick="location='<{$xoops_url}>/modules/profile/admin/user.php?op=delete&amp;id=<{$user_uid}>'" />
+      </tr>
+    </table>
+
+    <br /><br />
+<{/if}>
+
+<{foreach item=category from=$categories name=catcount}>
+    <{if isset($category.fields)}>
+        <div style="width: 48%; float: left; padding: 0px 5px 10px 5px;">
+            <table class="outer" cellpadding="4" cellspacing="1">
+                <tr>
+                  <th colspan="2" align="center"><{$category.cat_title}></th>
+                </tr>
+                <{foreach item=field from=$category.fields}>
+                    <tr>
+                        <td class="head"><{$field.title}></td>
+                        <td class="even"><{$field.value}></td>
+                    </tr>
+                <{/foreach}>
+            </table>
+        </div>
+    <{/if}>
+<{/foreach}>
+
+<{if $modules}>
+    <br style="clear: both;"/>
+    <!-- start module search results loop -->
+    <{foreach item=module from=$modules}>
+
+    <p>
+    <h4><{$module.name}></h4>
+
+      <!-- start results item loop -->
+          <{foreach item=result from=$module.results}>
+
+          <img src="<{$result.image}>" alt="<{$module.name}>" />&nbsp;<b><a href="<{$result.link}>"><{$result.title}></a></b><br /><small>(<{$result.time}>)</small><br />
+
+          <{/foreach}>
+          <!-- end results item loop -->
+
+    <{$module.showall_link}>
+    </p>
+
+    <{/foreach}>
+    <!-- end module search results loop -->
+<{/if}>

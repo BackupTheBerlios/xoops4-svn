@@ -1,0 +1,63 @@
+<h4 style='text-align:left;'><{$smarty.const._AM_BADMIN}></h4>
+
+<div>
+    <form name="<{$newform.name}>" id="<{$newform.name}>" action="<{$newform.action}>" method="<{$newform.method}>" <{$newform.extra}> >
+        <{foreach item=element from=$newform.elements}>
+            <{if $element.hidden != true}>
+                <{$element.caption}>&nbsp;<{$element.body}>
+            <{else}>
+                <{$element.body}>
+            <{/if}>
+        <{/foreach}>
+    </form>
+</div>
+
+<form name="<{$blockform.name}>" id="<{$blockform.name}>" action="<{$blockform.action}>" method="<{$blockform.method}>" <{$blockform.extra}> >
+    <table width='100%' class='outer' cellpadding='4' cellspacing='1'>
+        <tr valign='middle'>
+            <th width='20%'><{$smarty.const._AM_BLKDESC}></th>
+            <th><{$smarty.const._AM_TITLE}></th>
+            <th><{$smarty.const._AM_MODULE}></th>
+            <th align='center'><{$smarty.const._AM_SIDE}></th>
+            <th align='center'><{$smarty.const._AM_WEIGHT}></th>
+            <th align='center'><{$smarty.const._AM_VISIBLEIN}></th>
+            <th align='right'><{$smarty.const._AM_ACTION}></th>
+        </tr>
+       
+        <{foreach item=instance from=$instances}>
+            <tr valign='top' class='<{cycle values="odd, even"}>'>
+                <td><{$instance.title}></td>
+                <td><{$instance.block_name}></td>
+                <td><{$instance.module_name}></td>
+                <td>
+                    <select name="side[<{$instance.instanceid}>]">
+                        <{html_options options=$side_options selected=$instance.side}>
+                    </select>
+                </td>
+                <td align='center'>
+                    <input type='text' name='weight[<{$instance.instanceid}>]' value='<{$instance.weight}>' size='5' maxlength='5' />
+                </td>
+                <td align='center'>
+                    <select name="module[<{$instance.instanceid}>][]" multiple="multiple" size="8">
+                        <{html_options options=$module_options selected=$instance.visiblein}>
+                    </select>
+                </td>
+                <td align='right'><a href='admin.php?fct=blocksadmin&amp;op=edit&amp;id=<{$instance.instanceid}>&amp;selmod=<{$selmod}>'><{$smarty.const._EDIT}></a>
+                &nbsp;<a href='admin.php?fct=blocksadmin&amp;op=delete&amp;id=<{$instance.instanceid}>&amp;selmod=<{$selmod}>'><{$smarty.const._DELETE}></a>
+            </td>
+            </tr>
+        <{/foreach}>
+            
+        <tr>
+            <td class='foot' align='center' colspan='7'>
+                <{foreach item=element from=$blockform.elements}>
+                    <{if $element.hidden != true}>
+                        <{$element.caption}>&nbsp;<{$element.body}>
+                    <{else}>
+                        <{$element.body}>
+                    <{/if}>
+                <{/foreach}>
+            </td>
+        </tr>
+    </table>
+</form>

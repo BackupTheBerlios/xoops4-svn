@@ -1,0 +1,36 @@
+<div class="comContainer">
+		<div class="com_tl"><div class="com_tr"><div class="com_br"><div class="com_bl"> 
+			<h2 class="comTitle"><a id="comment<{$comment.id}>"></a><{$comment.image}><{$comment.title}></h2>
+			<div class="comIcons">
+				<{if $xoops_iscommentadmin == true}>
+						<a href="<{$editcomment_link}>&amp;com_id=<{$comment.id}>"><img src="<{$xoops_url}>/themes/default/images/edit_small.gif" width="16" height="16" alt="<{$lang_edit}>" title="<{$lang_edit}>" /></a>&nbsp;<a href="<{$deletecomment_link}>&amp;com_id=<{$comment.id}>"><img src="<{$xoops_url}>/themes/default/images/delete_small.gif" width="16" height="16" alt="<{$lang_delete}>" title="<{$lang_delete}>" /></a>&nbsp;<a href="<{$replycomment_link}>&amp;com_id=<{$comment.id}>"><img src="<{$xoops_url}>/themes/default/images/reply_small.gif" width="16" height="16" alt="<{$lang_reply}>" title="<{$lang_reply}>" /></a>
+				<{elseif $xoops_isuser == true && $xoops_userid == $comment.poster.id}>
+						<a href="<{$editcomment_link}>&amp;com_id=<{$comment.id}>"><img src="<{$xoops_url}>/themes/default/images/edit_small.gif" width="16" height="16" alt="<{$lang_edit}>" /></a>&nbsp;
+						<a href="<{$replycomment_link}>&amp;com_id=<{$comment.id}>"><img src="<{$xoops_url}>/themes/default/images/reply_small.gif" width="16" height="16" alt="<{$lang_reply}>" /></a>
+				<{elseif $xoops_isuser == true || $anon_canpost == true}>
+						<a href="<{$replycomment_link}>&amp;com_id=<{$comment.id}>"><img src="<{$xoops_url}>/themes/default/images/reply_small.gif" width="16" height="16" alt="<{$lang_reply}>" /></a>
+				<{/if}>
+			</div>
+      
+  <div>
+					<span class="comDateCaption"><{$lang_posted}>:</span> <{$comment.date_posted}>&nbsp;&nbsp;<span class="comDateCaption"><{$lang_updated}>:</span> <{$comment.date_modified}>
+	</div>
+
+				<{if $comment.poster.id != 0}>
+					<div class="comUserdetails">
+						<img class="comUserImg" src="<{$xoops_upload_url}>/<{$comment.poster.avatar}>" alt="" /><br />
+						<span class="comUserName"><{$comment.poster.uname}></span><br />
+						<img class="comUserRankImg" src="<{$xoops_upload_url}>/<{$comment.poster.rank_image}>" alt="" /><br />
+						<span class="comUserName"><{$comment.poster.rank_title}></span><br />
+						<span class="comUserStatCaption"><{$lang_joined}>:</span> <{$comment.poster.regdate}><br />
+						<span class="comUserStatCaption"><{$lang_from}>:</span> <{$comment.poster.from}><br />
+						<span class="comUserStatCaption"><{$lang_posts}>:</span> <{$comment.poster.postnum}><br />
+						<span class="comUserStatus"><{$comment.poster.status}></span>
+					</div>
+				<{/if}>
+						
+  <div class="comText">
+  	<{$comment.text}>
+  </div>
+
+</div></div></div></div></div>

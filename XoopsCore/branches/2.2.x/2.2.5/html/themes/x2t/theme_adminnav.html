@@ -1,0 +1,36 @@
+<div>
+    <{foreach item=module from=$adminmenu key=counter}>
+        <table width="95%" >
+            <tr>
+                <th class="adminNavHeader" onclick="xoops_toggleMenu(<{$counter}>);" style="cursor: pointer;">
+                    <{$module.name}>
+                </th>
+            </tr>
+            <tr id="adminmenu_<{$counter}>" style="display: none;">
+                <td style="padding: 2px;">
+                    <{foreach item=menuitem from=$module.links}>
+                        <a class="adminNavItem" href="<{$menuitem.link}>"><{$menuitem.title}></a><br />
+                    <{/foreach}>
+                </td>
+            </tr>
+        </table>
+    <{/foreach}>
+    <{if $systemmenu.name}>
+        <{assign var=system_no value=$adminmenucount-1}>
+        <table width="95%" >
+            <tr>
+                <th class="adminNavHeader" onclick="xoops_toggleMenu(<{$system_no}>);" style="cursor: pointer;">
+                    <{$systemmenu.name}>
+                </th>
+            </tr>
+            <tr id="adminmenu_<{$system_no}>" style="display: none;">
+                <td style="padding: 2px;">
+                    <{foreach item=menuitem from=$systemmenu.links}>
+                        <a class="adminNavItem" href="<{$menuitem.link}>"><{$menuitem.title}></a><br />
+                    <{/foreach}>
+                </td>
+            </tr>
+        </table>
+    <{/if}>
+    <script type="text/javascript">xoops_applyCookie();</script>
+</div>

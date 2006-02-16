@@ -1,0 +1,7 @@
+<form class="search_block" action="<{$xoops_url}>/search.php" method="get">
+  <input type="text" name="query" size="14" /><input type="hidden" name="action" value="results" /><br /><input class="formbutton" type="submit" value="<{$block.lang_search}>" />
+  <{if $block.modid > 1}>
+    <input type="hidden" name="mids[]" value="<{$block.modid}>" />
+  <{/if}>
+</form>
+<a href="<{$xoops_url}>/search.php"><{$block.lang_advsearch}></a>
