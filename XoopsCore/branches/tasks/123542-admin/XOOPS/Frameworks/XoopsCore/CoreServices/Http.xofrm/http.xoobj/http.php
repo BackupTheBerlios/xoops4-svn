@@ -32,15 +32,17 @@ XOS::import( 'xoops_http' );
 class xoops_http_HttpHandler {
 	/**
 	 * Whether HTTP redirections are enabled or not
-	 * @var bool
+	 * @var boolean
 	 */
 	var $enableRedirections	= true;
 	/**
 	 * Whether to use output compression or not, if the client supports it
+	 * @var boolean
 	 */
 	var $enableCompression = true;
 	/**
 	 * Whether to use output compression or not, if the client supports it
+	 * @var integer
 	 */
 	var $compressionLevel = 6;
 	/**
@@ -55,6 +57,7 @@ class xoops_http_HttpHandler {
 	var $cacheLifetime = 3600;
 	/**
 	 * Entity mimetype
+	 * @var string
 	 */
 	var $contentType = 'text/html';
 	/**
