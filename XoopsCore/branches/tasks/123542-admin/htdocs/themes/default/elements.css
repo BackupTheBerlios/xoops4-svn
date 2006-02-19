@@ -11,6 +11,9 @@ a {
 a:hover {
 	text-decoration:	underline;
 }
+form {
+	margin:				0px;
+}
 
 
 /* Web resources lists */

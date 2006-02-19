@@ -1,0 +1,17 @@
+
+	<link rel="stylesheet" type="text/css" media="screen" href="([xoImgUrl style-default.css])" />
+<!--[if lte IE 6]>
+	<link rel="stylesheet" type="text/css" media="screen" href="([xoImgUrl msie.css])" />
+<![endif]-->
+	([include file='xotpl:xoops_opal_Theme#templates/metas.xotpl'])
+
+	<link rel="SHORTCUT ICON" href="([xoImgUrl favicon.ico])" />
+
+	<script type="text/javascript" src="([xoImgUrl xoops.js])"></script>
+	<script type="text/javascript">
+		xoops.url = "([xoAppUrl /www])";
+	</script>
+
+	<title>([$xoops_sitename]) - ([$xoops_pagetitle])</title>
+
+	([$xoops_module_header])

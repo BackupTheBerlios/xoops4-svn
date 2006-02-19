@@ -1,0 +1,9 @@
+
+([if $xoBlocks[$zone] ])
+	([if not $zoneTag])([assign var=zoneTag value='div'])([/if])
+	<([$zoneTag]) class="xo-blockszone([if $zoneClass]) ([$zoneClass])([/if])"([if $zoneId]) id="([$zoneId])"([/if])>
+	([foreach from=$xoBlocks[$zone] key=n item=block])
+		([include file="xotpl:block.xotpl"])
+	([/foreach])
+	</([$zoneTag])>
+([/if])

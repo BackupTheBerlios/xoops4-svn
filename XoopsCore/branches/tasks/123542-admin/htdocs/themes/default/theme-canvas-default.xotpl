@@ -1,0 +1,118 @@
+<?xml version='1.0' encoding='utf-8'?>
+<XoopsTemplate>
+	<TemplateData contentType="text/html" default="true"><![CDATA[
+<!DOCTYPE ([$xoTheme->doctype|smarty:nodefaults])>
+<html
+	([$xoTheme->namespacesString()|smarty:nodefaults])
+	xml:lang="en" lang="en"
+>
+<head>
+	([includeq file='xotpl:html-head.xotpl'])
+</head>
+<body>
+<div id="xo-canvas" class="([$xoops->currentModule->xoBundleIdentifier])">
+	([include file='xotpl:header.xotpl'])
+	([if $xoops->services.http->redirectMessage])
+	<div id="xo-redirect-message">
+		([$xoops->services.http->redirectMessage])
+	</div>
+	<script type="text/javascript">if (xoHideRedirectMessage) window.setTimeout( 'xoHideRedirectMessage()', 4200 );</script>
+	([/if])
+	<div id="xo-canvas-main">
+		<div id="xo-canvas-globalnav" style="display:none">Global navigation bar</div>
+		<table id="xo-canvas-content" cellspacing="6">
+		<tr>
+			([include file='xotpl:blockszone.xotpl' zone='canvas_left'
+				zoneClass='xo-canvas-column' zoneId='xo-canvas-leftcolumn' zoneTag='td'
+			])
+			<td id="xo-page"([if $xoops->currentModule->currentLocation]) class="([$xoops->currentModule->currentLocation])"([/if])>
+			([$xoTheme->renderZone('page')])
+			</td>
+			([include file='xotpl:blockszone.xotpl' zone='canvas_right'
+				zoneClass='xo-canvas-column' zoneId='xo-canvas-rightcolumn' zoneTag='td'
+			])
+		</tr>
+		</table>
+	</div>
+	<div id="xo-canvas-footer">
+		<a href="http://www.xoops.org/" target="_blank">
+			Powered by ([$xoops->xoShortVersionString])
+		</a>
+	</div>
+</div>
+<!--{xo-logger-output}-->
+</body>
+</html>]]>
+	</TemplateData>
+	<TemplateData contentType="application/xhtml+xml">
+	<![CDATA[<?xml version='1.0'?>
+<!DOCTYPE ([$xoTheme->doctype|smarty:nodefaults])>
+<html
+	([$xoTheme->namespacesString()|smarty:nodefaults])
+	xml:lang="en" lang="en"
+>
+<head>
+	([includeq file='xotpl:html-head.xotpl'])
+</head>
+<body>
+<div id="xo-canvas" class="([$xoops->currentModule->xoBundleIdentifier])">
+	([include file='xotpl:header.xotpl'])
+	([if $xoops->services.http->redirectMessage])
+	<div id="xo-redirect-message">
+		([$xoops->services.http->redirectMessage])
+	</div>
+	<script type="text/javascript">if (xoHideRedirectMessage) window.setTimeout( 'xoHideRedirectMessage()', 4200 );</script>
+	([/if])
+	<div id="xo-canvas-main">
+		<div id="xo-canvas-globalnav" style="display:none">Global navigation bar</div>
+		<div id="xo-canvas-content">
+			([include file='xotpl:blockszone.xotpl' zone='canvas_left'
+				zoneClass='xo-canvas-column' zoneId='xo-canvas-leftcolumn'
+			])
+			<div id="xo-page"([if $xoops->currentModule->currentLocation]) class="([$xoops->currentModule->currentLocation])"([/if])>
+			([$xoTheme->renderZone('page')])
+			</div>
+			([include file='xotpl:blockszone.xotpl' zone='canvas_right'
+				zoneClass='xo-canvas-column' zoneId='xo-canvas-rightcolumn'
+			])
+		</div>
+	</div>
+	<div id="xo-canvas-footer">
+		<a href="http://www.xoops.org/" target="_blank">
+			Powered by ([$xoops->xoShortVersionString])
+		</a>
+	</div>
+</div>
+<!--{xo-logger-output}-->
+</body>
+</html>]]>
+	</TemplateData>
+	<TemplateData contentType="application/pdf">
+	<![CDATA[
+<pdml>
+<head>
+	<title>Document title goes here</title>
+	<subject>Document subject goes here</subject>
+	<keywords>example,php,document,and,stuff</keywords>
+</head>
+<body>
+<header>
+	<font size=10pt>
+		<div top=0.2cm left=0cm>Insert site name here</div>
+		<i><div top=0.2cm left=50%><a href="http://([$xoops->hostLocation])/">http://([$xoops->hostLocation])/</a></div></i>
+	</font>
+</header>
+.
+<font size=1cm>
+	<multicell top=40% align=center>
+		This is the front page sent before each document
+	</multicell>
+</font>
+<page>
+	This is the content now (well, this will be where the content goes)...
+
+</body>
+</pdml>
+]]>	
+	</TemplateData>
+</XoopsTemplate>

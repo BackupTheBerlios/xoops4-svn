@@ -11,13 +11,12 @@ html, body {
 	font:					10pt sans-serif;
 }
 
-
 #xo-canvas {
-	margin:			15px;
+	margin:			.4em;
 	background:		#EEEEEE;
 }
 
-/* ------------------- Canvas banner ------------------- */
+/* ------------------- Canvas header ------------------- */
 #xo-canvas-header {
 	position:		relative;
 	border-bottom:	1px solid #CCCCCC;
@@ -27,7 +26,7 @@ html, body {
 
 #xo-banner {
 	position:		relative;
-	height:			60px;
+	height:			4.5em;
 	border:			1px solid #000000;
 	padding:		2px;
 	background:		#2A75C5 url(img/canvas-banner_bg.png) repeat-x left top;
@@ -82,35 +81,29 @@ html, body {
 /* ------------------- Main canvas zone (columns and page) ------------------- */
 #xo-canvas-main {
 	border-top:		1px solid #FFFFFF;
-	padding:		6px;
+	margin:			0px;
 }
-
+#xo-canvas-content {
+	display:		table;
+	width:			100%;
+	border-spacing:	6px;
+}
 .xo-canvas-column {
-	width:			160px;
+	width:			11em;
+}
+.xo-canvas-column, #xo-page {
+	display:		table-cell;
+	vertical-align:	top;
 }
 
-#xo-canvas-leftcolumn {
-	float:			left;
-	border:			1px solid #666666;
-}
 #xo-canvas-column .xo-block {
 	display:		block;
 }
-#xo-canvas-rightcolumn {
-	float:			right;
-}
-#xo-page {
-	background:		#ffffff;
-	padding:		0px;
-	border:			1px solid #CCCCCC;
-	min-height:		300px;
-}
 
-#xo-canvas.xo-with_left #xo-page, #xo-canvas.xo-with_both #xo-page {
-	margin-left:	170px;
-}
-#xo-canvas.xo-with_right #xo-page, #xo-canvas.xo-with_both #xo-page {
-	margin-right:	170px;
+#xo-page {
+	min-height:		300px;
+	border:			1px solid #999999;
+	background:		#ffffff;
 }
 
 #xo-content {
@@ -119,7 +112,7 @@ html, body {
 
 
 #xo-canvas-footer {
-	padding:		1px;
+	padding:		.1em;
 	background:		#DDDDDD;
 	text-align:		center;
 	font-size:		90%;
@@ -129,3 +122,20 @@ html, body {
 	color:				#666666;
 	text-decoration:	none;
 }
+
+
+input[type=text], input[type=password] {
+	border:			1px solid #B3B9C3;
+	background:		#ffffff url(img/input_bg.png) no-repeat left top;
+	color:			#000000;
+	padding:		1px 2px;
+}
+
+button {
+	background:		#D3D2D6 url(img/button_bg.png) repeat-x left bottom;
+}
+
+button:hover {
+	background:		#E6EBFF url(img/button-hover_bg.png) repeat-x left bottom;
+}
+

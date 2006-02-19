@@ -1,0 +1,21 @@
+	<div id="xo-canvas-header">
+		<div id="xo-banner">
+			<div id="xo-banner-logo">
+				<a href="([xoAppUrl /www/])"><img src="([xoImgUrl img/xoops-logo.png])" alt="XOOPS" /></a>
+			</div>
+			([if $xoops_banner != '&nbsp;'])
+			<div id="xo-banner-ad">([$xoops_banner])</div>
+			([/if])
+		</div>
+		<div id="xo-header-userinfo">
+		([if not $xoops->currentUser->userId])
+			<a href="([xoAppUrl mod_xoops_Identification#login])">Log in</a>
+			<a href="([xoAppUrl /www/register.php])">Register</a>
+		([else])
+			<div class="user-name">
+				([if $xoops->currentUser->fullName])([$xoops->currentUser->fullName])([else])([$xoops->currentUser->login])([/if])
+			</div>
+			<a href="([xoAppUrl mod_xoops_Identification#logout])">Log out</a>
+		([/if])
+		</div>
+	</div>

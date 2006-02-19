@@ -1,4 +1,4 @@
 <div class="xo-block ([$block.module])-([$block.name])">
 	<div class="xo-blocktitle">([$block.title])</div>
-	<div class="xo-blockcontent">([$block.content])</div>
+	<div class="xo-blockcontent">([$block.content|smarty:nodefaults])</div>
 </div>

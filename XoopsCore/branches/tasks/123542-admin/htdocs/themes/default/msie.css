@@ -1,5 +1,4 @@
 
-
 #xo-header-userinfo {
 	right:			25px;
 }
@@ -7,17 +6,6 @@
 	background:		transparent none;
 	padding:		0px;
 }
-
-
-#xo-page {
-	/* Fix to allow 100% large elements inside the content zone (this browser is so lame... it's unbelievable) */
-	height:			1%;
-}
-
-#xo-canvas-left {
-	display:	inline;
-}
-
 
 .mod_xoops_Identification #xo-page.login {
 	text-align:		center;
