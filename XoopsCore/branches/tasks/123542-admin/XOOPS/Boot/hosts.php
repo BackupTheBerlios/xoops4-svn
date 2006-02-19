@@ -38,7 +38,7 @@ return array(
 		// URIs without a leading slash are considered relative to the current XOOPS host location
 		// URIs with a leading slash are considered semi-relative (you must setup approp rewriting rules in your server conf)
 		'paths'			=> array(
-			'XOOPS'			=> array( XOOPS_PATH,						'library' ),
+			'XOOPS'			=> array( XOOPS_PATH,						'library.php' ),
 			'modules'		=> array( XOOPS_ROOT_PATH . '/modules',		'modules' ),
 			'themes'		=> array( XOOPS_ROOT_PATH . '/themes',		'themes' ),
 			'var'			=> array( XOOPS_VAR_PATH,					null ),
