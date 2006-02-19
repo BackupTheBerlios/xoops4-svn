@@ -58,25 +58,23 @@ define( 'XO_PREFS_CURRENTUSER', 1 );
  * @devstatus	unfinished
  */
 class xoops_core_PreferencesHandler extends xoops_db_Accessor {
-
-	var $tables = array( 'sys_preference' );
-	
-	
-	var $user = false;
-	
-	
-	var $hostName = false;
-
-	var $language = false;
-	
-	var $prefsValues = array();
-
 	/**
-	 * Folder to read managed preferences from
-	 *
+	 * Name of the table storing preferences
+	 * @var array
+	 */	
+	var $tables = array( 'sys_preference' );
+	/**
+	 * Path to the folder that stores managed preferences
 	 * @var string
 	 */
 	var $preferencesFolder = '/XOOPS/Preferences/';
+	
+	/**
+	 * Local cache for preferences values
+	 * @var array
+	 * @access protected
+	 */
+	var $prefsValues = array();
 	
 	/**#@+ @tasktype 10 Initialization*/
 	function xoInit( $options = array() ) {
@@ -116,8 +114,8 @@ class xoops_core_PreferencesHandler extends xoops_db_Accessor {
 	 *
 	 * @param string $key The preference key whose value to obtain
 	 * @param string $bundleId The identifier of the object whose preferences to search
-	 * @param integer $userID XO_PREFS_CURRENTUSER if to search the current-user domain, otherwise XO_PREFS_ANYUSER
-	 * @param unknown_type $hostName
+	 * @param integer $userId XO_PREFS_CURRENTUSER if to search the current-user domain, otherwise XO_PREFS_ANYUSER
+	 * @param string $hostName XO_PREFS_CURRENTHOST if to search the current-host domain, otherwise XO_PREFS_ANYHOST
 	 */
 	function getValue( $key, $bundleId = '', $userId = XO_PREFS_CURRENTUSER, $hostName = XO_PREFS_ANYHOST ) {
 		$vars =& $this->loadValues( $bundleId, $userId, $hostName );
@@ -129,7 +127,7 @@ class xoops_core_PreferencesHandler extends xoops_db_Accessor {
 	 * @param string $key An array of preference keys the values of which to obtain
 	 * @param string $bundleId The identifier of the object whose preferences to search
 	 * @param integer $userId XO_PREFS_CURRENTUSER if to search the current-user domain, otherwise XO_PREFS_ANYUSER
-	 * @param unknown_type $hostName
+	 * @param string $hostName XO_PREFS_CURRENTHOST if to search the current-host domain, otherwise XO_PREFS_ANYHOST
 	 */
 	function getMultiple( $keys = array(), $bundleId = '', $userId = 0, $hostName = '' ) {
 		$ptr =& $this->loadValues( $bundleId, $userId, $hostName );
@@ -165,7 +163,8 @@ class xoops_core_PreferencesHandler extends xoops_db_Accessor {
 	 * @param string $key The preference key whose value you wish to set
 	 * @param string $value The value to set for the specified key and object. Pass NULL to remove the specified key from the specified domain
 	 * @param integer $userId XO_PREFS_CURRENTUSER if to to modify the current user’s preferences, XO_PREFS_ANYUSER for all users
-	 * @param unknown_type $hostName
+	 * @param string $hostName XO_PREFS_CURRENTHOST if to to modify the current host preferences, XO_PREFS_ANYHOST for all hosts
+	 * @param boolean $localized If the preference to modify is language-dependent
 	 */
 	function setValue( $key, $value = null, $bundleId = '', $userId = 0, $hostName = 0, $localized = false ) {
 		$vars =& $this->loadValues( $bundleId, $userId, $hostName );
@@ -183,7 +182,8 @@ class xoops_core_PreferencesHandler extends xoops_db_Accessor {
 	 * @param string $key An array of preference keys the values of which to obtain
 	 * @param string $bundleId The identifier of the object whose preferences to search
 	 * @param integer $userId XO_PREFS_CURRENTUSER if to search the current-user domain, otherwise XO_PREFS_ANYUSER
-	 * @param unknown_type $hostName
+	 * @param string $hostName XO_PREFS_CURRENTHOST if to to modify the current host preferences, XO_PREFS_ANYHOST for all hosts
+	 * @param array $localized Array containing the names of the language-dependent keys
 	 */
 	function setMultiple( $values = array(), $bundleId = '', $userId = 0, $hostName = '', $localized = array() ) {
 		$vars =& $this->loadValues( $bundleId, $userId, $hostName );
@@ -215,8 +215,8 @@ class xoops_core_PreferencesHandler extends xoops_db_Accessor {
 	 * Writes to permanent storage all pending changes to the preference data for the specified object and domain
 	 *
 	 * @param string $bundleId The ID of the object whose preferences to write to storage
-	 * @param integer $userId XO_PREFS_CURRENTUSER if to search the current-user domain, otherwise XO_PREFS_ANYUSER
-	 * @param unknown_type $hostName
+	 * @param integer $userId XO_PREFS_CURRENTUSER if to save the current-user preferences, otherwise XO_PREFS_ANYUSER
+	 * @param string $hostName XO_PREFS_CURRENTHOST if to to save the current host preferences, XO_PREFS_ANYHOST for all hosts
 	 */
 	function synchronize( $bundleId, $userId = 0, $hostName = '' ) {
 		$this->updateDatabaseValues( $bundleId, $userId, $hostName );
@@ -224,6 +224,14 @@ class xoops_core_PreferencesHandler extends xoops_db_Accessor {
 	}
 	/**#@-*/
 	/**#@+ @tasktype 50 Miscellaneous functions*/
+	/**
+	 * Indicated if a preference value is managed or not
+	 *
+	 * @param string $key Name of the value to check
+	 * @param string $bundleId The ID of the object whose preferences to write to storage
+	 * @param string $hostName XO_PREFS_CURRENTHOST if to to save the current host preferences, XO_PREFS_ANYHOST for all hosts
+	 * @return boolean True if this key is managed (read-only) false otherwise
+	 */
 	function objectValueIsForced( $key, $bundleId, $hostName = '' ) {
 		$vars =& $this->loadValues( $bundleId, 0, $hostName );
 		if ( $vars ) {
@@ -231,7 +239,10 @@ class xoops_core_PreferencesHandler extends xoops_db_Accessor {
 		}
 		return false;
 	}
-	
+	/**
+	 * Retrieve the preferences for the specified domain
+	 * @access protected
+	 */
 	function &loadValues( $bundleId = '', $userId = 0, $hostName = '' ) {
 		global $xoops;
 
@@ -269,29 +280,11 @@ class xoops_core_PreferencesHandler extends xoops_db_Accessor {
 		}
 		return $varsPointer;
 	}
-
 	/**
-	 * Read all the keys of the specified domain from the database
-	 *
-	 * @param unknown_type $bundleId
-	 * @param unknown_type $userId
-	 * @param unknown_type $host
-	 * @return unknown
+	 * Calculates a domain weight, and normalize its userId and hostName components
+	 * @return integer
 	 * @access protected
-	 */
-	function loadDatabaseValues( $bundleId = '', $userId = 0, $host = '' ) {
-		global $xoops;
-		
-		$this->calculateDomainWeight( $bundleId, $userId, $host );
-		
-		$rows = $this->fetchAll( 'getPrefs', array( $userId, $bundleId, $host, '' ) );
-		$values = array();
-		foreach ( $rows as $row ) {
-			$values[ $row['propertyName'] ] = isset( $row['complexValue'] ) ? unserialize( $row['complexValue'] ) : $row['scalarValue'];
-		}
-		return $values;		
-	}
-	
+	 */	
 	function calculateDomainWeight( &$bundleId, &$userId, &$hostName ) {
 		global $xoops;
 		$weight = 0;
@@ -314,8 +307,26 @@ class xoops_core_PreferencesHandler extends xoops_db_Accessor {
 		}
 		return $weight;
 	}
-	
-	
+	/**
+	 * Retrieve the preferences for the specified domain from the database
+	 * @access protected
+	 */
+	function loadDatabaseValues( $bundleId = '', $userId = 0, $host = '' ) {
+		global $xoops;
+		
+		$this->calculateDomainWeight( $bundleId, $userId, $host );
+		
+		$rows = $this->fetchAll( 'getPrefs', array( $userId, $bundleId, $host, '' ) );
+		$values = array();
+		foreach ( $rows as $row ) {
+			$values[ $row['propertyName'] ] = isset( $row['complexValue'] ) ? unserialize( $row['complexValue'] ) : $row['scalarValue'];
+		}
+		return $values;		
+	}
+	/**
+	 * Store the preferences for the specified domain to the database
+	 * @access protected
+	 */
 	function updateDatabaseValues( $bundleId = '', $userId = 0, $hostName = '' ) {
 		$weight = $this->calculateDomainWeight( $bundleId, $userId, $hostName );
 		
@@ -349,12 +360,9 @@ class xoops_core_PreferencesHandler extends xoops_db_Accessor {
 		}
 	}
 	/**
-	 * Read persistent preferences definition
-	 *
-	 * @param unknown_type $bundleId
-	 * @param unknown_type $hostName
+	 * Retrieve the managed preferences for the specified domain from the filesystem
 	 * @access protected
-	 */	
+	 */
 	function loadPersistentValues( $bundleId = '', $host = '' ) {
 		global $xoops;
 		if ( $bundleId && !XOS::import( $bundleId ) ) {
