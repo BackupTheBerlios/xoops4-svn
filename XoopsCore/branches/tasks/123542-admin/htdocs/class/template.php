@@ -15,7 +15,7 @@
 if ( !defined( 'XOOPS_PATH' ) )	die();
 
 
-XOS::import( 'xoops_template_Smarty' );
+XOS::import( 'xoops_opal_Smarty' );
 
 /**
  * Template engine
@@ -26,12 +26,12 @@ XOS::import( 'xoops_template_Smarty' );
  * @copyright	(c) 2000-2003 The Xoops Project - www.xoops.org
  * @deprecated
  */
-class XoopsTpl extends xoops_template_Smarty {
+class XoopsTpl extends xoops_opal_Smarty {
 
 	function XoopsTpl() {
 		global $xoopsConfig, $xoopsUser;
 
-		$this->xoops_template_Smarty();
+		$this->xoops_opal_Smarty();
 		$this->assign( array(
 			'xoops_url' => XOOPS_URL,
 			'xoops_rootpath'	=> XOOPS_ROOT_PATH,
