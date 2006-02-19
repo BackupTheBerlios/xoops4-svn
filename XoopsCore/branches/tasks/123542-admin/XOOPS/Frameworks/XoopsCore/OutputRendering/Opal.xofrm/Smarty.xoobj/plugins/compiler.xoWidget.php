@@ -1,23 +1,37 @@
 <?php
 /**
-* xoWidget Smarty compiler plug-in
-*
-* See the enclosed file LICENSE for licensing information.
-* If you did not receive this file, get it at http://www.fsf.org/copyleft/gpl.html
-*
-* @copyright    The XOOPS project http://www.xoops.org/
-* @license      http://www.fsf.org/copyleft/gpl.html GNU public license
-* @author		Skalpa Keo <skalpa@xoops.org>
-* @package		xoops_template
-* @subpackage	xoops_template_Smarty
-* @since        2.3.0
-* @version		$Id$
-*/
+ * xoWidget Smarty compiler plug-in
+ *
+ * See the enclosed file LICENSE for licensing information.
+ * If you did not receive this file, get it at http://www.fsf.org/copyleft/gpl.html
+ *
+ * @copyright   The XOOPS project http://www.xoops.org/
+ * @license     http://www.fsf.org/copyleft/gpl.html GNU public license
+ * @author		Skalpa Keo <skalpa@xoops.org>
+ * @package		xoops_opal
+ * @subpackage	xoops_opal_Smarty
+ * @since       2.3.0
+ * @version		$Id$
+ */
 
+/**
+ * Inserts/renders a widget
+ *
+ * The xoWidget plug-in generates the code to instanciate and/or render a widget. Depending on
+ * the parameters you specify, it can do three different things:
+ * - Instanciate a widget, and render it in-place
+ * - Instanciate a widget, and assign the created object to a template variable
+ * - Render an already created widget instance
+ * 
+ * In-place instanciation/rendering:
+ * 
+ * 
+ * 
+ */
 function smarty_compiler_xoWidget( $argStr, &$compiler ) {
 	global $xoops;
 	
-	$args = $compiler->_parse_attrs( trim( $argStr ) );
+	$args = $compiler->_parse_attrs( trim( $argStr ), false );
 	array_map( array( &$compiler, '_expand_quoted_text' ), $args );
 	
 	if ( isset( $args['tplVar'] ) ) {
