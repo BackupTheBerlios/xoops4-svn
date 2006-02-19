@@ -38,6 +38,10 @@ return array(
 			'xoBundleDisplayName' => 'XOOPS Legacy (XOOPS 2.0) database driver',
 			'xoClassPath' => '/legacy.php',
 		),
+		'xoops_db_Accessor' => array(
+			'xoBundleDisplayName' => 'XOOPS database accessor',
+			'xoClassPath' => '/accessor.php',
+		),
 	),
 );
 
