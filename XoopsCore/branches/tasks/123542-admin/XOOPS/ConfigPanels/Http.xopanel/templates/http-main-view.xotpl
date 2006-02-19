@@ -1,0 +1,133 @@
+<?xml version='1.0' encoding='iso-8859-1'?>
+<XoopsTemplate>
+	<LanguageFiles />
+	<TemplateObjects>
+		<Object bundleId="xoops_pyro_FormSelect1" tplVar="enableCompression">
+			<Property name="ownerForm">$form</Property>
+			<Property name="refPath">enableCompression</Property>
+			<Property name="value">$prefs.enableCompression</Property>
+			<Property name="label" localized="true">Enable compression</Property>
+			<Property name="appearance">full</Property>
+			<Property name="options" type="array">
+				<Item key="0" localized="true">No</Item>
+				<Item key="1" localized="true">Yes</Item>
+			</Property>
+		</Object>
+		<Object bundleId="xoops_pyro_FormRange" tplVar="compressionLevel">
+			<Property name="ownerForm">$form</Property>
+			<Property name="refPath">compressionLevel</Property>
+			<Property name="value">$prefs.compressionLevel</Property>
+			<Property name="label" localized="true">Compression level</Property>
+			<Property name="start">1</Property>
+			<Property name="end">9</Property>
+			<Property name="step">1</Property>
+		</Object>
+		<Object bundleId="xoops_pyro_FormSelect1" tplVar="enableRedirections">
+			<Property name="ownerForm">$form</Property>
+			<Property name="refPath">enableRedirections</Property>
+			<Property name="value">$prefs.enableRedirections</Property>
+			<Property name="label" localized="true">Redirection mode</Property>
+			<Property name="appearance">full</Property>
+			<Property name="options" type="array">
+				<Item key="0" localized="true">Display redirection screen</Item>
+				<Item key="1" localized="true">Use HTTP redirections</Item>
+			</Property>
+		</Object>
+		<Object bundleId="xoops_pyro_FormText" tplVar="fakeRedirectDelay">
+			<Property name="ownerForm">$form</Property>
+			<Property name="refPath">fakeRedirectDelay</Property>
+			<Property name="value">$prefs.fakeRedirectDelay</Property>
+			<Property name="label" localized="true">Screen display duration</Property>
+		</Object>
+		<Object bundleId="xoops_pyro_FormTextarea" tplVar="fakeRedirectTemplate">
+			<Property name="ownerForm">$form</Property>
+			<Property name="refPath">fakeRedirectTemplate</Property>
+			<Property name="value">$prefs.fakeRedirectTemplate</Property>
+			<Property name="label" localized="true">Screen template</Property>
+		</Object>
+		<Object bundleId="xoops_pyro_FormSelect1" tplVar="cacheLimiter">
+			<Property name="ownerForm">$form</Property>
+			<Property name="refPath">cacheLimiter</Property>
+			<Property name="value">$prefs.cacheLimiter</Property>
+			<Property name="label" localized="true">Client caching policy</Property>
+			<Property name="appearance">minimal</Property>
+			<Property name="options" type="array">
+				<Item key="public" localized="true">Allow content caching</Item>
+				<Item key="private" localized="true">Disallow caching by public caches</Item>
+				<Item key="nocache" localized="true">Disallow caching entirely</Item>
+			</Property>
+		</Object>
+		<Object bundleId="xoops_pyro_FormText" tplVar="cacheLifetime">
+			<Property name="ownerForm">$form</Property>
+			<Property name="refPath">cacheLifetime</Property>
+			<Property name="value">$prefs.cacheLifetime</Property>
+			<Property name="label" localized="true">Caching duration</Property>
+		</Object>
+	</TemplateObjects>
+	<TemplateData contentType="text/html" default="true"><![CDATA[
+	([assign var=fieldTplString value='<tr class="pref-setting"><td>{label}:</td><td class="pref-control">{control}</td></tr>'])
+
+	<h2>HTTP handler configuration</h2>
+
+	([$form->renderTag()|smarty:nodefaults])
+	<table>
+		<caption>Output compression</caption>
+		([xoWidget tplVar=$enableCompression templateString=$fieldTplString])
+		([xoWidget tplVar=$compressionLevel templateString=$fieldTplString])
+	</table>
+	<table>
+		<caption>Redirections</caption>
+		([xoWidget tplVar=$enableRedirections templateString=$fieldTplString])
+		([xoWidget tplVar=$fakeRedirectDelay templateString=$fieldTplString])
+		([xoWidget tplVar=$fakeRedirectTemplate templateString=$fieldTplString])
+	</table>
+	<table>
+		<caption>Default headers</caption>
+		([xoWidget tplVar=$cacheLimiter templateString=$fieldTplString])
+		([xoWidget tplVar=$cacheLifetime templateString=$fieldTplString])
+	</table>
+
+	<div class="form-submits">
+		<button type="submit">Apply changes</button>
+	</div>
+	</form>
+
+]]></TemplateData>
+	<TemplateData contentType="application/xhtml+xml"><![CDATA[
+
+	<h2>HTTP handler configuration xhtml</h2>
+
+	([assign var=fieldTplString value='<div class="pref-setting">{label}<div class="pref-control">{control}</div></div>'])
+
+	([$form->renderTag()|smarty:nodefaults])
+
+	<fieldset>
+		<legend>Output compression</legend>
+		([xoWidget tplVar=$enableCompression templateString=$fieldTplString])
+
+		([xoWidget tplVar=$compressionLevel templateString=$fieldTplString])
+	</fieldset>
+
+	<fieldset>
+		<legend>Redirections</legend>
+		([xoWidget tplVar=$enableRedirections templateString=$fieldTplString])
+
+		([xoWidget tplVar=$fakeRedirectDelay templateString=$fieldTplString])
+
+		([xoWidget tplVar=$fakeRedirectTemplate templateString=$fieldTplString])
+	</fieldset>
+
+	<fieldset>
+		<legend>Default headers</legend>
+		([xoWidget tplVar=$cacheLimiter templateString=$fieldTplString])
+
+		([xoWidget tplVar=$cacheLifetime templateString=$fieldTplString])
+	</fieldset>
+	
+	<div class="form-submits">
+		<button type="submit">Apply changes</button>
+	</div>
+	</form>
+
+]]></TemplateData>
+</XoopsTemplate>
