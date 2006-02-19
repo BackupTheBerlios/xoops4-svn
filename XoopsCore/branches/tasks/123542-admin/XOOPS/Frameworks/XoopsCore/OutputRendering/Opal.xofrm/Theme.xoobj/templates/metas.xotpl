@@ -1,21 +1,21 @@
 
 
-([foreach from=$xoTheme->metas.meta key=name item=content])
+([foreachq from=$xoTheme->metas.meta key=name item=content])
 	<meta name="([$name])" content="([$content])" />
 ([/foreach])
 
-([foreach from=$xoTheme->metas.script item=attributes])
-	<script([$xoTheme->renderAttributes($attributes)])>([if !empty( $attributes._ ) ])
+([foreachq from=$xoTheme->metas.script item=attributes])
+	<script([$xoTheme->renderAttributes($attributes)|smarty:nodefaults])>([if $attributes._])
 	//<![CDATA[
 	([$attributes._])
 	//]]>([/if])</script>
 ([/foreach])
 
-([foreach from=$xoTheme->metas.stylesheet item=attributes])
-([if empty( $attributes._ )])
-	<link rel="stylesheet"([$xoTheme->renderAttributes($attributes)]) />
+([foreachq from=$xoTheme->metas.stylesheet item=attributes])
+([if !$attributes._ ])
+	<link rel="stylesheet"([$xoTheme->renderAttributes($attributes)|smarty:nodefaults]) />
 ([else])
-	<style([$xoTheme->renderAttributes($attributes)])>
+	<style([$xoTheme->renderAttributes($attributes)|smarty:nodefaults])>
 	/* <![CDATA[ */
 	([$attributes._])
 	/* //]]> */
@@ -23,6 +23,6 @@
 ([/if])
 ([/foreach])
 	
-([foreach from=$xoTheme->metas.link key=rel item=attributes])
-	<link rel="([$rel])"([$xoTheme->renderAttributes($attributes)]) />
+([foreachq from=$xoTheme->metas.link key=rel item=attributes])
+	<link rel="([$rel])"([$xoTheme->renderAttributes($attributes)|smarty:nodefaults]) />
 ([/foreach])
