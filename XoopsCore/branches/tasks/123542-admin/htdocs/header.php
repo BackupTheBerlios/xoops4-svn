@@ -29,7 +29,7 @@ if (!defined("XOOPS_ROOT_PATH")) {
 }
 
 	global $xoops;
-	$xoops->loadService( 'theme', 'xoops_pyro_Theme', array( 'folderName' => $xoopsConfig['theme_set'] ) );
+	$xoops->loadService( 'theme', 'xoops_opal_Theme', array( 'folderName' => $xoopsConfig['theme_set'] ) );
 	
 	//var_export( $xoops->services['theme'] );
 
