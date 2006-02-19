@@ -105,7 +105,7 @@ class xoops_db_DatabaseFactory {
 			$options['dsn'] = 'system';
 		}
 		if ( isset( $this->instances[ $options['dsn'] ] ) ) {
-			return $this->instances[ $options['dsn'] ];
+			//return $this->instances[ $options['dsn'] ];
 		}
 		$inst = false;
 		$parsed = explode( ':', $dsn = $options['dsn'], 2 );
@@ -136,6 +136,7 @@ class xoops_db_DatabaseFactory {
 			$inst =& XOS::create( "xoops_db_Database_{$options['driverName']}", $options );
 			$this->instances[$dsn] =& $inst;
 		}
+
 		return $inst;
 	}
 }
@@ -203,7 +204,7 @@ class xoops_db_Database {
 		global $xoops;
 
 		$this->allowWebChanges = ( $_SERVER['REQUEST_METHOD'] != 'GET' );
-		if ( $xoops->services['logger'] ) {
+		if ( @$xoops->services['logger'] ) {
 			$this->logger =& $xoops->services['logger'];
 		}
 		if ( $this->autoConnect ) {

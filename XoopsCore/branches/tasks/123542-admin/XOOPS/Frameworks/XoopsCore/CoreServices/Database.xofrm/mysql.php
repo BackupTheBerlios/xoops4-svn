@@ -167,6 +167,7 @@ class xoops_db_Database_mysql extends xoops_db_Database {
 	 */
 	function exec( $statement ) {
 		if ( $this->allowWebChanges ) {
+			$this->logEvent( "SQL: $statement" );
 			return mysql_query( $statement, $this->conn ) ? mysql_affected_rows( $this->conn ) : false;
 		} else {
 			trigger_error( 'Database updates are not allowed during processing of a GET request', E_USER_WARNING );
@@ -249,6 +250,10 @@ class xoops_db_Statement_mysql {
 	var $query = '';
 	var $preparedQuery = '';
 
+	/**
+	 * Database connection used by this statement
+	 * @var xoops_db_Database
+	 */	
 	var $db = false;
 	var $result = false;
 	
@@ -336,7 +341,7 @@ class xoops_db_Statement_mysql {
 	 * Closes the cursor, enabling the statement to be executed again
 	 */	
 	function closeCursor() {
-		if ( $this->result ) {
+		if ( $this->result && is_resource( $this->result ) ) {
 			mysql_free_result( $this->result );
 			$this->result = false;
 		}
@@ -429,6 +434,10 @@ class xoops_db_Statement_mysql {
 			$rows[] = $row;
 		}
 		return $rows;
+	}
+	
+	function rowCount() {
+		return mysql_affected_rows( $this->db->conn );
 	}
 	
 	
