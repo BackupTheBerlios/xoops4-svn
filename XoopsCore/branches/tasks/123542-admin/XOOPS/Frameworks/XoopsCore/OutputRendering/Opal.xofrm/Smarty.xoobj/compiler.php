@@ -27,6 +27,8 @@ require_once SMARTY_DIR . '/Smarty_Compiler.class.php';
  * This compiler is used by the xoops_opal framework smarty implementation instead of the default one.
  * If the template is recognized as an XML XoopsTemplate file, it will be parsed before compilation,
  * the template data extracted from the correct TemplateData tag.
+ * @package		xoops_opal
+ * @subpackage	xoops_opal_Smarty
  */
 class xoops_opal_SmartyCompiler extends Smarty_Compiler {
 	/**
@@ -48,9 +50,9 @@ class xoops_opal_SmartyCompiler extends Smarty_Compiler {
 
     function _compile_file($resource_name, $source_content, &$compiled_content) {
 		$this->resourceName = $resource_name;
-    	if ( substr( $resource_name, 0, 6 ) == 'xotpl:' ) {
+    	if ( substr( $resource_name, -6 ) == '.xotpl' ) {
+			$this->tplLangFiles = $this->tplWidgets = array();
 			if ( strpos( substr( $source_content, 0, 256 ), '<XoopsTemplate' ) !== false ) {
-				$this->tplLangFiles = $this->tplWidgets = array();
 				
 				$parser = xml_parser_create();
 				xml_parser_set_option($parser, XML_OPTION_CASE_FOLDING, 0);
@@ -65,29 +67,31 @@ class xoops_opal_SmartyCompiler extends Smarty_Compiler {
 						$this->parseObject( $values[ $objects[$n] ], array_slice( $values, $start, $objects[$n+1] - $start ) );
 					}
 				}
-				$tplData = null;
 				foreach ( $tags['TemplateData'] as $tag ) {
 					$tagInfo =& $values[ $tag ];
 					if ( $tagInfo['attributes']['contentType'] == $this->template_engine->currentTheme->contentType ) {
-						$tplData = $tagInfo['value'];
+						$source_content = $tagInfo['value'];
 						break;
 					} elseif ( isset( $tagInfo['attributes']['default'] ) ) {
-						$tplData = $tagInfo['value'];
+						$source_content = $tagInfo['value'];
 					}
 				}
-				
-				parent::_compile_file( $resource_name, $tplData, $compiled_content );
-				$prelude = '';
-				if ( !empty($this->tplWidgets) ) {
-					$prelude = "<?php\n";
-					foreach ( $this->tplWidgets as $widgetDef ) {
-						$prelude .= $this->insertWidget( $widgetDef );
-					}
-					$prelude .= "\n?>";
-				}
-				$compiled_content = $prelude . $compiled_content;
-				return true;
 			}
+			$mods = $this->default_modifiers;
+			$this->default_modifiers = array( '@htmlspecialchars:' . ENT_QUOTES );
+			parent::_compile_file( $resource_name, $source_content, $compiled_content );
+			$this->default_modifiers = $mods;
+
+			$prelude = '';
+			if ( !empty($this->tplWidgets) ) {
+				$prelude = "<?php\n";
+				foreach ( $this->tplWidgets as $widgetDef ) {
+					$prelude .= $this->insertWidget( $widgetDef );
+				}
+				$prelude .= "\n?>";
+			}
+			$compiled_content = $prelude . $compiled_content;
+			return true;
 		}
     	return parent::_compile_file( $resource_name, $source_content, $compiled_content );
     }
@@ -130,9 +134,9 @@ class xoops_opal_SmartyCompiler extends Smarty_Compiler {
     	$n = 0;
     	foreach ( $tags as $k => $tag ) {
     		if ( isset( $tag['attributes']['key'] ) ) {
-    			$items[] = "'$k' => " . $this->parsePropertyValue( $tag['value'] );
+    			$items[] = "'{$tag['attributes']['key']}' => " . $this->parsePropertyValue( $tag['value'] );
     		} else {
-    			$items[] = "$n => " . $this->parsePropertyValue(  $tag['value'] );
+    			$items[] = "$k => " . $this->parsePropertyValue(  $tag['value'] );
     		}
     	}
     	return 'array( ' . implode( ',', $items ) . ')';
@@ -207,8 +211,44 @@ class xoops_opal_SmartyCompiler extends Smarty_Compiler {
 		return $code;
     }
     
-    
-    
+    // Fixes for some an original smarty misbehavior, that applies the default modifiers
+    // on the foreach and if variables (making arrays content escaped twice)
+	function _compile_foreach_start( $tag_args ) {
+   		$mods = $this->default_modifiers;
+   		$this->default_modifiers = array();
+   		$out = parent::_compile_foreach_start( $tag_args );
+       	$this->default_modifiers = $mods;
+		return $out;
+	}
+    function _compile_if_tag($tag_args, $elseif = false) {
+   		$mods = $this->default_modifiers;
+   		$this->default_modifiers = array();
+   		$out = parent::_compile_if_tag( $tag_args, $elseif );
+       	$this->default_modifiers = $mods;
+		return $out;
+	}
+
+	function _parse_attrs( $tag_args, $use_mods = true ) {
+		if ( $use_mods ) {
+			return parent::_parse_attrs( $tag_args );
+		}
+   		$mods = $this->default_modifiers;
+   		$this->default_modifiers = array();
+   		$out = parent::_parse_attrs( $tag_args );
+       	$this->default_modifiers = $mods;
+		return $out;
+	}
+    function _parse_parenth_args( $parenth_args ) {
+   		$mods = $this->default_modifiers;
+   		$this->default_modifiers = array();
+   		$out = parent::_parse_parenth_args( $parenth_args );
+       	$this->default_modifiers = $mods;
+		return $out;
+    }
+	
+	
+	
+	
 }
 
 ?>

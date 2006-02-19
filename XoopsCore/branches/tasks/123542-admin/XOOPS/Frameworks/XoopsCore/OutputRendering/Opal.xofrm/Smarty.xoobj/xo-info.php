@@ -1,6 +1,6 @@
 <?php
 /**
- * xoops_template_Smarty bundle information file
+ * xoops_opal_Smarty bundle information file
  *
  * See the enclosed file LICENSE for licensing information.
  * If you did not receive this file, get it at http://www.fsf.org/copyleft/gpl.html

@@ -14,13 +14,18 @@
  * @author		Skalpa Keo <skalpa@xoops.org>
  */
 
+/**
+ * This file cannot be requested directly
+ */
+if ( !defined( 'XOOPS_PATH' ) ) exit();
+
 XOS::import( 'Smarty' );
 
 /**
- * XOOPS core default Smarty implementation
- * @since        2.3.0
- * @package		xoops_template
- * @subpackage	xoops_template_Smarty
+ * Opal framework Smarty implementation
+ * @since       2.3.0
+ * @package		xoops_opal
+ * @subpackage	xoops_opal_Smarty
  */
 class xoops_opal_Smarty extends Smarty {
 	
@@ -87,7 +92,7 @@ class xoops_opal_Smarty extends Smarty {
     }
 
 	/**
-	 * Render output from template data
+	 * Renders output from template data
 	 * 
 	 * @param   string  $data		The template to render
 	 * @param	bool	$display	If rendered text should be output or returned
@@ -111,6 +116,39 @@ class xoops_opal_Smarty extends Smarty {
     	return $data;
     }
 
+	/**
+	 * Temporary fix for a Smarty bug (Smarty doesn't work with recursive arrays)
+	 */    
+    function _run_mod_handler()
+    {
+        $_args = func_get_args();
+        list($_modifier_name, $_map_array) = array_splice($_args, 0, 2);
+        list($_func_name, $_tpl_file, $_tpl_line) =
+            $this->_plugins['modifier'][$_modifier_name];
+
+        $_var = $_args[0];
+        foreach ($_var as $_key => $_val) {
+            $_args[0] = $_val;
+			// skalpa: fix to handle recursive arrays
+			//$_var[$_key] = call_user_func_array($_func_name, $_args);
+            if ( is_array( $_val ) ) {
+            	$_cargs = func_get_args();
+            	$_cargs[2] = $_val;
+            	$_var[$_key] = call_user_func_array( array( &$this, '_run_mod_handler' ), $_cargs );
+            } else {
+ 	           $_var[$_key] = call_user_func_array($_func_name, $_args);
+            }
+        }
+        return $_var;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
 }
 
 ?>
