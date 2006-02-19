@@ -326,6 +326,15 @@ class xoops_kernel_Xoops2 extends XOS {
 			} elseif ( empty( $bundleId ) ) {
 				$bundleId = $name;
 			}
+			// Preferences retrieval will be integrated in the instanciation layer during alpha3 dev
+			// so, this ugly hack is just here temporarily to ensure the 2 actual config panels work
+			// correctly, and will be removed soon :-)
+			if ( $name == 'http' || $name == 'session' ) {
+				$prefs =& XOS::create( 'xoops_core_PreferencesHandler' );
+				$values = $prefs->getMultiple( null, $bundleId, XO_PREFS_ANYUSER, XO_PREFS_CURRENTHOST );
+				$options = array_merge( $values, $options );
+			}
+			// -----
 			$this->services[$name] =& XOS::create( $bundleId, $options );
 		}
 		return $this->services[$name];
@@ -507,6 +516,33 @@ function XO_( $str ) {
 	global $xoops;
 	return $xoops->services['lang'] ? $xoops->services['lang']->translate( $str ) : $str;	
 }
+
+
+if ( !function_exists( 'str_split' ) ) {
+	function str_split( $string, $chunkSize = 1 ) {
+		list( $pos, $len, $out ) = array( 0, strlen($string), array() );
+		while ( $pos <= $len ) {
+			$out[] = substr( $string, $pos, $chunkSize );
+			$pos += $chunkSize;
+		}
+		return $out;
+	}
+	function array_combine( $keys, $values ) {
+		$size = count($keys);
+		if ( !$size || $size != count($values) )	return false;
+		$out = array();
+		for ( $i=0; $i!=$size; $i++ ) {
+			$out[ $keys[$i] ] = $values[$i];
+		}
+		return $out;
+	}
+}
+
+
+
+
+
+
 
 
 
