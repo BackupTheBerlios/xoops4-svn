@@ -162,7 +162,7 @@ define("_MEDIUMDATESTRING","Y/n/j G:i");
 define("_SHORTDATESTRING","Y/n/j");
 // !!IMPORTANT!! insert '\' before any char among reserved chars: "a", "A","B","c","d","D","F","g","G","h","H","i","I","j","l","L","m","M","n","O","r","s","S","t","T","U","w","W","Y","y","z","Z"	
 // insert double '\' before 't', 'r', 'n'
-define("_TODAY", "\To\d\a\y G:i:s");
+define("_TODAY", "\T\o\d\a\y G:i:s");
 define("_YESTERDAY", "\Ye\s\\te\\r\d\a\y G:i:s");
 define("_MONTHDAY", "n/j G:i:s");
 define("_YEARMONTHDAY", "Y/n/j G:i");
