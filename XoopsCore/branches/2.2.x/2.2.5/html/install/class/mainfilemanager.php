@@ -68,7 +68,6 @@ class mainfile_manager {
         fclose($file);
 
         foreach($this->rewrite as $key => $val){
-            $val = str_replace('$', '\\$', $val);
             if(is_int($val) &&
              preg_match("/(define\()([\"'])(".$key.")\\2,\s*([0-9]+)\s*\)/",$content)){
 
