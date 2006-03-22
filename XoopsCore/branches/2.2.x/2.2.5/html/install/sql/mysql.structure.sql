@@ -167,7 +167,7 @@ CREATE TABLE config (
   conf_modid smallint(5) unsigned NOT NULL default '0',
   conf_catid smallint(5) unsigned NOT NULL default '0',
   conf_name varchar(25) NOT NULL default '',
-  conf_title varchar(30) NOT NULL default '',
+  conf_title varchar(255) NOT NULL default '',
   conf_value text NOT NULL,
   conf_desc varchar(50) NOT NULL default '',
   conf_formtype varchar(15) NOT NULL default '',
@@ -184,8 +184,8 @@ CREATE TABLE config (
 
 CREATE TABLE configcategory (
   confcat_id smallint(5) unsigned NOT NULL,
-  confcat_modid smallint(5) unsigned NOT NULL,
-  confcat_name varchar(25) NOT NULL default '',
+  confcat_modid smallint(5) unsigned NOT NULL default '0',
+  confcat_name varchar(255) NOT NULL default '',
   confcat_order smallint(5) unsigned NOT NULL default '0',
   confcat_nameid varchar(255) NOT NULL default '',
   confcat_description text NOT NULL,
@@ -416,7 +416,7 @@ CREATE TABLE ranks (
   rank_min mediumint(8) unsigned NOT NULL default '0',
   rank_max mediumint(8) unsigned NOT NULL default '0',
   rank_special tinyint(1) unsigned NOT NULL default '0',
-  rank_image varchar(255) default NULL,
+  rank_image varchar(255) default NULL default '',
   PRIMARY KEY  (rank_id),
   KEY rank_min (rank_min),
   KEY rank_max (rank_max),
@@ -546,7 +546,7 @@ CREATE TABLE `user_profile_field` (
 
 CREATE TABLE `block_instance` (
   `instanceid` int(12) unsigned NOT NULL auto_increment,
-  `bid` int(12) unsigned NOT NULL,
+  `bid` int(12) unsigned NOT NULL default '0',
   `options` text NOT NULL default '',
   `title` varchar(255) NOT NULL default '',
   `side` tinyint(1) unsigned NOT NULL default '0',
@@ -554,5 +554,5 @@ CREATE TABLE `block_instance` (
   `visible` tinyint(1) unsigned NOT NULL default '0',
   `bcachetime` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY (`instanceid`),
-  KEY `join` (`instanceid`, `visible`, `weight`)
+  KEY `joinkeys` (`instanceid`, `visible`, `weight`)
 ) TYPE=MyISAM;
