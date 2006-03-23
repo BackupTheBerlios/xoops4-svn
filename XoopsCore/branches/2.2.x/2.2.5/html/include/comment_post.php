@@ -99,8 +99,6 @@ if (!empty($_POST)) {
 	exit();
 }
 
-include_once XOOPS_ROOT_PATH."/modules/system/constants.php";
-
 switch ( $op ) {
 
 case "delete":
