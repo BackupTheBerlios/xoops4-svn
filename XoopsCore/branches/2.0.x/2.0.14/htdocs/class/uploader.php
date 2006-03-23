@@ -115,6 +115,10 @@ class XoopsMediaUploader
     var $savedFileName;
 
 	var $extensionToMime = array();
+	
+	var $extensionsToBeSanitized = array("php", "php3", "php5");
+	var $checkImageType = true;
+	
     /**
      * Constructor
      *
@@ -167,7 +171,7 @@ class XoopsMediaUploader
             $this->mediaType = $_FILES[$media_name]['type'][$index];
             $this->mediaSize = $_FILES[$media_name]['size'][$index];
             $this->mediaTmpName = $_FILES[$media_name]['tmp_name'][$index];
-            $this->mediaError = !empty($_FILES[$media_name]['error'][$index]) ? $_FILES[$media_name]['errir'][$index] : 0;
+            $this->mediaError = !empty($_FILES[$media_name]['error'][$index]) ? $_FILES[$media_name]['error'][$index] : 0;
         } else {
             $media_name =& $_FILES[$media_name];
 			$this->mediaName = (get_magic_quotes_gpc()) ? stripslashes($media_name['name']) : $media_name['name'];
@@ -178,20 +182,13 @@ class XoopsMediaUploader
             $this->mediaError = !empty($media_name['error']) ? $media_name['error'] : 0;
         }
 		if ( ($ext = strrpos( $this->mediaName, '.' )) !== false ) {
-			$ext = substr( $this->mediaName, $ext + 1 );
+			$ext = strtolower(substr( $this->mediaName, $ext + 1 ));
 			if ( isset( $this->extensionToMime[$ext] ) ) {
 				$this->mediaRealType = $this->extensionToMime[$ext];
 				//trigger_error( "XoopsMediaUploader: Set mediaRealType to {$this->mediaRealType} (file extension is $ext)", E_USER_NOTICE );
 			}
 		}
         $this->errors = array();
-		if ( $ext && in_array( $ext, array( 'gif', 'jpg', 'jpeg', 'png', 'bmp', 'xbm' ) ) ) {
-	   		// Prevent sending of invalid images that would crash IE
-			if ( ! ( $info = getimagesize( $this->mediaTmpName ) ) ) {
-				$this->setErrors( 'Invalid file content' );
-				return false;
-			}
-		}
         if (intval($this->mediaSize) < 0) {
             $this->setErrors('Invalid File Size');
             return false;
@@ -304,6 +301,8 @@ class XoopsMediaUploader
         if (!is_writeable($this->uploadDir)) {
             $this->setErrors('Failed opening directory with write permission: '.$this->uploadDir);
         }
+        $this->sanitizeMultipleExtensions();
+        
         if (!$this->checkMaxFileSize()) {
             $this->setErrors('File size too large: '.$this->mediaSize);
         }
@@ -315,6 +314,9 @@ class XoopsMediaUploader
         }
         if (!$this->checkMimeType()) {
             $this->setErrors('MIME type not allowed: '.$this->mediaType);
+        }
+        if (!$this->checkImageType()) {
+            $this->setErrors('Invalid image file');
         }
         if (count($this->errors) > 0) {
             return false;
@@ -418,6 +420,41 @@ class XoopsMediaUploader
 		}
 
 		return ( empty($this->allowedMimeTypes) || in_array($this->mediaRealType, $this->allowedMimeTypes) );
+	}
+
+    /**
+     * Check whether or not the uploaded image type is valid
+     *
+     * @return  bool
+     **/
+    function checkImageType()
+    {
+	    if(empty($this->checkImageType)) return true;
+
+        if( ("image" == substr($this->mediaType, 0, strpos($this->mediaType, "/"))) || 
+        	(!empty($this->mediaRealType) && "image" == substr($this->mediaRealType, 0, strpos($this->mediaRealType, "/")))
+        ){
+			if ( ! ( $info = @getimagesize( $this->mediaTmpName ) ) ) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+    /**
+     * Sanitize executable filename with multiple extensions
+     *
+     **/
+    function sanitizeMultipleExtensions()
+    {
+	    if(empty($this->extensionsToBeSanitized)) return;
+	    $patterns = array();
+	    $replaces = array();
+	    foreach($this->extensionsToBeSanitized as $ext){
+		    $patterns[] = "/\.".preg_quote($ext)."\./i";
+		    $replaces[] = "_".$ext.".";
+	    }
+        $this->mediaName = preg_replace($patterns, $replaces, $this->mediaName);
 	}
 
     /**
